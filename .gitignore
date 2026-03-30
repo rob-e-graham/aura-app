@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.DS_Store
+ios/App/App/public/
+.env
+server/.env
+recovered/
+ios/App/Pods/
+
+.codex/

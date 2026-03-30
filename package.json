@@ -1,0 +1,27 @@
+{
+  "name": "aura-capacitor-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AURA iOS web app wrapped with Capacitor",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "cap:sync": "npx cap sync ios",
+    "cap:open": "npx cap open ios",
+    "ios": "npm run build && npm run cap:sync && npm run cap:open",
+    "start:api": "node server/server.js"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7.4.2",
+    "@capacitor/ios": "^7.4.2",
+    "@revenuecat/purchases-capacitor": "^11.3.2",
+    "@supabase/supabase-js": "^2.100.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.2",
+    "vite": "^7.1.3"
+  }
+}

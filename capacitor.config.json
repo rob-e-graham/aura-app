@@ -1,0 +1,9 @@
+{
+  "appId": "com.auralife.app",
+  "appName": "AURA",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}
