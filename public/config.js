@@ -17,6 +17,5 @@
     // RevenueCat configuration — Apple public API key from RevenueCat dashboard
     window.AURA_REVENUECAT_APPLE_KEY = window.AURA_REVENUECAT_APPLE_KEY || 'test_bmrngPaRezJznfNKVRVFxFhBkSP';
 
-    // Apple Sign-In is kept off until the native flow is verified end-to-end on device.
-    window.AURA_APPLE_SIGNIN_ENABLED = window.AURA_APPLE_SIGNIN_ENABLED || false;
+    // Apple Sign-In removed — email OTP is the sole auth method.
 })();

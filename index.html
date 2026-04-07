@@ -33,7 +33,6 @@
 
         // RevenueCat configuration
         const REVENUECAT_APPLE_KEY = window.AURA_REVENUECAT_APPLE_KEY || '';
-        const APPLE_SIGNIN_ENABLED = window.AURA_APPLE_SIGNIN_ENABLED === true || window.AURA_APPLE_SIGNIN_ENABLED === 'true';
         let rcOfferings = null;
         let rcInitialized = false;
 
@@ -41,6 +40,45 @@
             if (tier === 'pro') return 2;
             if (tier === 'premium') return 1;
             return 0;
+        }
+
+        function deriveTierFromCustomerInfo(customerInfo) {
+            if (!customerInfo) return 'free';
+
+            const activeEntitlements = customerInfo.entitlements?.active || {};
+            const entitlementKeys = Object.keys(activeEntitlements).map(key => String(key || '').toLowerCase());
+            const entitlementProductIds = Object.values(activeEntitlements)
+                .map((entry) => String(entry?.productIdentifier || entry?.product_identifier || '').toLowerCase())
+                .filter(Boolean);
+            const activeSubscriptions = Array.isArray(customerInfo.activeSubscriptions)
+                ? customerInfo.activeSubscriptions.map((id) => String(id || '').toLowerCase())
+                : [];
+            const purchasedProducts = Array.isArray(customerInfo.allPurchasedProductIdentifiers)
+                ? customerInfo.allPurchasedProductIdentifiers.map((id) => String(id || '').toLowerCase())
+                : [];
+
+            const signals = [...entitlementKeys, ...entitlementProductIds, ...activeSubscriptions, ...purchasedProducts];
+
+            if (signals.some((value) => value.includes('pro'))) return 'pro';
+            if (signals.some((value) => value.includes('premium'))) return 'premium';
+            return 'free';
+        }
+
+        function customerInfoHasPaidAccess(customerInfo) {
+            if (!customerInfo) return false;
+
+            const activeEntitlements = customerInfo.entitlements?.active || {};
+            if (Object.keys(activeEntitlements).length > 0) return true;
+
+            if (Array.isArray(customerInfo.activeSubscriptions) && customerInfo.activeSubscriptions.length > 0) {
+                return true;
+            }
+
+            if (Array.isArray(customerInfo.allPurchasedProductIdentifiers) && customerInfo.allPurchasedProductIdentifiers.length > 0) {
+                return true;
+            }
+
+            return false;
         }
 
         function applyAuraTier(nextTier, { force = false } = {}) {
@@ -86,13 +124,25 @@
         }
 
         function handleCustomerInfoUpdate(customerInfo) {
-            if (!customerInfo?.entitlements?.active) return;
-            const active = customerInfo.entitlements.active;
-            let newTier = 'free';
-            if (active.pro_access) newTier = 'pro';
-            else if (active.premium_access) newTier = 'premium';
-
+            const newTier = deriveTierFromCustomerInfo(customerInfo);
             applyAuraTier(newTier, { force: newTier === 'free' });
+        }
+
+        async function refreshRevenueCatTier() {
+            if (!rcInitialized) return auraTier;
+            try {
+                const Purchases = Capacitor?.Plugins?.Purchases;
+                if (!Purchases?.getCustomerInfo) return auraTier;
+                const { customerInfo } = await Purchases.getCustomerInfo();
+                handleCustomerInfoUpdate(customerInfo);
+            } catch (err) {
+                console.warn('RevenueCat customer info refresh failed:', err.message);
+            }
+
+            if (auraTier === 'free' && isAccountSignedIn()) {
+                await syncEntitlementsFromServer();
+            }
+            return auraTier;
         }
 
         async function rcLogIn(userId) {
@@ -129,12 +179,6 @@
             }
         }
 
-        function syncAppleSignInAvailability() {
-            const buttons = document.querySelectorAll('.apple-signin-btn');
-            buttons.forEach((button) => {
-                button.style.display = APPLE_SIGNIN_ENABLED ? '' : 'none';
-            });
-        }
     </script>
     <title>Aura - Self-Discovery Through Cards</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -925,8 +969,7 @@
         }
         .tagline { font-size: 13px; letter-spacing: 0.2em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 14px; }
         .welcome-subtitle { font-size: 14px; color: var(--text-secondary); max-width: 280px; line-height: 1.6; margin-bottom: 30px; }
-        .welcome-actions { display: flex; flex-direction: column; gap: 10px; align-items: center; }
-        .welcome-actions { margin-top: auto; margin-bottom: 28px; }
+        .welcome-actions { display: flex; flex-direction: column; gap: 10px; align-items: center; margin-top: auto; margin-bottom: 28px; }
         .welcome-actions button {
             min-width: 250px;
             padding: 14px 28px;
@@ -1216,7 +1259,7 @@
         }
         
         /* Reading */
-        .reading-screen { padding-top: 24px; padding-bottom: 120px; overflow-y: auto; position: relative; }
+        .reading-screen { padding-top: 24px; padding-bottom: calc(154px + env(safe-area-inset-bottom, 0px)); overflow-y: auto; position: relative; }
         .reading-screen.active { display: block; }
         .reading-screen::before {
             content: '';
@@ -1366,9 +1409,6 @@
             50% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
         }
         
-        .position-labels { display: flex; justify-content: center; gap: 10px; margin-bottom: 18px; }
-        .position-labels.single-card { display: none; }
-        .position-label { width: 105px; text-align: center; font-size: 11px; color: var(--text-secondary); letter-spacing: 0.08em; text-transform: uppercase; }
         
         /* Card Details - Improved readability */
         .card-details { margin-bottom: 12px; overflow-x: hidden; }
@@ -1480,12 +1520,12 @@
 
         
         /* Personalize Prompt */
-        .personalize-prompt { background: linear-gradient(135deg, rgba(200, 160, 255, 0.08), rgba(255, 180, 200, 0.08)); border: 1px solid rgba(200, 160, 255, 0.15); border-radius: 14px; padding: 16px; margin-top: 0; margin-bottom: var(--stack-gap); text-align: center; }
+        .personalize-prompt { background: linear-gradient(135deg, rgba(200, 160, 255, 0.08), rgba(255, 180, 200, 0.08)); border: 1px solid rgba(200, 160, 255, 0.15); border-radius: 14px; padding: 18px 16px; margin-top: 6px; margin-bottom: calc(var(--stack-gap) + 4px); text-align: center; }
         .personalize-prompt h3 { font-family: 'Cormorant Garamond', serif; font-size: 16px; margin-bottom: 6px; }
         .personalize-prompt p { font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.5; }
         
         /* Chat */
-        .chat-section { margin-top: var(--space-sm); margin-bottom: var(--stack-gap); display: flex; flex-direction: column; gap: var(--stack-gap); }
+        .chat-section { margin-top: calc(var(--space-sm) + 4px); margin-bottom: calc(var(--stack-gap) + 10px); display: flex; flex-direction: column; gap: calc(var(--stack-gap) + 2px); }
         .chat-messages { max-height: 420px; overflow-y: auto; overflow-x: hidden; margin: 0; scroll-behavior: smooth; padding: 2px; overscroll-behavior-x: none; -webkit-overflow-scrolling: touch; }
         .chat-messages:empty { display: none; }
         .chat-message {
@@ -1868,25 +1908,6 @@
         .btn-secondary:active,
         .aura-ritual-btn:active,
         .chat-send:active { animation: softSpringTap 240ms cubic-bezier(0.2, 0.9, 0.2, 1); }
-        .input-sparkle {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            animation: inputSpark 1450ms ease-out forwards;
-        }
-        .input-sparkle::before {
-            content: '✦';
-            color: rgba(230, 210, 255, 0.9);
-            font-size: 11px;
-            text-shadow: 0 0 8px rgba(200,160,255,0.45);
-        }
-        @keyframes inputSpark {
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
-            25% { opacity: 1; }
-            100% { opacity: 0; transform: translate(-50%, -132px) scale(1.05); }
-        }
         @keyframes chatRitualPulse {
             0% { opacity: 0; transform: scale(0.98); }
             25% { opacity: 0.45; }
@@ -2227,12 +2248,12 @@
             grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: var(--bottom-dock-gap);
             width: 100%;
-            margin-top: 8px;
+            margin-top: 12px;
         }
         .chat-settings-full {
             width: 100%;
-            margin-top: var(--bottom-dock-gap);
-            margin-bottom: 0;
+            margin-top: 14px;
+            margin-bottom: 4px;
             display: flex;
             justify-content: center;
         }
@@ -2381,31 +2402,6 @@
             height: 1px;
             background: rgba(255,255,255,0.12);
         }
-        .apple-signin-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            padding: 13px 16px;
-            background: #fff;
-            color: #000;
-            border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            font-family: -apple-system, 'SF Pro Display', 'Inter', sans-serif;
-            font-weight: 500;
-            cursor: pointer;
-            letter-spacing: 0.01em;
-            transition: opacity 0.2s;
-        }
-        .apple-signin-btn:active {
-            opacity: 0.8;
-        }
-        .apple-signin-btn svg {
-            width: 18px;
-            height: 18px;
-        }
         .otp-panel {
             display: none;
             margin-top: 10px;
@@ -2442,10 +2438,12 @@
         .entry-guest-link {
             margin-top: 12px;
             font-size: 13px;
+            font-family: inherit;
             color: rgba(255,255,255,0.35);
             cursor: pointer;
             text-align: center;
             letter-spacing: 0.01em;
+            -webkit-tap-highlight-color: transparent;
         }
         .entry-guest-link:hover {
             color: rgba(255,255,255,0.5);
@@ -2901,7 +2899,8 @@
                 linear-gradient(180deg, rgba(22, 22, 30, 0.88) 0%, rgba(13, 15, 22, 0.82) 100%),
                 radial-gradient(120% 120% at 18% 0%, rgba(215, 188, 255, 0.16) 0%, transparent 52%),
                 radial-gradient(110% 140% at 100% 100%, rgba(110, 200, 255, 0.08) 0%, transparent 48%);
-            padding: 16px;
+            padding: 0;
+            overflow: hidden;
             box-shadow:
                 0 14px 34px rgba(18, 12, 28, 0.30),
                 inset 0 1px 0 rgba(255,255,255,0.04);
@@ -2909,8 +2908,53 @@
         .astro-insight-card.active {
             display: block;
         }
+        .astro-collapse-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            background:
+                linear-gradient(180deg, rgba(34, 40, 48, 0.24) 0%, rgba(18, 22, 28, 0.18) 100%),
+                radial-gradient(120% 140% at 10% 12%, rgba(200, 160, 255, 0.06) 0%, transparent 60%);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.015);
+            transition: background 220ms ease, box-shadow 220ms ease;
+        }
+        .astro-insight-card.collapsed .astro-collapse-header {
+            border-bottom: none;
+        }
+        .astro-collapse-header:hover {
+            background:
+                linear-gradient(180deg, rgba(38, 45, 54, 0.28) 0%, rgba(20, 24, 31, 0.20) 100%),
+                radial-gradient(120% 140% at 10% 12%, rgba(200, 160, 255, 0.09) 0%, transparent 62%);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+        }
+        .astro-collapse-header:active {
+            background:
+                linear-gradient(180deg, rgba(42, 50, 60, 0.32) 0%, rgba(22, 26, 34, 0.24) 100%),
+                radial-gradient(120% 140% at 10% 12%, rgba(200, 160, 255, 0.12) 0%, transparent 60%);
+        }
         .astro-insight-card .astro-daily-title {
-            margin-bottom: 6px;
+            margin: 0;
+            font-size: 13px;
+        }
+        .astro-collapse-toggle {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            transition: transform 0.3s ease;
+        }
+        .astro-insight-card.collapsed .astro-collapse-toggle {
+            transform: rotate(-90deg);
+        }
+        .astro-insight-card .astro-daily-insight {
+            padding: 0 16px 16px;
+            transition: all 0.3s ease;
+        }
+        .astro-insight-card.collapsed .astro-daily-insight {
+            display: none;
         }
         .astro-chart-note {
             margin-top: 10px;
@@ -3044,8 +3088,8 @@
         .affirmation-label { font-size: 8px; color: var(--text-tertiary); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 4px; }
         .affirmation-text { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-style: italic; }
         
-        .action-buttons { display: flex; gap: var(--space-sm); margin-top: 0; margin-bottom: var(--stack-gap); }
-        .action-buttons button { flex: 1; min-height: 42px; padding: 8px 12px; font-size: 12px; }
+        .action-buttons { display: flex; gap: var(--space-sm); margin-top: 8px; margin-bottom: calc(var(--stack-gap) + 4px); }
+        .action-buttons button { flex: 1; min-height: 44px; padding: 10px 12px; font-size: 12px; }
         .action-buttons .btn-gradient {
             background: rgba(255, 255, 255, 0.02);
             border-color: rgba(236, 176, 122, 0.5);
@@ -3223,6 +3267,21 @@
             transition: all 180ms ease;
         }
         .onboarding-skip:hover { color: rgba(246,248,255,0.88); border-color: rgba(184,242,214,0.18); }
+        .onboarding-skip-field {
+            display: block;
+            width: 100%;
+            margin-top: 12px;
+            padding: 10px 16px;
+            background: none;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: rgba(255,255,255,0.45);
+            font-size: 13px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .onboarding-skip-field:active { color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.2); }
         .onboarding-progress { display: flex; gap: 3px; margin-bottom: 20px; }
         .progress-dot { height: 3px; flex: 1; background: rgba(255,255,255,0.1); border-radius: 2px; }
         .progress-dot.active { background: var(--accent-purple); }
@@ -3392,7 +3451,6 @@
 .chat-message.guide p { margin-top: 0; }
 
 /* ===== Readability Pass ===== */
-.tap-hint { font-size: 12px; }
 .create-guide-btn { font-size: 13px; }
 .reading-date { font-size: 13px; }
 .card-detail-position { font-size: 10px; }
@@ -3496,11 +3554,7 @@
         <p class="entry-orb-text">Sign in to sync your readings and unlock premium features.</p>
     </div>
     <div class="entry-card">
-        <button class="apple-signin-btn" onclick="signInWithApple()">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
-            Sign in with Apple
-        </button>
-        <div class="entry-divider">or continue with email</div>
+        <div class="entry-divider">Sign in with email</div>
         <div id="entryEmailPanel">
             <input id="entryEmailInput" class="settings-email-input" type="email" placeholder="your@email.com" autocomplete="email">
             <button class="entry-email-btn" onclick="sendEmailOtp()" id="entrySendOtpBtn">Send Code</button>
@@ -3522,7 +3576,7 @@
         </div>
         <div id="entryEmailStatus" class="entry-status"></div>
     </div>
-    <div class="entry-guest-link" onclick="continueAsGuest()">Continue without an account</div>
+    <button class="entry-guest-link" onclick="continueAsGuest()" style="background:none;border:none;cursor:pointer;">Continue without an account</button>
     <div class="entry-legal-links">
         <a href="https://auraguide.com/terms" target="_blank" rel="noopener">Terms of Service</a>
         <span class="entry-legal-sep">|</span>
@@ -3581,10 +3635,6 @@
             <div class="settings-hub-card" id="settingsAccountCard">
                 <h4>Account</h4>
                 <div id="settingsSignedOutPanel">
-                    <button class="apple-signin-btn" onclick="signInWithApple()" style="margin-bottom:8px;">
-                        <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px;"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
-                        Sign in with Apple
-                    </button>
                     <input id="settingsEmailInput" class="settings-email-input" type="email" placeholder="your@email.com" autocomplete="email">
                     <div class="settings-hub-row" style="margin-top:10px;">
                         <button class="settings-chip-btn" onclick="sendEmailOtp('settings')">Send Code</button>
@@ -3645,11 +3695,11 @@
             <div class="settings-hub-card">
                 <div class="daily-section collapsed" id="dailySectionHub">
                     <div class="daily-section-header" onclick="toggleDailySection(event, 'hub')">
-                        <h4>Daily Affirmation</h4>
+                        <h4>Notifications</h4>
                         <span class="daily-section-toggle">▼</span>
                     </div>
                     <div class="daily-section-content">
-                        <p>Get a gentle reminder each day with an affirmation from your Aura deck</p>
+                        <p>Receive a daily horoscope or affirmation reminder</p>
                         <div class="daily-time-select">
                             <label>Remind me at:</label>
                             <select id="notificationTimeHub" onchange="saveNotificationTime('hub')">
@@ -3662,9 +3712,15 @@
                             </select>
                         </div>
                         <div class="notification-toggle">
-                            <span>Daily notifications</span>
+                            <span>Daily horoscope</span>
+                            <div class="toggle-switch" id="horoscopeNotifToggleHub" onclick="toggleHoroscopeNotif()"></div>
+                        </div>
+                        <p style="font-size:11px; color:rgba(255,255,255,0.4); margin:2px 0 10px;">Sends your personalised zodiac reading each morning</p>
+                        <div class="notification-toggle">
+                            <span>Daily affirmation</span>
                             <div class="toggle-switch" id="notificationToggleHub" onclick="toggleNotifications('hub')"></div>
                         </div>
+                        <p style="font-size:11px; color:rgba(255,255,255,0.4); margin:2px 0 4px;">A wisdom card drawn from your Aura deck</p>
                         <div class="daily-status" id="dailyStatusHub"></div>
                     </div>
                 </div>
@@ -3748,8 +3804,11 @@
             </div>
 
             <div class="astro-insight-card fade-in" id="astroInsightCard">
-                <p class="astro-daily-title" id="astroDailyTitle">Daily Horoscope</p>
-                <div class="astro-daily-insight">
+                <div class="astro-collapse-header" onclick="toggleHoroscopeCollapse()">
+                    <p class="astro-daily-title" id="astroDailyTitle">Daily Horoscope</p>
+                    <span class="astro-collapse-toggle" id="astroCollapseToggle">▼</span>
+                </div>
+                <div class="astro-daily-insight" id="astroCollapseBody">
                     <p class="astro-daily-copy" id="astroDailyCopy"></p>
                     <div class="astro-pill-row" id="astroPillRow"></div>
                     <div class="astro-chart-note" id="astroChartNote"></div>
@@ -4165,6 +4224,16 @@ function renderDailyHoroscope() {
     moreCopy.classList.toggle('active', horoscopeMoreInfoOpen);
     if (moreInfoBtn) moreInfoBtn.textContent = horoscopeMoreInfoOpen ? 'Less Info' : 'More Info';
     card.classList.add('active');
+    // Default collapsed; user can expand. Remembers preference after first interaction.
+    const pref = localStorage.getItem('aura_horoscope_collapsed');
+    const collapsed = pref === null ? true : pref === 'true';
+    card.classList.toggle('collapsed', collapsed);
+}
+function toggleHoroscopeCollapse() {
+    const card = document.getElementById('astroInsightCard');
+    if (!card) return;
+    card.classList.toggle('collapsed');
+    localStorage.setItem('aura_horoscope_collapsed', card.classList.contains('collapsed'));
 }
 function toggleHoroscopeMoreInfo() {
     horoscopeMoreInfoOpen = !horoscopeMoreInfoOpen;
@@ -5810,6 +5879,7 @@ async function sendChat() {
 
 // ========== DAILY NOTIFICATIONS ==========
 let notificationsEnabled = localStorage.getItem('aura_notifications') === 'true';
+let horoscopeNotifEnabled = localStorage.getItem('aura_horoscope_notif') === 'true';
 let notificationTime = localStorage.getItem('aura_notification_time') || '08:00';
 
 function getNotificationElements(source) {
@@ -5921,6 +5991,8 @@ function initNotifications() {
     [readingEls.toggle, hubEls.toggle].forEach((toggle) => {
         if (toggle) toggle.classList.toggle('active', notificationsEnabled);
     });
+    const horoscopeToggle = document.getElementById('horoscopeNotifToggleHub');
+    if (horoscopeToggle) horoscopeToggle.classList.toggle('active', horoscopeNotifEnabled);
     [readingEls.timeSelect, hubEls.timeSelect].forEach((timeSelect) => {
         if (timeSelect) timeSelect.value = notificationTime;
     });
@@ -5934,8 +6006,8 @@ function initNotifications() {
 
     updateNotificationStatus();
 
-    // Re-schedule after reload when notifications are enabled.
-    if (notificationsEnabled && 'Notification' in window && Notification.permission === 'granted') {
+    // Re-schedule after reload when any notification is enabled.
+    if ((notificationsEnabled || horoscopeNotifEnabled) && 'Notification' in window && Notification.permission === 'granted') {
         scheduleNotification();
     }
 }
@@ -6199,73 +6271,6 @@ function cancelOtp(source = 'entry') {
     pendingOtpEmail = '';
 }
 
-// ===== APPLE SIGN-IN =====
-async function signInWithApple() {
-    if (!APPLE_SIGNIN_ENABLED) {
-        toast('Email sign-in is enabled while Apple sign-in is being finalized.');
-        return;
-    }
-    if (!supabaseClient) {
-        toast('Sign-in not configured');
-        return;
-    }
-    try {
-        const { data, error } = await supabaseClient.auth.signInWithOAuth({
-            provider: 'apple',
-            options: {
-                skipBrowserRedirect: true,
-                redirectTo: window.location.origin
-            }
-        });
-        if (error) {
-            toast(error.message || 'Apple sign-in failed');
-            return;
-        }
-        // For native iOS, use the native Apple auth flow
-        if (typeof window.Capacitor !== 'undefined' && window.Capacitor.isNativePlatform?.()) {
-            try {
-                const appleResult = await performNativeAppleSignIn();
-                if (appleResult) return; // handled by native flow
-            } catch (_) {
-                // Fall back to web flow
-            }
-        }
-        // Web flow: Supabase handles the redirect
-        if (data?.url) {
-            window.location.href = data.url;
-        }
-    } catch (err) {
-        toast('Apple sign-in failed');
-    }
-}
-
-async function performNativeAppleSignIn() {
-    // Use Capacitor Social Login plugin for native Apple auth
-    if (typeof Capacitor === 'undefined' || !Capacitor.Plugins?.SocialLogin) return false;
-    try {
-        const result = await Capacitor.Plugins.SocialLogin.login({
-            provider: 'apple',
-            options: { scopes: ['email', 'name'] }
-        });
-        if (result?.result?.idToken) {
-            const { data, error } = await supabaseClient.auth.signInWithIdToken({
-                provider: 'apple',
-                token: result.result.idToken,
-                nonce: result.result.nonce
-            });
-            if (error) {
-                toast(error.message || 'Apple sign-in failed');
-                return false;
-            }
-            await completeSignIn(data.session);
-            goTo('welcomeScreen');
-            return true;
-        }
-    } catch (err) {
-        console.warn('Native Apple sign-in error:', err);
-    }
-    return false;
-}
 
 // ===== SESSION MANAGEMENT =====
 async function applySession(session, { showToast = false } = {}) {
@@ -6412,11 +6417,13 @@ function updateNotificationStatus() {
         return;
     }
     
-    if (notificationsEnabled) {
+    if (notificationsEnabled || horoscopeNotifEnabled) {
+        const parts = [];
+        if (horoscopeNotifEnabled) parts.push('horoscope');
+        if (notificationsEnabled) parts.push('affirmation');
         statuses.forEach((status) => {
             status.className = 'daily-status enabled';
-            const label = buildDailyHoroscopeModel() ? 'daily horoscope reminders' : 'daily affirmations';
-            status.innerHTML = `✓ You'll receive ${label} at ${formatTime(notificationTime)}`;
+            status.innerHTML = `✓ You'll receive ${parts.join(' & ')} notifications at ${formatTime(notificationTime)}`;
         });
     } else {
         statuses.forEach((status) => {
@@ -6499,7 +6506,7 @@ function saveNotificationTime(source = 'reading') {
 }
 
 function scheduleNotification() {
-    if (!notificationsEnabled) return;
+    if (!notificationsEnabled && !horoscopeNotifEnabled) return;
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
 
     // Clear existing timer
@@ -6527,31 +6534,67 @@ function scheduleNotification() {
         scheduleNotification();
     }, msUntilNotification);
     
-    console.log(`Notification scheduled for ${target.toLocaleString()}`);
 }
 
 function sendDailyAffirmation() {
-    if (!notificationsEnabled) return;
+    if (!notificationsEnabled && !horoscopeNotifEnabled) return;
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
     if (!Array.isArray(auraDeck) || auraDeck.length === 0) return;
 
-    const horoscope = buildDailyHoroscopeModel();
+    const horoscope = horoscopeNotifEnabled ? buildDailyHoroscopeModel() : null;
     const card = auraDeck[Math.floor(Math.random() * auraDeck.length)];
-    const title = horoscope ? `✨ ${horoscope.sign} Daily Horoscope` : '✨ Aura Daily Wisdom';
-    const body = horoscope ? horoscope.copy : `${card.name}: "${card.affirmation}"`;
 
-    const notification = new Notification(title, {
-        body,
-        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23C8A0FF"/></svg>',
-        badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23C8A0FF"/></svg>',
-        tag: 'aura-daily',
-        renotify: true
-    });
-    
-    notification.onclick = () => {
-        window.focus();
-        notification.close();
-    };
+    // Send horoscope notification if enabled and available
+    if (horoscope && horoscopeNotifEnabled) {
+        const notification = new Notification(`✨ ${horoscope.sign} Daily Horoscope`, {
+            body: horoscope.copy,
+            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23C8A0FF"/></svg>',
+            tag: 'aura-horoscope',
+            renotify: true
+        });
+        notification.onclick = () => { window.focus(); notification.close(); };
+    }
+
+    // Send affirmation notification if enabled
+    if (notificationsEnabled) {
+        const notification = new Notification('✨ Aura Daily Wisdom', {
+            body: `${card.name}: "${card.affirmation}"`,
+            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23C8A0FF"/></svg>',
+            tag: 'aura-affirmation',
+            renotify: true
+        });
+        notification.onclick = () => { window.focus(); notification.close(); };
+    }
+}
+
+async function toggleHoroscopeNotif() {
+    const toggle = document.getElementById('horoscopeNotifToggleHub');
+    if (!horoscopeNotifEnabled) {
+        if (!('Notification' in window)) { toast('Notifications not supported'); return; }
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            horoscopeNotifEnabled = true;
+            localStorage.setItem('aura_horoscope_notif', 'true');
+            if (toggle) toggle.classList.add('active');
+            if (!buildDailyHoroscopeModel()) {
+                toast('Add your birthdate in Personalize to get horoscope notifications');
+            } else {
+                toast('Horoscope notifications enabled');
+            }
+            scheduleNotification();
+        } else {
+            toast('Notifications blocked — check your device settings');
+        }
+    } else {
+        horoscopeNotifEnabled = false;
+        localStorage.setItem('aura_horoscope_notif', 'false');
+        if (toggle) toggle.classList.remove('active');
+        toast('Horoscope notifications disabled');
+        if (!notificationsEnabled) {
+            if (window.notificationTimer) clearTimeout(window.notificationTimer);
+        }
+    }
+    updateNotificationStatus();
 }
 
 function showTestNotification() {
@@ -6594,10 +6637,14 @@ function renderQuestion() {
             </div>`).join('') + '</div>';
     } else if(q.type === 'text') {
         html += `<textarea class="text-input" placeholder="${q.placeholder||''}" oninput="answers['${q.id}']=this.value">${answers[q.id]||''}</textarea>`;
+        if (q.subtitle && q.subtitle.toLowerCase().includes('optional')) {
+            html += `<button class="onboarding-skip-field" onclick="answers['${q.id}']='';nextQuestion()">I don't know — skip</button>`;
+        }
     } else if(q.type === 'date') {
         html += `<input class="settings-email-input settings-date-input onboarding-date-input" type="date" value="${answers[q.id]||''}" oninput="answers['${q.id}']=this.value">`;
     } else if(q.type === 'time') {
         html += `<input class="settings-email-input settings-date-input onboarding-date-input" type="time" value="${answers[q.id]||''}" oninput="answers['${q.id}']=this.value">`;
+        html += `<button class="onboarding-skip-field" onclick="answers['${q.id}']='';nextQuestion()">I don't know — skip</button>`;
     }
     
     document.getElementById('questionContainer').innerHTML = html;
@@ -6961,7 +7008,6 @@ document.addEventListener('DOMContentLoaded', () => {
     applyBlueLightState();
     initPremiumInteractions();
     initAccountSettings();
-    syncAppleSignInAvailability();
     checkDisclaimer();
     autoGrowChatInput(document.getElementById('openChatInput'));
 
@@ -8060,6 +8106,12 @@ function openPaywall(feature = "premium features", requiredTier = "premium") {
     document.getElementById("paywallModal").style.display = "flex";
 }
 
+function applyPurchasedTierFallback(requestedTier, customerInfo) {
+    if (!requestedTier) return auraTier;
+    if (!customerInfoHasPaidAccess(customerInfo)) return auraTier;
+    return applyAuraTier(requestedTier);
+}
+
 async function unlockPremium(tier) {
     if (!rcInitialized) {
         // RevenueCat not available — fallback for dev/testing
@@ -8113,6 +8165,9 @@ async function unlockPremium(tier) {
 
         // Update tier based on entitlements
         handleCustomerInfoUpdate(customerInfo);
+        if (auraTier === 'free') {
+            applyPurchasedTierFallback(tier, customerInfo);
+        }
         closePaywall();
         syncEntitlementsFromServer();
         toast("Unlocked: " + auraTier.toUpperCase());
@@ -8142,6 +8197,9 @@ async function restorePurchases() {
             const Purchases = Capacitor.Plugins.Purchases;
             const { customerInfo } = await Purchases.restorePurchases();
             handleCustomerInfoUpdate(customerInfo);
+            if (auraTier === 'free') {
+                applyPurchasedTierFallback(paywallContext?.tier || 'premium', customerInfo);
+            }
             if (auraTier !== 'free') {
                 tokenBalance = initTokenBalance();
                 memoryBalance = initMemoryBalance();
@@ -8179,7 +8237,8 @@ function checkPersonalizationPaywall() {
 }
 
 const originalStartOnboarding = startOnboarding;
-startOnboarding = function() {
+startOnboarding = async function() {
+    await refreshRevenueCatTier();
     if (checkPersonalizationPaywall()) return;
     originalStartOnboarding();
 };
