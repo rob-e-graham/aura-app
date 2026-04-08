@@ -235,6 +235,23 @@
             --border-bright: 1.02;
             --border-opacity: 0.42;
         }
+        /* On native device: full-screen but keep animated border */
+        .app.native-device {
+            max-width: 100%;
+            margin: 0;
+            height: var(--app-vh, 100dvh);
+            border-radius: 0;
+            clip-path: none;
+            -webkit-clip-path: none;
+        }
+        .app.native-device::before,
+        .app.native-device::after {
+            border-radius: 0;
+        }
+        .app.native-device .frame-mist-static,
+        .app.native-device .aurora-eq-frame {
+            border-radius: 0;
+        }
         .app::before,
         .app::after {
             content: '';
@@ -3738,6 +3755,21 @@
                 </div>
             </div>
 
+            <!-- ═══ DEV DEBUG PANEL ═══ -->
+            <div class="settings-hub-card" id="devDebugPanel" style="border:1px solid rgba(200,100,255,0.25);">
+                <h4 style="color:#c9a0ff;">Dev Debug Panel</h4>
+                <div id="debugInfo" style="font-size:11px;color:rgba(255,255,255,0.6);line-height:1.8;font-family:monospace;padding:8px 0;"></div>
+                <div class="settings-hub-row" style="flex-wrap:wrap;gap:6px;">
+                    <button class="settings-chip-btn" onclick="debugSetTier('free')" style="font-size:10px;">Set Free</button>
+                    <button class="settings-chip-btn" onclick="debugSetTier('premium')" style="font-size:10px;">Set Premium</button>
+                    <button class="settings-chip-btn" onclick="debugSetTier('pro')" style="font-size:10px;">Set Pro</button>
+                    <button class="settings-chip-btn" onclick="debugSyncServer()" style="font-size:10px;">Sync Server</button>
+                    <button class="settings-chip-btn" onclick="debugTestCloud()" style="font-size:10px;">Test Cloud AI</button>
+                    <button class="settings-chip-btn" onclick="debugRefreshInfo()" style="font-size:10px;">Refresh</button>
+                </div>
+                <div id="debugLog" style="font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;max-height:150px;overflow-y:auto;margin-top:8px;padding:6px;background:rgba(0,0,0,0.3);border-radius:6px;display:none;"></div>
+            </div>
+
             <div class="settings-legal-links">
                 <a href="https://auraguide.com/terms" target="_blank" rel="noopener">Terms of Service</a>
                 <span class="settings-legal-sep">|</span>
@@ -4806,6 +4838,52 @@ function loadAuraMemory() {
 
 function saveAuraMemory(mem) {
     localStorage.setItem(AURA_MEMORY_KEY, JSON.stringify(mem));
+    // Sync to Supabase in background (non-blocking)
+    syncMemoryToServer(mem);
+}
+
+let _memorySyncTimer = null;
+function syncMemoryToServer(mem) {
+    // Debounce — sync at most every 5 seconds
+    if (_memorySyncTimer) clearTimeout(_memorySyncTimer);
+    _memorySyncTimer = setTimeout(async () => {
+        if (typeof isAccountSignedIn !== 'function' || !isAccountSignedIn()) return;
+        const token = typeof getAuthToken === 'function' ? getAuthToken() : null;
+        if (!token) return;
+        try {
+            await fetch(`${window.AURA_API_BASE || ''}/api/memory/sync`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ memory_data: mem })
+            });
+        } catch (_) {}
+    }, 5000);
+}
+
+async function loadMemoryFromServer() {
+    if (typeof isAccountSignedIn !== 'function' || !isAccountSignedIn()) return null;
+    const token = typeof getAuthToken === 'function' ? getAuthToken() : null;
+    if (!token) return null;
+    try {
+        const r = await fetch(`${window.AURA_API_BASE || ''}/api/memory/sync`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!r.ok) return null;
+        const d = await r.json();
+        return d?.memory_data || null;
+    } catch (_) { return null; }
+}
+
+async function mergeServerMemoryOnSignIn() {
+    const serverMem = await loadMemoryFromServer();
+    if (!serverMem || !serverMem.themeCounts) return;
+    const localMem = loadAuraMemory();
+    // If local is empty or server has more data, use server
+    const localThemeCount = Object.values(localMem.themeCounts || {}).reduce((a, b) => a + b, 0);
+    const serverThemeCount = Object.values(serverMem.themeCounts || {}).reduce((a, b) => a + b, 0);
+    if (serverThemeCount > localThemeCount) {
+        localStorage.setItem(AURA_MEMORY_KEY, JSON.stringify(serverMem));
+    }
 }
 
 function extractThemes(text) {
@@ -6297,6 +6375,11 @@ async function applySession(session, { showToast = false } = {}) {
     if (typeof updateTokenUI === 'function') updateTokenUI();
     if (typeof updateSettingsTier === 'function') updateSettingsTier();
 
+    // Merge personalization memory from server
+    if (typeof mergeServerMemoryOnSignIn === 'function') {
+        mergeServerMemoryOnSignIn().catch(() => {});
+    }
+
     if (showToast && email) {
         toast(`Signed in as ${email}`);
     }
@@ -6372,7 +6455,8 @@ async function syncEntitlementsFromServer() {
         if (data?.ok) {
             const usage = data.usage || data;
             const serverTier = data.tier || 'free';
-            applyAuraTier(serverTier, { force: serverTier === 'free' && auraTier === 'free' });
+            // Server is authoritative — always apply what server says
+            applyAuraTier(serverTier, { force: true });
 
             // Sync token balance from server
             if (typeof tokenBalance !== 'undefined' && usage) {
@@ -6999,6 +7083,10 @@ function initViewportSync() {
 
 // ========== INIT ==========
 document.addEventListener('DOMContentLoaded', () => {
+    // Go full-screen on native device (no decorative phone frame)
+    if (['capacitor:', 'ionic:', 'file:'].includes(window.location.protocol)) {
+        document.querySelector('.app')?.classList.add('native-device');
+    }
     initViewportSync();
     prepareWelcomeLogo();
     initStarfieldParticles();
@@ -8087,7 +8175,7 @@ function hasTier(requiredTier) {
 function canUseFeature(feature) {
     const featureTiers = {
         chat: "free",
-        onboarding: "premium",
+        onboarding: "free",
         three_card: "premium",
         runes_pack: "pro",
         dynamic_intro: "pro"
@@ -8245,6 +8333,111 @@ startOnboarding = async function() {
 
 // Initialize token UI on load
 updateTokenUI();
+
+// ═══ DEV DEBUG PANEL ═══
+function debugLog(msg, type = 'info') {
+    const el = document.getElementById('debugLog');
+    if (!el) return;
+    el.style.display = 'block';
+    const colors = {ok:'#4ade80', err:'#f87171', warn:'#fbbf24', info:'#818cf8'};
+    el.innerHTML += `<div style="color:${colors[type] || colors.info}">${new Date().toLocaleTimeString()} ${msg}</div>`;
+    el.scrollTop = el.scrollHeight;
+}
+
+function debugRefreshInfo() {
+    const el = document.getElementById('debugInfo');
+    if (!el) return;
+    const signedIn = typeof isAccountSignedIn === 'function' ? isAccountSignedIn() : false;
+    const token = typeof getAuthToken === 'function' ? getAuthToken() : null;
+    const canCloud = typeof canSendCloudMessage === 'function' ? canSendCloudMessage(500) : false;
+    const tokensLeft = typeof getTokensRemaining === 'function' ? getTokensRemaining() : 0;
+    const rcInit = typeof rcInitialized !== 'undefined' ? rcInitialized : false;
+    const apiBase = window.AURA_API_BASE || 'not set';
+
+    el.innerHTML = `
+        <div><b>auraTier:</b> <span style="color:${auraTier==='free'?'#f87171':'#4ade80'}">${auraTier}</span></div>
+        <div><b>canSendCloud:</b> <span style="color:${canCloud?'#4ade80':'#f87171'}">${canCloud}</span></div>
+        <div><b>tokensRemaining:</b> ${tokensLeft.toLocaleString()}</div>
+        <div><b>tokenBalance:</b> ${tokenBalance.monthly_used}/${tokenBalance.monthly_allowance} used + ${tokenBalance.bonus_tokens} bonus</div>
+        <div><b>memoryBalance:</b> ${memoryBalance.current_entries}/${memoryBalance.max_entries + memoryBalance.bonus_entries} entries</div>
+        <div><b>signedIn:</b> ${signedIn} | <b>hasToken:</b> ${!!token}</div>
+        <div><b>rcInitialized:</b> ${rcInit}</div>
+        <div><b>API base:</b> ${apiBase}</div>
+    `;
+}
+
+function debugSetTier(tier) {
+    debugLog(`Setting tier to: ${tier}`, 'info');
+    auraTier = tier;
+    localStorage.setItem('aura_tier', tier);
+    tokenBalance = initTokenBalance();
+    memoryBalance = initMemoryBalance();
+    updateTokenUI();
+    if (typeof updateSettingsTier === 'function') updateSettingsTier();
+    debugRefreshInfo();
+    debugLog(`Tier set to ${tier}. Allowance: ${tokenBalance.monthly_allowance}, canCloud: ${canSendCloudMessage(500)}`, tier === 'free' ? 'warn' : 'ok');
+}
+
+async function debugSyncServer() {
+    debugLog('Syncing with server...', 'info');
+    const signedIn = typeof isAccountSignedIn === 'function' ? isAccountSignedIn() : false;
+    if (!signedIn) {
+        debugLog('Not signed in — server sync requires auth', 'warn');
+        // Test health endpoint instead
+        try {
+            const r = await fetch(`${window.AURA_API_BASE || ''}/api/health`);
+            const d = await r.json();
+            debugLog(`Server health: ${d.ok ? 'OK' : 'FAIL'} | provider: ${d.provider} | togetherKey: ${d.togetherKeyConfigured} | supabase: ${d.supabaseConfigured}`, d.ok ? 'ok' : 'err');
+        } catch (e) {
+            debugLog(`Server unreachable: ${e.message}`, 'err');
+        }
+        return;
+    }
+    try {
+        await syncEntitlementsFromServer();
+        debugRefreshInfo();
+        debugLog(`Server sync done. Tier: ${auraTier}, tokens: ${getTokensRemaining()}`, 'ok');
+    } catch (e) {
+        debugLog(`Server sync failed: ${e.message}`, 'err');
+    }
+}
+
+async function debugTestCloud() {
+    debugLog('Testing cloud AI endpoint...', 'info');
+    try {
+        const start = Date.now();
+        const headers = typeof getAuthHeaders === 'function' ? getAuthHeaders() : {'Content-Type': 'application/json'};
+        const r = await fetch(`${window.AURA_API_BASE || ''}/api/ai`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({message: 'Say hello in one sentence.', system: 'Reply briefly.'})
+        });
+        const ms = Date.now() - start;
+        const d = await r.json();
+        if (r.ok && d.reply) {
+            debugLog(`Cloud AI OK (${ms}ms): "${d.reply.slice(0,80)}"`, 'ok');
+            debugLog(`Tokens used: ${d.tokens_used}, remaining: ${d.tokens_remaining}`, 'info');
+        } else if (r.status === 429) {
+            debugLog(`Tokens exhausted on server: ${d.error}`, 'err');
+        } else {
+            debugLog(`Cloud AI error (${r.status}): ${d.error || JSON.stringify(d)}`, 'err');
+        }
+    } catch (e) {
+        debugLog(`Cloud AI failed: ${e.message}`, 'err');
+    }
+    debugRefreshInfo();
+}
+
+// Auto-refresh debug info when settings screen is shown
+const _origGoToSettings = typeof goToSettingsHub === 'function' ? goToSettingsHub : null;
+if (_origGoToSettings) {
+    goToSettingsHub = function() {
+        _origGoToSettings.apply(this, arguments);
+        setTimeout(debugRefreshInfo, 100);
+    };
+}
+// Also refresh on load
+setTimeout(debugRefreshInfo, 500);
 </script>
 </body>
 </html>

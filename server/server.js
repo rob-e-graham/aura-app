@@ -422,6 +422,59 @@ app.post("/api/memory/topup", requireAuth, async (req, res) => {
   }
 });
 
+// ===== MEMORY DATA SYNC =====
+// Save user's personalization memory (themes, moods, actions) to Supabase
+app.post("/api/memory/sync", requireAuth, async (req, res) => {
+  try {
+    const sb = getSupabase();
+    if (!sb || !req.userId) return res.status(500).json({ error: "Not available" });
+
+    const memoryData = req.body?.memory_data;
+    if (!memoryData || typeof memoryData !== 'object') {
+      return res.status(400).json({ error: "Invalid memory_data" });
+    }
+
+    const { error } = await sb
+      .from("profiles")
+      .update({ memory_data: memoryData })
+      .eq("id", req.userId);
+
+    if (error) {
+      console.error("Memory sync save error:", error.message);
+      return res.status(500).json({ error: "Failed to save memory" });
+    }
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("Memory sync error:", err.message);
+    res.status(500).json({ error: "Failed to sync memory" });
+  }
+});
+
+// Load user's personalization memory from Supabase
+app.get("/api/memory/sync", requireAuth, async (req, res) => {
+  try {
+    const sb = getSupabase();
+    if (!sb || !req.userId) return res.status(500).json({ error: "Not available" });
+
+    const { data, error } = await sb
+      .from("profiles")
+      .select("memory_data")
+      .eq("id", req.userId)
+      .single();
+
+    if (error) {
+      console.error("Memory sync load error:", error.message);
+      return res.status(500).json({ error: "Failed to load memory" });
+    }
+
+    res.json({ ok: true, memory_data: data?.memory_data || {} });
+  } catch (err) {
+    console.error("Memory sync error:", err.message);
+    res.status(500).json({ error: "Failed to load memory" });
+  }
+});
+
 // ===== REVENUECAT WEBHOOK =====
 app.post("/api/webhooks/revenuecat", async (req, res) => {
   // Verify webhook auth
