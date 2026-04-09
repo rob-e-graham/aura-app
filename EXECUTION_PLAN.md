@@ -12,27 +12,34 @@ Status key: [x] Done | [-] In progress | [ ] Not started
 - [x] Relaunch session restore works
 
 ## 2. Purchases & Restore (Blocker)
-- [ ] Premium purchase opens Apple payment sheet
+- [ ] Premium purchase opens Apple payment sheet (needs Sandbox Apple ID testing)
 - [ ] Pro purchase works
 - [ ] Restore Purchases works
 - [ ] Token top-up consumable works
 - [ ] Memory top-up consumable works
-- [ ] Server sync after purchase via `/api/account/state`
-- [ ] Server sync via `/api/tokens/topup`
-- [ ] Server sync via `/api/memory/topup`
+- [-] Server sync after purchase via `/api/account/state` (endpoint deployed, needs device test)
+- [-] Server sync via `/api/tokens/topup` (endpoint deployed, needs device test)
+- [-] Server sync via `/api/memory/topup` (endpoint deployed, needs device test)
 - [ ] App fails closed (no free unlock if billing unavailable)
 
 ## 3. Supabase Per-User Memory Integrity (Blocker)
-- [ ] Each signed-in user reads/writes only their own aura_user_memory row
-- [ ] Merge logic on reinstall/sign-in/sign-out/switch-account
-- [ ] Memory state persists across relaunch and fresh install
-- [ ] RLS and user scoping verified end-to-end
+- [x] Memory content syncs to Supabase (memory_data column on profiles)
+- [x] Memory auto-syncs on save (debounced 5s)
+- [x] Merge logic on sign-in (server wins if more data)
+- [ ] Verify each signed-in user reads/writes only their own data
+- [ ] Memory state persists across relaunch and fresh install (needs device test)
+- [x] RLS covers memory_data via existing profiles policy
 
-## 4. AI Quality + Personalization (Current Issue)
-- [ ] Cloud AI path (DeepSeek via Together) reachable and stable under auth/premium
-- [ ] Personalization context included in prompts and retained across sessions
-- [ ] Fallback behavior when API fails (no crash, graceful messaging)
-- [ ] Pro/Premium users get cloud AI responses, NOT local dumb responses
+## 4. AI Quality + Personalization
+- [x] Cloud AI path (DeepSeek via Together) reachable and stable (tested via curl)
+- [x] Tier sync bug fixed (server tier now authoritative with force:true)
+- [x] Token balance resets on tier upgrade (no more "Need More Tokens" after upgrade)
+- [x] Fallback behavior when API fails (graceful local fallback + timeout message)
+- [x] 25s timeout on cloud AI requests
+- [x] AI responses no longer always end with a question (varied endings)
+- [-] Pro/Premium users get cloud AI responses (code fixed, needs device verification)
+- [x] Personalization context included in prompts
+- [x] Memory retained across sessions (localStorage + Supabase sync)
 
 ## 5. URLs, Deep Links, Website/Shop
 - [ ] Shop website URL correct everywhere (paywall, settings, legal, CTAs)
@@ -61,7 +68,21 @@ Status key: [x] Done | [-] In progress | [ ] Not started
 
 ---
 
-## Current Status
-- **Auth**: Working (Phase 1 complete)
-- **Active Issue**: Pro users still getting local/dumb AI responses instead of cloud AI
-- **Next**: Fix cloud AI routing for paid tiers, then continue through Phase 2+
+## Completed This Session
+- Added splash screen (replaces empty cosmic boot screen)
+- Fixed paywall scroll cropping on small screens
+- Fixed cloud AI routing (tier sync bug)
+- Fixed token reset on tier upgrade
+- Added dev debug panel in Settings
+- Added service status dashboard (tools/dashboard.html)
+- Added memory_data sync to Supabase
+- Added 25s timeout on AI requests
+- Improved AI response variety (not always ending with question)
+- Deployed server changes to Render via GitHub push
+
+## What Needs Testing On Device
+1. Debug panel: Set Premium → chat → verify cloud AI response
+2. Sign in → verify server sync shows correct tier
+3. Paywall scrolling on smaller screens
+4. Splash screen on cold boot
+5. Sandbox Apple ID purchase flow (Phase 2 blocker)

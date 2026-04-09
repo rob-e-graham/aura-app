@@ -885,6 +885,8 @@
             text-align: center;
             padding-top: 86px;
             padding-bottom: 56px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .welcome-screen::before { content: none; }
         .welcome-screen::after { content: none; }
@@ -986,7 +988,10 @@
         }
         .tagline { font-size: 13px; letter-spacing: 0.2em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 14px; }
         .welcome-subtitle { font-size: 14px; color: var(--text-secondary); max-width: 280px; line-height: 1.6; margin-bottom: 30px; }
-        .welcome-actions { display: flex; flex-direction: column; gap: 10px; align-items: center; margin-top: auto; margin-bottom: 28px; }
+        .welcome-daily-section { width: 100%; max-width: 340px; padding: 0 16px; margin-top: 12px; margin-bottom: 12px; position: relative; z-index: 1; overflow-y: auto; flex-shrink: 1; }
+        .welcome-daily-section .affirmation-box { margin-bottom: 12px; }
+        .welcome-daily-section .astro-insight-card { margin-bottom: 0; }
+        .welcome-actions { display: flex; flex-direction: column; gap: 10px; align-items: center; margin-top: auto; margin-bottom: 28px; flex-shrink: 0; }
         .welcome-actions button {
             min-width: 250px;
             padding: 14px 28px;
@@ -1520,7 +1525,7 @@
             border-radius: inherit;
             pointer-events: none;
             z-index: 2;
-            background: linear-gradient(to bottom, rgba(16,16,22,0) 0%, rgba(16,16,22,0) 78%, rgba(16,16,22,0.36) 90%, rgba(16,16,22,0.72) 100%);
+            background: linear-gradient(to bottom, rgba(16,16,22,0) 0%, rgba(16,16,22,0) 92%, rgba(16,16,22,0.25) 96%, rgba(16,16,22,0.5) 100%);
         }
         .guide-section > * { position: relative; z-index: 1; }
         .guide-section .guide-message { position: relative; z-index: 1; }
@@ -1532,7 +1537,7 @@
             inset: 0;
             border-radius: inherit;
             pointer-events: none;
-            background: linear-gradient(to bottom, rgba(18,20,28,0) 0%, rgba(18,20,28,0) 82%, rgba(18,20,28,0.34) 92%, rgba(18,20,28,0.62) 100%);
+            background: linear-gradient(to bottom, rgba(18,20,28,0) 0%, rgba(18,20,28,0) 94%, rgba(18,20,28,0.2) 97%, rgba(18,20,28,0.4) 100%);
         }
 
         
@@ -2310,6 +2315,42 @@
             transform: scale(0.97);
         }
         .settings-hub-screen { gap: 16px; }
+        /* ═══ SPLASH SCREEN ═══ */
+        .splash-screen {
+            position: fixed; inset: 0;
+            background: #0d0b14;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        .splash-screen.hidden {
+            opacity: 0; visibility: hidden; pointer-events: none;
+        }
+        .splash-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 48px; font-weight: 300;
+            letter-spacing: 0.2em; color: #F5F5FA;
+            margin-bottom: 8px;
+            opacity: 0; animation: splashFadeIn 1.2s ease 0.2s forwards;
+        }
+        .splash-tagline {
+            font-size: 12px; font-weight: 300;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            color: rgba(200,160,255,0.5);
+            opacity: 0; animation: splashFadeIn 1s ease 0.6s forwards;
+        }
+        .splash-glow {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(120,80,200,0.15) 0%, transparent 70%);
+            border-radius: 50%; filter: blur(40px);
+            animation: splashPulse 3s ease-in-out infinite;
+        }
+        @keyframes splashFadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes splashPulse { 0%,100% { opacity:0.4; transform:translate(-50%,-50%) scale(1); } 50% { opacity:0.7; transform:translate(-50%,-50%) scale(1.1); } }
+
         .entry-screen {
             justify-content: flex-start;
             align-items: center;
@@ -2704,9 +2745,12 @@
         .paywall-overlay {
             position: fixed; inset: 0;
             background: rgba(0,0,0,0.95);
-            display: none; align-items: center; justify-content: center;
+            display: none; align-items: flex-start; justify-content: center;
             z-index: 5000; padding: 24px;
+            padding-top: calc(40px + env(safe-area-inset-top, 0px));
+            padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .paywall-container {
             background: #161618;
@@ -3563,6 +3607,13 @@
     </div>
 </div>
 
+<!-- ═══ Splash Screen ═══ -->
+<div class="splash-screen" id="splashScreen">
+    <div class="splash-glow"></div>
+    <h1 class="splash-logo">AURA</h1>
+    <p class="splash-tagline">Know Yourself</p>
+</div>
+
 <div class="screen entry-screen" id="entryScreen">
     <h1 class="entry-title">AURA</h1>
     <p class="entry-tagline">Unlock AI</p>
@@ -3606,6 +3657,31 @@
             <p class="tagline misty-copy">Know Yourself</p>
             <div class="welcome-orb"></div>
             <p class="welcome-subtitle misty-copy">Ancient Futures, Wisdom &amp; Reflection</p>
+
+            <div class="welcome-daily-section">
+                <div class="affirmation-box fade-in" id="welcomeAffirmationBox">
+                    <p class="affirmation-label">Today's Affirmation</p>
+                    <p class="affirmation-text" id="welcomeAffirmation"></p>
+                </div>
+
+                <div class="astro-insight-card fade-in" id="welcomeAstroCard">
+                    <div class="astro-collapse-header" onclick="toggleWelcomeHoroscopeCollapse()">
+                        <p class="astro-daily-title" id="welcomeAstroDailyTitle">Daily Horoscope</p>
+                        <span class="astro-collapse-toggle" id="welcomeAstroCollapseToggle">▼</span>
+                    </div>
+                    <div class="astro-daily-insight" id="welcomeAstroCollapseBody">
+                        <p class="astro-daily-copy" id="welcomeAstroDailyCopy"></p>
+                        <div class="astro-pill-row" id="welcomeAstroPillRow"></div>
+                        <div class="astro-chart-note" id="welcomeAstroChartNote"></div>
+                        <div class="astro-actions">
+                            <button class="btn-secondary btn-gradient btn-small astro-action-btn" onclick="sendHoroscopeToChat()">Ask Aura</button>
+                            <button class="btn-secondary btn-gradient btn-small astro-action-btn" id="welcomeAstroMoreInfoBtn" onclick="toggleWelcomeHoroscopeMoreInfo()">More Info</button>
+                        </div>
+                        <div class="astro-more-copy" id="welcomeAstroMoreCopy"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="welcome-actions">
                 <button class="btn-primary" onclick="goTo('shuffleScreen')">Draw Your Cards</button>
                 <button class="btn-secondary btn-gradient" onclick="openAuraChat()">Chat with Aura</button>
@@ -3765,6 +3841,7 @@
                     <button class="settings-chip-btn" onclick="debugSetTier('pro')" style="font-size:10px;">Set Pro</button>
                     <button class="settings-chip-btn" onclick="debugSyncServer()" style="font-size:10px;">Sync Server</button>
                     <button class="settings-chip-btn" onclick="debugTestCloud()" style="font-size:10px;">Test Cloud AI</button>
+                    <button class="settings-chip-btn" onclick="debugResetTokens()" style="font-size:10px;">Reset Tokens</button>
                     <button class="settings-chip-btn" onclick="debugRefreshInfo()" style="font-size:10px;">Refresh</button>
                 </div>
                 <div id="debugLog" style="font-size:10px;color:rgba(255,255,255,0.5);font-family:monospace;max-height:150px;overflow-y:auto;margin-top:8px;padding:6px;background:rgba(0,0,0,0.3);border-radius:6px;display:none;"></div>
@@ -3835,22 +3912,6 @@
                 <p class="affirmation-text" id="dailyAffirmation"></p>
             </div>
 
-            <div class="astro-insight-card fade-in" id="astroInsightCard">
-                <div class="astro-collapse-header" onclick="toggleHoroscopeCollapse()">
-                    <p class="astro-daily-title" id="astroDailyTitle">Daily Horoscope</p>
-                    <span class="astro-collapse-toggle" id="astroCollapseToggle">▼</span>
-                </div>
-                <div class="astro-daily-insight" id="astroCollapseBody">
-                    <p class="astro-daily-copy" id="astroDailyCopy"></p>
-                    <div class="astro-pill-row" id="astroPillRow"></div>
-                    <div class="astro-chart-note" id="astroChartNote"></div>
-                    <div class="astro-actions">
-                        <button class="btn-secondary btn-gradient btn-small astro-action-btn" onclick="sendHoroscopeToChat()">Ask Aura</button>
-                        <button class="btn-secondary btn-gradient btn-small astro-action-btn" id="astroMoreInfoBtn" onclick="toggleHoroscopeMoreInfo()">More Info</button>
-                    </div>
-                    <div class="astro-more-copy" id="astroMoreCopy"></div>
-                </div>
-            </div>
 
             <div class="chat-settings-full fade-in" id="settingsSection">
                 <button class="settings-cog-btn" onclick="goToSettingsHub()" aria-label="Settings" title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
@@ -4270,7 +4331,85 @@ function toggleHoroscopeCollapse() {
 function toggleHoroscopeMoreInfo() {
     horoscopeMoreInfoOpen = !horoscopeMoreInfoOpen;
     renderDailyHoroscope();
+    renderWelcomeHoroscope();
 }
+
+/* ── Welcome Screen: Daily Affirmation + Horoscope ── */
+let welcomeHoroscopeMoreInfoOpen = false;
+
+function getDailyAffirmation() {
+    const today = new Date();
+    const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+    if (typeof auraCards !== 'undefined' && auraCards.length) {
+        const idx = dayOfYear % auraCards.length;
+        return auraCards[idx].affirmation;
+    }
+    const fallback = [
+        "I embrace fresh starts with open arms",
+        "Everything I need is already within me",
+        "I trust my inner knowing",
+        "I notice and appreciate what I have",
+        "I honor my needs clearly",
+        "I nurture meaningful relationships",
+        "I move forward with purpose",
+        "I trust the timing of my life"
+    ];
+    return fallback[dayOfYear % fallback.length];
+}
+
+function renderWelcomeAffirmation() {
+    const el = document.getElementById('welcomeAffirmation');
+    if (!el) return;
+    el.textContent = '"' + getDailyAffirmation() + '"';
+}
+
+function renderWelcomeHoroscope() {
+    const card = document.getElementById('welcomeAstroCard');
+    const title = document.getElementById('welcomeAstroDailyTitle');
+    const copy = document.getElementById('welcomeAstroDailyCopy');
+    const pills = document.getElementById('welcomeAstroPillRow');
+    const chartNote = document.getElementById('welcomeAstroChartNote');
+    const moreCopy = document.getElementById('welcomeAstroMoreCopy');
+    const moreInfoBtn = document.getElementById('welcomeAstroMoreInfoBtn');
+    const model = buildDailyHoroscopeModel();
+    if (!card || !title || !copy || !pills || !moreCopy || !chartNote) return;
+    if (!model) {
+        card.classList.remove('active');
+        return;
+    }
+    title.textContent = model.title;
+    copy.textContent = model.copy;
+    pills.innerHTML = model.pills.map((pill) => `<span class="astro-pill">${pill}</span>`).join('');
+    chartNote.textContent = model.chartNote;
+    moreCopy.textContent = model.detail;
+    moreCopy.classList.toggle('active', welcomeHoroscopeMoreInfoOpen);
+    if (moreInfoBtn) moreInfoBtn.textContent = welcomeHoroscopeMoreInfoOpen ? 'Less Info' : 'More Info';
+    card.classList.add('active');
+    const pref = localStorage.getItem('aura_horoscope_collapsed');
+    const collapsed = pref === null ? true : pref === 'true';
+    card.classList.toggle('collapsed', collapsed);
+}
+
+function toggleWelcomeHoroscopeCollapse() {
+    const card = document.getElementById('welcomeAstroCard');
+    if (!card) return;
+    card.classList.toggle('collapsed');
+    localStorage.setItem('aura_horoscope_collapsed', card.classList.contains('collapsed'));
+    // Keep reading screen in sync
+    const readingCard = document.getElementById('astroInsightCard');
+    if (readingCard) readingCard.classList.toggle('collapsed', card.classList.contains('collapsed'));
+}
+
+function toggleWelcomeHoroscopeMoreInfo() {
+    welcomeHoroscopeMoreInfoOpen = !welcomeHoroscopeMoreInfoOpen;
+    renderWelcomeHoroscope();
+}
+
+function renderWelcomeDaily() {
+    renderWelcomeAffirmation();
+    renderWelcomeHoroscope();
+}
+
 async function sendHoroscopeToChat() {
     const model = buildDailyHoroscopeModel();
     if (!model) {
@@ -4326,6 +4465,9 @@ function refreshScreenLayout(screenId = '') {
     if (screenId === 'shuffleScreen') {
         prepareTypedWordmark(document.getElementById('shuffleLogoMain'), true);
         setReadingType(readingType);
+    }
+    if (screenId === 'welcomeScreen') {
+        renderWelcomeDaily();
     }
 }
 
@@ -5228,6 +5370,7 @@ function checkDisclaimer() {
     const accepted = localStorage.getItem('aura_disclaimer_accepted');
     if(!accepted) {
         document.getElementById('disclaimerModal').classList.remove('hidden');
+        dismissSplash();
     } else {
         document.getElementById('disclaimerModal').classList.add('hidden');
         goToEntryOrWelcome();
@@ -5245,6 +5388,16 @@ async function goToEntryOrWelcome() {
     initAccountSettings();
     const signedIn = isAccountSignedIn();
     goTo(signedIn ? 'welcomeScreen' : 'entryScreen');
+    // Fade out splash screen
+    dismissSplash();
+}
+
+function dismissSplash() {
+    const splash = document.getElementById('splashScreen');
+    if (splash) {
+        splash.classList.add('hidden');
+        setTimeout(() => { splash.remove(); }, 700);
+    }
 }
 
 // ========== SYSTEM PROMPT GENERATOR ==========
@@ -5341,7 +5494,11 @@ function buildSystemPrompt(userMessage = '') {
 - Use up to two gentle bridges back to cards when it feels natural
 - Match user mood in one brief opening sentence, then guide
 - If the user input is unclear/silly/offbeat, skip robotic validation and respond naturally (playful, curious, or clarifying)
-- Reflection question is preferred, not mandatory every message
+- Do NOT end every response with a question. Vary your endings:
+  • Sometimes end with a reflective question (maybe 40% of the time)
+  • Sometimes end with a gentle statement to sit with ("Let that land for a moment.")
+  • Sometimes end with an open invitation ("I'm here when you want to go deeper.")
+  • Sometimes just let the insight breathe — no question, no call to action
 - Offer one practical micro-step when the user asks for action, clarity, or grounding
 - If you suggest journaling or making a list, add: "Share it in chat if you want."
 - Emojis are allowed occasionally (0-2 when tone is light/supportive)
@@ -5406,7 +5563,11 @@ Do not reference cards, spreads, positions, deck names, or card meanings unless 
 - Default: 40-120 words.
 - If user is short/casual: 1-3 short lines.
 - If user asks depth: go deeper with clear structure.
-- Reflection question is preferred but not required every message.
+- Do NOT end every response with a question. Vary your endings:
+  • Sometimes a reflective question (about 40% of the time)
+  • Sometimes a gentle closing statement ("Let that settle." / "Take your time with that.")
+  • Sometimes an open invitation ("I'm here whenever you want to talk more.")
+  • Sometimes just let the thought breathe with no question at all
 - If you suggest writing/listing/journaling, add: "Share it in chat if you want."
 
 ## USER CONTEXT
@@ -5557,9 +5718,8 @@ function showReading() {
     // Initialize notifications
     initNotifications();
     
-    // Affirmation
+    // Affirmation (card-specific, tied to reading)
     document.getElementById('dailyAffirmation').textContent = '"' + selectedCards[Math.floor(selectedCards.length/2)].affirmation + '"';
-    renderDailyHoroscope();
 }
 
 function highlightCard(idx) {
@@ -5854,19 +6014,16 @@ async function sendAuraMessage(mode = 'reading') {
 
     // Determine if we use local or cloud AI
     const useCloud = auraTier !== 'free' && canSendCloudMessage(500);
-    const useLocalFallback = auraTier === 'free';
+    const useLocalFallback = !useCloud; // Free tier OR exhausted tokens → always use local
     const tokensExhausted = auraTier !== 'free' && !canSendCloudMessage(500);
 
-    if (tokensExhausted) {
-        // Premium/Pro user ran out of tokens — offer to buy more
-        isTyping = false;
-        if (ui.sendBtn) ui.sendBtn.disabled = false;
-        updateComposerState(mode);
-        openTokenTopUp();
-        return;
+    // Show token top-up hint for exhausted premium users, but DON'T block — let them chat with local AI
+    if (tokensExhausted && !ui._tokenHintShown) {
+        ui._tokenHintShown = true;
+        toast('Cloud tokens used up — using local mode. Buy more tokens for AI-powered responses.');
     }
 
-    ui.chatEl.innerHTML += `<div class="chat-message guide typing-indicator"><p>${useLocalFallback ? 'Reflecting...' : 'Aura Guide is thinking...'}</p></div>`;
+    ui.chatEl.innerHTML += `<div class="chat-message guide typing-indicator"><p>${useCloud ? 'Aura Guide is thinking...' : 'Reflecting...'}</p></div>`;
     smoothFollowChat(ui.chatEl, true);
 
     const thinkingStartedAt = Date.now();
@@ -5918,7 +6075,11 @@ async function sendAuraMessage(mode = 'reading') {
         ui.chatEl.querySelector('.typing-indicator')?.remove();
         // On cloud failure, fall back to local response
         if (!useLocalFallback) {
-            const localReply = generateLocalResponse(msg);
+            const isTimeout = error?.message?.includes('timed out');
+            const fallbackNote = isTimeout
+                ? "I took a little too long gathering my thoughts. Here's something to reflect on while I recalibrate."
+                : '';
+            const localReply = (fallbackNote ? fallbackNote + '\n\n' : '') + generateLocalResponse(msg);
             await renderAuraReplyAnimated(ui.chatEl, localReply, {
                 attachActions: true,
                 mode,
@@ -6515,7 +6676,7 @@ function updateNotificationStatus() {
             status.innerHTML = 'Enable to receive gentle daily reminders';
         });
     }
-    renderDailyHoroscope();
+    renderWelcomeHoroscope();
 }
 
 function formatTime(time) {
@@ -7070,15 +7231,40 @@ function initViewportSync() {
     syncAppViewportHeight();
     window.addEventListener('resize', syncAppViewportHeight, { passive: true });
     window.addEventListener('orientationchange', () => setTimeout(syncAppViewportHeight, 120), { passive: true });
-    window.addEventListener('focusout', () => setTimeout(syncAppViewportHeight, 180), { passive: true });
+    window.addEventListener('focusout', () => {
+        setTimeout(syncAppViewportHeight, 180);
+        // Scroll back to normal when keyboard closes
+        setTimeout(() => window.scrollTo(0, 0), 100);
+    }, { passive: true });
     window.addEventListener('focus', () => setTimeout(syncAppViewportHeight, 80), { passive: true });
     document.addEventListener('visibilitychange', () => {
         if (!document.hidden) setTimeout(syncAppViewportHeight, 60);
     });
     if (window.visualViewport) {
-        window.visualViewport.addEventListener('resize', syncAppViewportHeight, { passive: true });
-        window.visualViewport.addEventListener('scroll', syncAppViewportHeight, { passive: true });
+        window.visualViewport.addEventListener('resize', () => {
+            syncAppViewportHeight();
+            // Keep webview from scrolling off-screen
+            requestAnimationFrame(() => window.scrollTo(0, 0));
+        }, { passive: true });
+        window.visualViewport.addEventListener('scroll', () => {
+            // Prevent iOS from scrolling the viewport itself
+            if (window.visualViewport.offsetTop > 0) {
+                window.scrollTo(0, 0);
+            }
+            syncAppViewportHeight();
+        }, { passive: true });
     }
+
+    // When chat inputs gain focus, scroll messages to bottom after keyboard settles
+    document.addEventListener('focusin', (e) => {
+        if (e.target?.classList?.contains('chat-input')) {
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+                const chatEl = e.target.closest('.chat-section')?.querySelector('.chat-messages');
+                if (chatEl) smoothFollowChat(chatEl, true);
+            }, 350);
+        }
+    }, { passive: true });
 }
 
 // ========== INIT ==========
@@ -7113,13 +7299,30 @@ document.addEventListener('DOMContentLoaded', () => {
 async function requestAuraReply(payload) {
     const endpoints = ["/api/ai", "/api/llama"];
     let lastError = null;
+    const TIMEOUT_MS = 25000; // 25 second timeout
 
     for (const endpoint of endpoints) {
-        const response = await fetch(`${window.AURA_API_BASE}${endpoint}`, {
-            method: "POST",
-            headers: typeof getAuthHeaders === 'function' ? getAuthHeaders() : { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+        let response;
+        try {
+            response = await fetch(`${window.AURA_API_BASE}${endpoint}`, {
+                method: "POST",
+                headers: typeof getAuthHeaders === 'function' ? getAuthHeaders() : { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+                signal: controller.signal
+            });
+        } catch (fetchErr) {
+            clearTimeout(timeoutId);
+            if (fetchErr.name === 'AbortError') {
+                lastError = new Error('Request timed out — the AI took too long to respond. Please try again.');
+                continue;
+            }
+            lastError = fetchErr;
+            continue;
+        }
+        clearTimeout(timeoutId);
 
         let data = {};
         try {
@@ -7852,18 +8055,22 @@ function initTokenBalance() {
             period_start: Date.now()
         };
         saveTokenBalance(bal);
+        return bal;
     }
+    // Monthly reset (30 day cycle)
     const daysSincePeriod = (Date.now() - (bal.period_start || Date.now())) / (1000 * 60 * 60 * 24);
     if (daysSincePeriod >= 30) {
         bal.monthly_used = 0;
         bal.period_start = Date.now();
-        bal.monthly_allowance = allowance;
-        saveTokenBalance(bal);
     }
-    if (bal.monthly_allowance !== allowance) {
-        bal.monthly_allowance = allowance;
-        saveTokenBalance(bal);
+    // Tier upgrade — reset usage when allowance increases (e.g. free→premium)
+    if (allowance > (bal.monthly_allowance || 0)) {
+        bal.monthly_used = 0;
+        bal.period_start = Date.now();
     }
+    // Always sync allowance to current tier
+    bal.monthly_allowance = allowance;
+    saveTokenBalance(bal);
     return bal;
 }
 
@@ -8370,12 +8577,23 @@ function debugSetTier(tier) {
     debugLog(`Setting tier to: ${tier}`, 'info');
     auraTier = tier;
     localStorage.setItem('aura_tier', tier);
-    tokenBalance = initTokenBalance();
-    memoryBalance = initMemoryBalance();
+    // Force-reset token balance for the new tier (clear old usage)
+    const allowance = TOKEN_ALLOWANCES[tier] || 0;
+    tokenBalance = {
+        monthly_allowance: allowance,
+        monthly_used: 0,
+        bonus_tokens: 0,
+        period_start: Date.now()
+    };
+    saveTokenBalance(tokenBalance);
+    // Force-reset memory balance
+    const memAllowance = MEMORY_ALLOWANCES[tier] || 0;
+    memoryBalance = { max_entries: memAllowance, current_entries: 0, bonus_entries: 0 };
+    saveMemoryBalance(memoryBalance);
     updateTokenUI();
     if (typeof updateSettingsTier === 'function') updateSettingsTier();
     debugRefreshInfo();
-    debugLog(`Tier set to ${tier}. Allowance: ${tokenBalance.monthly_allowance}, canCloud: ${canSendCloudMessage(500)}`, tier === 'free' ? 'warn' : 'ok');
+    debugLog(`Tier set to ${tier}. Allowance: ${allowance}, remaining: ${getTokensRemaining()}, canCloud: ${canSendCloudMessage(500)}`, tier === 'free' ? 'warn' : 'ok');
 }
 
 async function debugSyncServer() {
@@ -8424,6 +8642,35 @@ async function debugTestCloud() {
         }
     } catch (e) {
         debugLog(`Cloud AI failed: ${e.message}`, 'err');
+    }
+    debugRefreshInfo();
+}
+
+async function debugResetTokens() {
+    debugLog('Resetting tokens (local + server)...', 'info');
+    // Reset local
+    const allowance = TOKEN_ALLOWANCES[auraTier] || 0;
+    const bal = { monthly_allowance: allowance, monthly_used: 0, bonus_tokens: 0, period_start: Date.now() };
+    saveTokenBalance(bal);
+    if (typeof ui !== 'undefined') ui._tokenHintShown = false;
+    debugLog(`Local tokens reset: ${allowance} available`, 'ok');
+
+    // Reset server-side
+    try {
+        const headers = typeof getAuthHeaders === 'function' ? getAuthHeaders() : {'Content-Type': 'application/json'};
+        const r = await fetch(`${window.AURA_API_BASE || ''}/api/tokens/reset`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ reset: true })
+        });
+        if (r.ok) {
+            const d = await r.json();
+            debugLog(`Server tokens reset: ${JSON.stringify(d)}`, 'ok');
+        } else {
+            debugLog(`Server reset failed (${r.status}) — reset manually in Supabase`, 'err');
+        }
+    } catch (e) {
+        debugLog(`Server reset failed: ${e.message}`, 'err');
     }
     debugRefreshInfo();
 }

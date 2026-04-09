@@ -422,6 +422,30 @@ app.post("/api/memory/topup", requireAuth, async (req, res) => {
   }
 });
 
+// ===== TOKEN RESET (Dev/Debug) =====
+app.post("/api/tokens/reset", requireAuth, async (req, res) => {
+  try {
+    const sb = getSupabase();
+    if (!sb) return res.status(503).json({ error: "Service not configured" });
+
+    const { error } = await sb.from("user_usage").update({
+      ai_tokens_used: 0
+    }).eq("user_id", req.userId);
+
+    if (error) {
+      console.error("Token reset error:", error.message);
+      return res.status(500).json({ error: "Failed to reset tokens" });
+    }
+
+    const bal = await getTokenBalance(req.userId);
+    const remaining = bal ? Math.max(0, bal.monthly_allowance - bal.monthly_used) + (bal.bonus_tokens || 0) : 0;
+    return res.json({ ok: true, monthly_used: 0, remaining });
+  } catch (err) {
+    console.error("Token reset error:", err.message);
+    return res.status(500).json({ error: "Failed to reset tokens" });
+  }
+});
+
 // ===== MEMORY DATA SYNC =====
 // Save user's personalization memory (themes, moods, actions) to Supabase
 app.post("/api/memory/sync", requireAuth, async (req, res) => {
