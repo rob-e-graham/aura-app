@@ -58,7 +58,7 @@ button.primary:hover{background:#6d28d9}
         <div class="subtitle">Real-time status of all services and endpoints</div>
     </div>
     <div class="auto-refresh">
-        <input type="checkbox" id="autoRefresh" checked>
+        <input type="checkbox" id="autoRefresh">
         <label for="autoRefresh">Auto-refresh 30s</label>
     </div>
 </div>
@@ -214,20 +214,18 @@ async function checkEndpoint(name, method, path, needsAuth = false) {
     renderCard('endpointGrid', id, {title:name, url, status:'loading', statusText:'Checking...'});
     try {
         const start = Date.now();
-        const opts = {method, signal: AbortSignal.timeout(10000)};
-        if (method === 'POST') {
-            opts.headers = {'Content-Type': 'application/json'};
-            opts.body = JSON.stringify({message: 'test'});
-        }
+        // Use GET for reachability checks — avoids triggering real server logic or burning credits
+        const opts = {method: 'GET', signal: AbortSignal.timeout(10000)};
         const r = await fetch(url, opts);
         const ms = Date.now() - start;
         let statusText, status;
+        // Any response (even 401/404/405) means the server is reachable
         if (r.ok) {
             status = 'ok'; statusText = `${r.status} (${ms}ms)`;
         } else if (r.status === 401 && needsAuth) {
             status = 'ok'; statusText = `Auth required (correct)`;
-        } else if (r.status === 401) {
-            status = 'warn'; statusText = `401 Unauthorized`;
+        } else if (r.status === 401 || r.status === 404 || r.status === 405) {
+            status = 'ok'; statusText = `Reachable (${r.status}, ${ms}ms)`;
         } else {
             status = 'err'; statusText = `HTTP ${r.status}`;
         }
@@ -335,12 +333,13 @@ async function runAllChecks() {
 
     // Endpoints in parallel
     await Promise.all([
-        checkEndpoint('AI Chat', 'POST', '/api/ai'),
+        checkEndpoint('AI Chat', 'GET', '/api/ai'),
         checkEndpoint('Account State', 'GET', '/api/account/state', true),
         checkEndpoint('Token Balance', 'GET', '/api/tokens/balance', true),
-        checkEndpoint('Token Top-up', 'POST', '/api/tokens/topup', true),
-        checkEndpoint('Memory Top-up', 'POST', '/api/memory/topup', true),
-        checkEndpoint('RevenueCat Webhook', 'POST', '/api/webhooks/revenuecat'),
+        checkEndpoint('Token Top-up', 'GET', '/api/tokens/topup', true),
+        checkEndpoint('Token Reset', 'GET', '/api/tokens/reset', true),
+        checkEndpoint('Memory Sync', 'GET', '/api/memory/sync', true),
+        checkEndpoint('RevenueCat Webhook', 'GET', '/api/webhooks/revenuecat'),
     ]);
 
     // Client checks
@@ -360,10 +359,9 @@ function setupAutoRefresh() {
             clearInterval(refreshTimer);
         }
     });
-    refreshTimer = setInterval(runAllChecks, 30000);
 }
 
-// Init
+// Init — run once, no auto-refresh by default (saves API credits)
 runAllChecks();
 setupAutoRefresh();
 </script>

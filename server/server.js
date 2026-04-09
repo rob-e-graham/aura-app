@@ -65,6 +65,29 @@ const REVENUECAT_WEBHOOK_AUTH = readEnv("REVENUECAT_WEBHOOK_AUTH", "");
 const TOKEN_ALLOWANCES = { free: 0, premium: 50000, pro: 150000 };
 const MEMORY_ALLOWANCES = { free: 0, premium: 100, pro: 500 };
 
+// ===== GLOBAL DAILY SPEND CAP — protects Together.ai credits =====
+const DAILY_REQUEST_CAP = Number(readEnv("DAILY_REQUEST_CAP", "200")); // max AI requests per day across ALL users
+let dailyRequestCount = 0;
+let dailyCapResetDate = new Date().toDateString();
+
+function checkDailyCap() {
+  const today = new Date().toDateString();
+  if (today !== dailyCapResetDate) {
+    dailyRequestCount = 0;
+    dailyCapResetDate = today;
+  }
+  return dailyRequestCount < DAILY_REQUEST_CAP;
+}
+
+function incrementDailyCap() {
+  const today = new Date().toDateString();
+  if (today !== dailyCapResetDate) {
+    dailyRequestCount = 0;
+    dailyCapResetDate = today;
+  }
+  dailyRequestCount++;
+}
+
 // Initialize Supabase admin client (lazy — only if configured)
 let supabaseAdmin = null;
 function getSupabase() {
@@ -226,6 +249,8 @@ app.get("/api/health", (req, res) => {
     togetherKeyConfigured: Boolean(TOGETHER_API_KEY),
     supabaseConfigured: Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY),
     revenuecatConfigured: Boolean(REVENUECAT_SECRET_API_KEY),
+    dailyRequests: dailyRequestCount,
+    dailyCap: DAILY_REQUEST_CAP,
     promptFiles: {
       systemPrompt: fs.existsSync(SYSTEM_PROMPT_PATH),
       promptDb: fs.existsSync(PROMPT_DB_PATH),
@@ -243,6 +268,16 @@ async function handleAiRequest(req, res) {
 
     if (!userMessage) {
       return res.status(400).json({ error: "No message provided" });
+    }
+
+    // Global daily spend cap — hard stop to protect Together.ai credits
+    if (!checkDailyCap()) {
+      console.warn(`DAILY CAP HIT: ${dailyRequestCount}/${DAILY_REQUEST_CAP} requests today`);
+      return res.status(429).json({
+        error: "daily_cap_reached",
+        message: "Daily AI request limit reached. Resets at midnight.",
+        requests_today: dailyRequestCount
+      });
     }
 
     // Server-side token check if user is authenticated
@@ -282,7 +317,8 @@ async function handleAiRequest(req, res) {
       }
     }
 
-    res.json({ reply, tokens_used: tokensUsed, tokens_remaining: tokensRemaining });
+    incrementDailyCap();
+    res.json({ reply, tokens_used: tokensUsed, tokens_remaining: tokensRemaining, requests_today: dailyRequestCount });
 
   } catch (error) {
     console.error("LLM Error:", error.message);
