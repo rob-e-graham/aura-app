@@ -107,6 +107,10 @@ function getSupabase() {
 
 app.use(cors());
 app.use(express.json({ limit: JSON_BODY_LIMIT }));
+
+// Static legal pages
+app.get("/terms", (req, res) => res.sendFile(path.join(__dirname, "pages", "terms.html")));
+app.get("/privacy", (req, res) => res.sendFile(path.join(__dirname, "pages", "privacy.html")));
 const promptService = createPromptService({
   systemPromptPath: SYSTEM_PROMPT_PATH,
   promptDbPath: PROMPT_DB_PATH,
