@@ -462,6 +462,34 @@ app.post("/api/memory/topup", requireAuth, async (req, res) => {
   }
 });
 
+// ===== ACCOUNT DELETION =====
+app.post("/api/account/delete", requireAuth, async (req, res) => {
+  try {
+    const sb = getSupabase();
+    if (!sb) return res.status(503).json({ error: "Service not configured" });
+
+    const userId = req.userId;
+    console.log(`Account deletion requested for user: ${userId}`);
+
+    // Delete from all user tables
+    await sb.from("user_usage").delete().eq("user_id", userId);
+    await sb.from("user_entitlements").delete().eq("user_id", userId);
+    await sb.from("profiles").delete().eq("id", userId);
+
+    // Delete the auth user via admin API
+    const { error: authError } = await sb.auth.admin.deleteUser(userId);
+    if (authError) {
+      console.warn("Auth user deletion warning:", authError.message);
+    }
+
+    console.log(`Account deleted: ${userId}`);
+    return res.json({ ok: true, message: "Account and all data deleted" });
+  } catch (err) {
+    console.error("Account deletion error:", err.message);
+    return res.status(500).json({ error: "Failed to delete account" });
+  }
+});
+
 // ===== TOKEN RESET (Dev/Debug) =====
 app.post("/api/tokens/reset", requireAuth, async (req, res) => {
   try {

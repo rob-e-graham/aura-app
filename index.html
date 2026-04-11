@@ -1010,15 +1010,13 @@
 
         /* ── Daily Guidance Screen ── */
         .daily-screen {
-            justify-content: flex-start;
-            align-items: center;
-            text-align: center;
-            padding-top: max(54px, env(safe-area-inset-top, 48px) + 10px);
-            padding-bottom: max(24px, env(safe-area-inset-bottom, 20px));
+            padding: 34px 32px var(--bottom-dock-inset);
+            position: relative;
+            overflow: hidden;
         }
         .daily-header {
             display: flex; align-items: center; justify-content: space-between;
-            width: 100%; max-width: 360px; padding: 0 20px; margin-bottom: 12px;
+            width: 100%; margin-bottom: 10px;
             position: relative; z-index: 2; flex-shrink: 0;
         }
         .daily-back-btn {
@@ -1032,25 +1030,6 @@
             font-size: 22px; font-weight: 300; letter-spacing: 0.12em;
             color: rgba(242, 255, 248, 0.9);
             text-shadow: 0 0 16px rgba(196, 134, 255, 0.2);
-        }
-        .daily-content {
-            width: 100%; max-width: 340px; padding: 0 16px;
-            position: relative; z-index: 1;
-            flex: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        .daily-content .affirmation-box { margin-bottom: 16px; }
-        .daily-content .astro-insight-card { margin-bottom: 16px; }
-        .daily-chat-section { margin-top: 8px; }
-        .daily-chat-label {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 14px; color: rgba(200, 160, 255, 0.6);
-            letter-spacing: 0.06em; margin-bottom: 10px;
-        }
-        .daily-chat-messages {
-            max-height: 200px; overflow-y: auto;
-            margin-bottom: 10px;
         }
         .welcome-actions button {
             min-width: 260px;
@@ -1073,7 +1052,7 @@
             width: 220px;
             height: 220px;
             margin: 20px auto 16px;
-            flex-shrink: 0;
+            flex: 1 0 auto;
             z-index: 1;
         }
         .welcome-orb {
@@ -1098,8 +1077,8 @@
             50% { transform: translate(-50%, -50%) scale(1.18); opacity: 1; }
         }
         @keyframes mistCounterBreath {
-            0%, 100% { transform: translate(-50%, -50%) scale(1.08); opacity: 0.7; }
-            50% { transform: translate(-50%, -50%) scale(0.88); opacity: 0.42; }
+            0%, 100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+            50% { transform: translate(-50%, -50%) scale(0.7); opacity: 0.35; }
         }
         @keyframes mistRevealIn {
             from { opacity: 0; }
@@ -3110,6 +3089,15 @@
             font-size: 12px;
             cursor: pointer;
         }
+        .settings-delete-btn {
+            border-color: rgba(255,80,80,0.3);
+            color: rgba(255,100,100,0.8);
+            background: rgba(255,60,60,0.08);
+        }
+        .settings-delete-btn:hover {
+            border-color: rgba(255,80,80,0.5);
+            background: rgba(255,60,60,0.15);
+        }
         .misty-copy {
             position: relative;
             display: inline-block;
@@ -3722,11 +3710,11 @@
                 <button class="daily-back-btn" onclick="goTo('welcomeScreen')" aria-label="Back">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                 </button>
-                <h2 class="daily-title">Daily Guidance</h2>
+                <h2 class="daily-title misty-copy">Daily Guidance</h2>
                 <div style="width:20px"></div>
             </div>
-
-            <div class="daily-content">
+            <p class="chat-screen-subtitle">Your Daily Wisdom</p>
+            <div class="chat-section fade-in">
                 <div class="affirmation-box fade-in" id="welcomeAffirmationBox">
                     <p class="affirmation-label">Today's Affirmation</p>
                     <p class="affirmation-text" id="welcomeAffirmation"></p>
@@ -3749,18 +3737,22 @@
                     </div>
                 </div>
 
-                <div class="daily-chat-section">
-                    <p class="daily-chat-label">Ask Aura about your day</p>
-                    <div class="chat-messages daily-chat-messages" id="dailyChatMessages"></div>
-                    <div class="chat-input-container">
-                        <textarea class="chat-input" id="dailyChatInput" placeholder="Message Aura..." rows="1" oninput="autoGrowChatInput(this)" onkeydown="handleChatComposerKeydown(event, 'daily')"></textarea>
-                        <button class="chat-send" id="dailyChatSendBtn" onclick="sendDailyChat()">→</button>
-                    </div>
+                <div class="chat-messages" id="dailyChatMessages"></div>
+                <div class="chat-input-container">
+                    <textarea class="chat-input" id="dailyChatInput" placeholder="Ask Aura about your day..." rows="1" oninput="autoGrowChatInput(this)" onkeydown="handleChatComposerKeydown(event, 'daily')"></textarea>
+                    <button class="chat-send" id="dailyChatSendBtn" onclick="sendDailyChat()">→</button>
                 </div>
-            </div>
-
-            <div class="screen-cog">
-                <button class="settings-cog-btn" onclick="goToSettingsHub()" aria-label="Settings" title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+                <div class="composer-meta">
+                    <span class="composer-count" id="dailyComposerCount">0/600</span>
+                </div>
+                <div class="chat-nav-row">
+                    <button class="chat-top-btn" onclick="goTo('readingScreen')">Reading</button>
+                    <button class="chat-top-btn" onclick="goTo('shuffleScreen')">Draw</button>
+                    <button class="chat-top-btn" onclick="goTo('welcomeScreen')">Home</button>
+                </div>
+                <div class="chat-settings-full fade-in">
+                    <button class="settings-cog-btn" onclick="goToSettingsHub()" aria-label="Settings" title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+                </div>
             </div>
         </div>
 
@@ -3826,6 +3818,9 @@
                     <div class="settings-hub-row" style="margin-top:10px;">
                         <button class="settings-chip-btn" onclick="startOnboarding()">Personalize your Aura Guide</button>
                         <button class="settings-chip-btn" onclick="signOutAccount()">Sign Out</button>
+                    </div>
+                    <div class="settings-hub-row" style="margin-top:6px;">
+                        <button class="settings-chip-btn settings-delete-btn" onclick="confirmDeleteAccount()">Delete Account</button>
                     </div>
                 </div>
             </div>
@@ -6668,6 +6663,51 @@ async function signOutAccount() {
     if (typeof updateTokenUI === 'function') updateTokenUI();
     if (typeof updateSettingsTier === 'function') updateSettingsTier();
     toast('Signed out');
+}
+
+async function confirmDeleteAccount() {
+    const email = getStoredAccountEmail() || 'your account';
+    const confirmed = confirm(
+        `Are you sure you want to delete ${email}?\n\nThis will permanently remove:\n• Your profile and personalisation data\n• Chat memory and saved themes\n• Token balance and usage history\n\nActive subscriptions must be cancelled separately in Settings > Apple ID > Subscriptions.\n\nThis action cannot be undone.`
+    );
+    if (!confirmed) return;
+
+    const doubleConfirm = confirm('This is permanent. Delete your account and all data?');
+    if (!doubleConfirm) return;
+
+    try {
+        // Delete server-side data
+        if (auraUserId) {
+            const headers = typeof getAuthHeaders === 'function' ? getAuthHeaders() : {'Content-Type': 'application/json'};
+            await fetch(`${window.AURA_API_BASE || ''}/api/account/delete`, {
+                method: 'POST',
+                headers
+            }).catch(() => {});
+        }
+
+        // Clear all local data
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('aura_')) keysToRemove.push(key);
+        }
+        keysToRemove.forEach(k => localStorage.removeItem(k));
+
+        // Sign out
+        if (supabaseClient) {
+            try { await supabaseClient.auth.signOut(); } catch (_) {}
+        }
+        await rcLogOut();
+        auraSession = null;
+        auraUserId = null;
+        auraTier = 'free';
+
+        toast('Account deleted');
+        goTo('entryScreen');
+    } catch (e) {
+        toast('Failed to delete account. Please try again.');
+        console.error('Account deletion error:', e);
+    }
 }
 
 function continueAsGuest() {
