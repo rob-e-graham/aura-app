@@ -1013,6 +1013,28 @@
             padding: 34px 32px var(--bottom-dock-inset);
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .daily-cards-area {
+            width: 100%;
+            max-width: 340px;
+            padding: 0 8px;
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+        .daily-screen .welcome-orb-wrap {
+            flex: 0 0 auto;
+            margin: 10px auto 10px;
+        }
+        .daily-screen .chat-section {
+            width: 100%;
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
         }
         .daily-header {
             display: flex; align-items: center; justify-content: space-between;
@@ -3691,6 +3713,7 @@
 <div class="screen welcome-screen" id="welcomeScreen">
             <h1 class="logo">AURA</h1>
             <p class="tagline misty-copy">Know Yourself</p>
+            <p class="chat-screen-subtitle" style="margin-top:2px;">Let's Hold Space Together</p>
             <div class="welcome-orb-wrap">
                 <div class="welcome-orb"></div>
             </div>
@@ -3713,42 +3736,44 @@
                 <h2 class="daily-title misty-copy">Daily Guidance</h2>
                 <div style="width:20px"></div>
             </div>
-            <p class="chat-screen-subtitle">Your Daily Wisdom</p>
+            <p class="chat-screen-subtitle">Wisdom &amp; Reflection</p>
+
+            <div class="welcome-orb-wrap">
+                <div class="welcome-orb"></div>
+            </div>
+
             <div class="chat-section fade-in">
-                <div class="affirmation-box fade-in" id="welcomeAffirmationBox">
-                    <p class="affirmation-label">Today's Affirmation</p>
-                    <p class="affirmation-text" id="welcomeAffirmation"></p>
-                </div>
-
-                <div class="astro-insight-card fade-in" id="welcomeAstroCard">
-                    <div class="astro-collapse-header" onclick="toggleWelcomeHoroscopeCollapse()">
-                        <p class="astro-daily-title" id="welcomeAstroDailyTitle">Daily Horoscope</p>
-                        <span class="astro-collapse-toggle" id="welcomeAstroCollapseToggle">▼</span>
-                    </div>
-                    <div class="astro-daily-insight" id="welcomeAstroCollapseBody">
-                        <p class="astro-daily-copy" id="welcomeAstroDailyCopy"></p>
-                        <div class="astro-pill-row" id="welcomeAstroPillRow"></div>
-                        <div class="astro-chart-note" id="welcomeAstroChartNote"></div>
-                        <div class="astro-actions">
-                            <button class="btn-secondary btn-gradient btn-small astro-action-btn" onclick="sendHoroscopeToChat()">Ask Aura</button>
-                            <button class="btn-secondary btn-gradient btn-small astro-action-btn" id="welcomeAstroMoreInfoBtn" onclick="toggleWelcomeHoroscopeMoreInfo()">More Info</button>
-                        </div>
-                        <div class="astro-more-copy" id="welcomeAstroMoreCopy"></div>
-                    </div>
-                </div>
-
                 <div class="chat-messages" id="dailyChatMessages"></div>
                 <div class="chat-input-container">
-                    <textarea class="chat-input" id="dailyChatInput" placeholder="Ask Aura about your day..." rows="1" oninput="autoGrowChatInput(this)" onkeydown="handleChatComposerKeydown(event, 'daily')"></textarea>
+                    <textarea class="chat-input" id="dailyChatInput" placeholder="Chat with Aura..." rows="1" oninput="autoGrowChatInput(this)" onkeydown="handleChatComposerKeydown(event, 'daily')"></textarea>
                     <button class="chat-send" id="dailyChatSendBtn" onclick="sendDailyChat()">→</button>
-                </div>
-                <div class="composer-meta">
-                    <span class="composer-count" id="dailyComposerCount">0/600</span>
                 </div>
                 <div class="chat-nav-row">
                     <button class="chat-top-btn" onclick="goTo('readingScreen')">Reading</button>
                     <button class="chat-top-btn" onclick="goTo('shuffleScreen')">Draw</button>
-                    <button class="chat-top-btn" onclick="goTo('welcomeScreen')">Home</button>
+                    <button class="chat-top-btn" onclick="openAuraGuideSite()">Store</button>
+                </div>
+                <div class="daily-cards-area">
+                    <div class="affirmation-box fade-in" id="welcomeAffirmationBox">
+                        <p class="affirmation-label">Today's Affirmation</p>
+                        <p class="affirmation-text" id="welcomeAffirmation"></p>
+                    </div>
+                    <div class="astro-insight-card fade-in" id="welcomeAstroCard">
+                        <div class="astro-collapse-header" onclick="toggleWelcomeHoroscopeCollapse()">
+                            <p class="astro-daily-title" id="welcomeAstroDailyTitle">Daily Horoscope</p>
+                            <span class="astro-collapse-toggle" id="welcomeAstroCollapseToggle">▼</span>
+                        </div>
+                        <div class="astro-daily-insight" id="welcomeAstroCollapseBody">
+                            <p class="astro-daily-copy" id="welcomeAstroDailyCopy"></p>
+                            <div class="astro-pill-row" id="welcomeAstroPillRow"></div>
+                            <div class="astro-chart-note" id="welcomeAstroChartNote"></div>
+                            <div class="astro-actions">
+                                <button class="btn-secondary btn-gradient btn-small astro-action-btn" onclick="sendHoroscopeToChat()">Ask Aura</button>
+                                <button class="btn-secondary btn-gradient btn-small astro-action-btn" id="welcomeAstroMoreInfoBtn" onclick="toggleWelcomeHoroscopeMoreInfo()">More Info</button>
+                            </div>
+                            <div class="astro-more-copy" id="welcomeAstroMoreCopy"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="chat-settings-full fade-in">
                     <button class="settings-cog-btn" onclick="goToSettingsHub()" aria-label="Settings" title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
@@ -3778,7 +3803,7 @@
                 <div class="chat-nav-row">
                     <button class="chat-top-btn" onclick="goTo('readingScreen')">Reading</button>
                     <button class="chat-top-btn" onclick="goTo('shuffleScreen')">Draw</button>
-                    <button class="chat-top-btn" onclick="openAuraGuideSite()">Website</button>
+                    <button class="chat-top-btn" onclick="openAuraGuideSite()">Store</button>
                 </div>
                 <div class="chat-settings-full fade-in">
                     <button class="settings-cog-btn" onclick="goToSettingsHub()" aria-label="Settings" title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
@@ -3978,10 +4003,6 @@
                 <button class="btn-secondary btn-gradient" onclick="openAuraChat()">Chat</button>
             </div>
 
-            <div class="affirmation-box fade-in">
-                <p class="affirmation-label">Today's Affirmation</p>
-                <p class="affirmation-text" id="dailyAffirmation"></p>
-            </div>
 
 
             <div class="chat-settings-full fade-in" id="settingsSection">
@@ -5804,8 +5825,6 @@ function showReading() {
     // Initialize notifications
     initNotifications();
     
-    // Affirmation (card-specific, tied to reading)
-    document.getElementById('dailyAffirmation').textContent = '"' + selectedCards[Math.floor(selectedCards.length/2)].affirmation + '"';
 }
 
 function highlightCard(idx) {
