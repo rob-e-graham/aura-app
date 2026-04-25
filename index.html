@@ -995,6 +995,32 @@
         .tagline { font-size: 13px; letter-spacing: 0.2em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 14px; }
         .welcome-subtitle { font-size: 14px; color: var(--text-secondary); max-width: 280px; line-height: 1.6; margin-bottom: 30px; }
         .welcome-actions { display: flex; flex-direction: column; gap: 10px; align-items: center; margin-top: 12px; margin-bottom: 0; flex-shrink: 0; position: relative; z-index: 3; }
+        /* ── Daily Guidance Dropdown ── */
+        .daily-dropdown {
+            width: 100%; margin-top: 4px; flex-shrink: 0;
+            order: 5;
+        }
+        .chat-screen .chat-settings-full { order: 6; }
+        .daily-dropdown-toggle {
+            width: 100%; background: none; border: none;
+            color: rgba(200, 160, 255, 0.7); font-family: 'Cormorant Garamond', serif;
+            font-size: 14px; letter-spacing: 0.1em; cursor: pointer;
+            padding: 10px 0; text-align: center;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: color 0.2s;
+        }
+        .daily-dropdown-toggle:hover { color: rgba(200, 160, 255, 1); }
+        .daily-dropdown-arrow {
+            font-size: 10px; transition: transform 0.3s ease;
+            display: inline-block;
+        }
+        .daily-dropdown-arrow.open { transform: rotate(180deg); }
+        .daily-dropdown-body {
+            display: none; flex-direction: column; gap: 10px;
+            padding: 8px 0 4px; width: 100%;
+        }
+        .daily-dropdown-body.open { display: flex; }
+
         .welcome-daily-link {
             background: none; border: none; cursor: pointer;
             font-family: 'Cormorant Garamond', serif;
@@ -3739,63 +3765,10 @@
             <div class="welcome-actions">
                 <button class="btn-primary" id="welcomeDrawBtn" onclick="goToDrawScreen()">Draw Your Cards</button>
                 <button class="btn-secondary btn-gradient" id="welcomeChatBtn" onclick="openAuraChat()">Chat with Aura</button>
-                <button class="welcome-daily-link" id="welcomeDailyBtn" onclick="goTo('dailyScreen')">✦ Your Daily Guidance</button>
             </div>
+
             <div class="screen-cog">
                 <button class="settings-cog-btn" id="welcomeSettingsBtn" onclick="goToSettingsHub()" aria-label="Settings" title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
-            </div>
-        </div>
-
-        <div class="screen daily-screen" id="dailyScreen">
-            <div class="daily-header">
-                <button class="daily-back-btn" onclick="goTo('welcomeScreen')" aria-label="Back">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-                </button>
-                <h2 class="daily-title misty-copy">Daily Guidance</h2>
-                <div style="width:20px"></div>
-            </div>
-            <p class="chat-screen-subtitle">Wisdom &amp; Reflection</p>
-
-            <div class="welcome-orb-wrap">
-                <div class="welcome-orb"></div>
-            </div>
-
-            <div class="chat-section fade-in">
-                <div class="chat-messages" id="dailyChatMessages"></div>
-                <div class="chat-input-container">
-                    <textarea class="chat-input" id="dailyChatInput" placeholder="Chat with Aura..." rows="1" oninput="autoGrowChatInput(this)" onkeydown="handleChatComposerKeydown(event, 'daily')"></textarea>
-                    <button class="chat-send" id="dailyChatSendBtn" onclick="sendDailyChat()">→</button>
-                </div>
-                <div class="chat-nav-row">
-                    <button class="chat-top-btn" onclick="goToReadingScreen()">Reading</button>
-                    <button class="chat-top-btn" onclick="goToDrawScreen()">Draw</button>
-                    <button class="chat-top-btn" onclick="openAuraGuideSite()">Store</button>
-                </div>
-                <div class="daily-cards-area">
-                    <div class="affirmation-box fade-in" id="welcomeAffirmationBox">
-                        <p class="affirmation-label">Today's Affirmation</p>
-                        <p class="affirmation-text" id="welcomeAffirmation"></p>
-                    </div>
-                    <div class="astro-insight-card fade-in" id="welcomeAstroCard">
-                        <div class="astro-collapse-header" onclick="toggleWelcomeHoroscopeCollapse()">
-                            <p class="astro-daily-title" id="welcomeAstroDailyTitle">Daily Horoscope</p>
-                            <span class="astro-collapse-toggle" id="welcomeAstroCollapseToggle">▼</span>
-                        </div>
-                        <div class="astro-daily-insight" id="welcomeAstroCollapseBody">
-                            <p class="astro-daily-copy" id="welcomeAstroDailyCopy"></p>
-                            <div class="astro-pill-row" id="welcomeAstroPillRow"></div>
-                            <div class="astro-chart-note" id="welcomeAstroChartNote"></div>
-                            <div class="astro-actions">
-                                <button class="btn-secondary btn-gradient btn-small astro-action-btn" onclick="sendHoroscopeToChat()">Ask Aura</button>
-                                <button class="btn-secondary btn-gradient btn-small astro-action-btn" id="welcomeAstroMoreInfoBtn" onclick="toggleWelcomeHoroscopeMoreInfo()">More Info</button>
-                            </div>
-                            <div class="astro-more-copy" id="welcomeAstroMoreCopy"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="chat-settings-full fade-in">
-                    <button class="settings-cog-btn" onclick="goToSettingsHub()" aria-label="Settings" title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
-                </div>
             </div>
         </div>
 
@@ -3822,6 +3795,34 @@
                     <button class="chat-top-btn" onclick="goToReadingScreen()">Reading</button>
                     <button class="chat-top-btn" onclick="goToDrawScreen()">Draw</button>
                     <button class="chat-top-btn" onclick="openAuraGuideSite()">Store</button>
+                </div>
+                <!-- Daily Guidance collapsible dropdown -->
+                <div class="daily-dropdown" id="dailyDropdown">
+                    <button class="daily-dropdown-toggle" onclick="toggleDailyDropdown()" id="dailyDropdownToggle">
+                        ✦ Daily Guidance <span class="daily-dropdown-arrow" id="dailyDropdownArrow">▼</span>
+                    </button>
+                    <div class="daily-dropdown-body" id="dailyDropdownBody">
+                        <div class="affirmation-box" id="welcomeAffirmationBox">
+                            <p class="affirmation-label">Today's Affirmation</p>
+                            <p class="affirmation-text" id="welcomeAffirmation"></p>
+                        </div>
+                        <div class="astro-insight-card" id="welcomeAstroCard">
+                            <div class="astro-collapse-header" onclick="toggleWelcomeHoroscopeCollapse()">
+                                <p class="astro-daily-title" id="welcomeAstroDailyTitle">Daily Horoscope</p>
+                                <span class="astro-collapse-toggle" id="welcomeAstroCollapseToggle">▼</span>
+                            </div>
+                            <div class="astro-daily-insight" id="welcomeAstroCollapseBody">
+                                <p class="astro-daily-copy" id="welcomeAstroDailyCopy"></p>
+                                <div class="astro-pill-row" id="welcomeAstroPillRow"></div>
+                                <div class="astro-chart-note" id="welcomeAstroChartNote"></div>
+                                <div class="astro-actions">
+                                    <button class="btn-secondary btn-gradient btn-small astro-action-btn" onclick="sendHoroscopeToChat()">Ask Aura</button>
+                                    <button class="btn-secondary btn-gradient btn-small astro-action-btn" id="welcomeAstroMoreInfoBtn" onclick="toggleWelcomeHoroscopeMoreInfo()">More Info</button>
+                                </div>
+                                <div class="astro-more-copy" id="welcomeAstroMoreCopy"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="chat-settings-full fade-in">
                     <button class="settings-cog-btn" onclick="goToSettingsHub()" aria-label="Settings" title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
@@ -4501,6 +4502,15 @@ function renderWelcomeHoroscope() {
     card.classList.toggle('collapsed', collapsed);
 }
 
+function toggleDailyDropdown() {
+    const body = document.getElementById('dailyDropdownBody');
+    const arrow = document.getElementById('dailyDropdownArrow');
+    if (!body) return;
+    const isOpen = body.classList.toggle('open');
+    if (arrow) arrow.classList.toggle('open', isOpen);
+    if (isOpen) renderWelcomeDaily();
+}
+
 function toggleWelcomeHoroscopeCollapse() {
     const card = document.getElementById('welcomeAstroCard');
     if (!card) return;
@@ -4590,7 +4600,7 @@ function refreshScreenLayout(screenId = '') {
         prepareTypedWordmark(document.getElementById('shuffleLogoMain'), true);
         setReadingType(readingType);
     }
-    if (screenId === 'welcomeScreen' || screenId === 'dailyScreen') {
+    if (screenId === 'chatScreen') {
         renderWelcomeDaily();
     }
 }
