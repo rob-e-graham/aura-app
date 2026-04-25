@@ -799,6 +799,11 @@
             opacity: 0.4;
             animation: orbRingDrift 16s linear infinite;
         }
+        .app[data-screen="welcomeScreen"] .aura-life-orb,
+        .app[data-screen="dailyScreen"] .aura-life-orb,
+        .app[data-screen="readingScreen"] .aura-life-orb {
+            opacity: 0;
+        }
         @keyframes ambientBreath {
             0%, 100% { transform: scale(1); opacity: 0.46; filter: blur(0px); }
             50% { transform: scale(1.03); opacity: 0.62; filter: blur(0.5px); }
@@ -890,6 +895,7 @@
         }
         .welcome-screen::before { content: none; }
         .welcome-screen::after { content: none; }
+        .daily-screen::before { content: none; }
         .logo {
             position: relative;
             z-index: 1;
@@ -988,7 +994,7 @@
         }
         .tagline { font-size: 13px; letter-spacing: 0.2em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 14px; }
         .welcome-subtitle { font-size: 14px; color: var(--text-secondary); max-width: 280px; line-height: 1.6; margin-bottom: 30px; }
-        .welcome-actions { display: flex; flex-direction: column; gap: 10px; align-items: center; margin-top: 12px; margin-bottom: 0; flex-shrink: 0; }
+        .welcome-actions { display: flex; flex-direction: column; gap: 10px; align-items: center; margin-top: 12px; margin-bottom: 0; flex-shrink: 0; position: relative; z-index: 3; }
         .welcome-daily-link {
             background: none; border: none; cursor: pointer;
             font-family: 'Cormorant Garamond', serif;
@@ -996,6 +1002,9 @@
             color: rgba(200, 160, 255, 0.7);
             padding: 10px 16px;
             transition: color 0.3s ease;
+            position: relative;
+            z-index: 4;
+            pointer-events: auto;
         }
         .welcome-daily-link:hover { color: rgba(200, 160, 255, 1); }
         .screen-cog {
@@ -1005,7 +1014,8 @@
             text-align: center;
             flex-shrink: 0;
             position: relative;
-            z-index: 2;
+            z-index: 4;
+            pointer-events: auto;
         }
 
         /* ── Daily Guidance Screen ── */
@@ -1013,9 +1023,11 @@
             padding: 34px 32px var(--bottom-dock-inset);
             position: relative;
             overflow: hidden;
-            display: flex;
             flex-direction: column;
             align-items: center;
+        }
+        .daily-screen.active {
+            display: flex;
         }
         .daily-cards-area {
             width: 100%;
@@ -1059,6 +1071,9 @@
             border-radius: 28px;
             font-size: 15px;
             letter-spacing: 0.05em;
+            position: relative;
+            z-index: 4;
+            pointer-events: auto;
         }
         .welcome-actions .btn-primary {
             background: linear-gradient(135deg, rgba(78, 162, 136, 0.34) 0%, rgba(116, 214, 184, 0.24) 100%);
@@ -2370,6 +2385,9 @@
             backdrop-filter: blur(10px) saturate(1.05);
             -webkit-backdrop-filter: blur(10px) saturate(1.05);
             transition: transform 180ms ease, border-color 220ms ease, box-shadow 220ms ease;
+            position: relative;
+            z-index: 5;
+            pointer-events: auto;
         }
         .settings-cog-btn:hover {
             border-color: rgba(190, 242, 222, 0.68);
@@ -2383,7 +2401,7 @@
         .settings-cog-btn:active {
             transform: scale(0.97);
         }
-        .settings-hub-screen { gap: 16px; }
+        .settings-hub-screen { gap: 16px; background: var(--app-bg, #0a0812); min-height: 100%; }
         /* ═══ SPLASH SCREEN ═══ */
         .splash-screen {
             position: fixed; inset: 0;
@@ -3719,12 +3737,12 @@
             </div>
 
             <div class="welcome-actions">
-                <button class="btn-primary" onclick="goTo('shuffleScreen')">Draw Your Cards</button>
-                <button class="btn-secondary btn-gradient" onclick="openAuraChat()">Chat with Aura</button>
-                <button class="welcome-daily-link" onclick="goTo('dailyScreen')">✦ Your Daily Guidance</button>
+                <button class="btn-primary" id="welcomeDrawBtn" onclick="goToDrawScreen()">Draw Your Cards</button>
+                <button class="btn-secondary btn-gradient" id="welcomeChatBtn" onclick="openAuraChat()">Chat with Aura</button>
+                <button class="welcome-daily-link" id="welcomeDailyBtn" onclick="goTo('dailyScreen')">✦ Your Daily Guidance</button>
             </div>
             <div class="screen-cog">
-                <button class="settings-cog-btn" onclick="goToSettingsHub()" aria-label="Settings" title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+                <button class="settings-cog-btn" id="welcomeSettingsBtn" onclick="goToSettingsHub()" aria-label="Settings" title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
             </div>
         </div>
 
@@ -3749,8 +3767,8 @@
                     <button class="chat-send" id="dailyChatSendBtn" onclick="sendDailyChat()">→</button>
                 </div>
                 <div class="chat-nav-row">
-                    <button class="chat-top-btn" onclick="goTo('readingScreen')">Reading</button>
-                    <button class="chat-top-btn" onclick="goTo('shuffleScreen')">Draw</button>
+                    <button class="chat-top-btn" onclick="goToReadingScreen()">Reading</button>
+                    <button class="chat-top-btn" onclick="goToDrawScreen()">Draw</button>
                     <button class="chat-top-btn" onclick="openAuraGuideSite()">Store</button>
                 </div>
                 <div class="daily-cards-area">
@@ -3801,8 +3819,8 @@
                     <span class="composer-count" id="openComposerCount">0/600</span>
                 </div>
                 <div class="chat-nav-row">
-                    <button class="chat-top-btn" onclick="goTo('readingScreen')">Reading</button>
-                    <button class="chat-top-btn" onclick="goTo('shuffleScreen')">Draw</button>
+                    <button class="chat-top-btn" onclick="goToReadingScreen()">Reading</button>
+                    <button class="chat-top-btn" onclick="goToDrawScreen()">Draw</button>
                     <button class="chat-top-btn" onclick="openAuraGuideSite()">Store</button>
                 </div>
                 <div class="chat-settings-full fade-in">
@@ -3963,8 +3981,8 @@
             </div>
             <p class="tap-hint">Tap to shuffle & draw</p>
             <div class="reading-type-toggle">
-                <button class="toggle-btn" id="toggleSingle" onclick="setReadingType('single')">Single Card</button>
-                <button class="toggle-btn active" id="toggleThree" onclick="setReadingType('three')">3-Card Reading</button>
+                <button class="toggle-btn active" id="toggleSingle" onclick="setReadingType('single', true)">Single Card</button>
+                <button class="toggle-btn" id="toggleThree" onclick="setReadingType('three', true)">3-Card Reading</button>
             </div>
             <button class="btn-secondary btn-gradient btn-small create-guide-btn" onclick="startOnboarding()">✨ Personalize your Aura Guide</button>
             <div class="chat-settings-full fade-in">
@@ -3998,7 +4016,7 @@
             <div id="chatOrPersonalize"></div>
             
             <div class="action-buttons fade-in">
-                <button class="btn-secondary btn-gradient" onclick="newReading()">Reading</button>
+                <button class="btn-secondary btn-gradient" onclick="goToDrawScreen()">Draw</button>
                 <button class="btn-secondary btn-gradient" onclick="shareReading()">Share</button>
                 <button class="btn-secondary btn-gradient" onclick="openAuraChat()">Chat</button>
             </div>
@@ -4168,7 +4186,7 @@ const questions = [
 ];
 
 // ========== STATE ==========
-let readingType = 'three';
+let readingType = 'single';
 let selectedCards = [];
 let readingCount = parseInt(localStorage.getItem('aura_readings') || '0');
 let hasGuide = localStorage.getItem('aura_guide') ? true : false;
@@ -4580,11 +4598,13 @@ function refreshScreenLayout(screenId = '') {
 const goTo = id => {
     const target = document.getElementById(id);
     if (!target) return;
+    const app = document.querySelector('.app');
     if (id !== 'settingsHubScreen') {
         window.__lastNonSettingsScreen = id;
     }
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     target.classList.add('active');
+    if (app) app.dataset.screen = id;
     applyMotionProfile(id);
     updateGlobalTabbar(id);
     if (id === 'shuffleScreen') {
@@ -4596,6 +4616,35 @@ const goTo = id => {
     }
     refreshScreenLayout(id);
 };
+function goToDrawScreen() {
+    window.__lastPrimaryAction = 'draw';
+    goTo('shuffleScreen');
+}
+function goToReadingScreen() {
+    window.__lastPrimaryAction = 'reading';
+    if (selectedCards.length > 0) {
+        showReading();
+        return;
+    }
+    goToDrawScreen();
+}
+function bindPrimaryNavigation() {
+    const bindClick = (id, handler) => {
+        const el = document.getElementById(id);
+        if (!el || el.dataset.boundPrimaryNav === '1') return;
+        el.dataset.boundPrimaryNav = '1';
+        el.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            handler();
+        }, true);
+    };
+
+    bindClick('welcomeDrawBtn', () => goToDrawScreen());
+    bindClick('welcomeChatBtn', () => openAuraChat());
+    bindClick('welcomeDailyBtn', () => goTo('dailyScreen'));
+    bindClick('welcomeSettingsBtn', () => goToSettingsHub());
+}
 function updateGlobalTabbar(activeScreenId) {
     const tabbar = document.getElementById('globalTabbar');
     if (!tabbar) return;
@@ -4607,11 +4656,20 @@ function goToSettingsHub() {
         window.__lastNonSettingsScreen = current;
     }
     goTo('settingsHubScreen');
-    hydrateAudioPrefs();
-    updateAudioToggleLabels();
-    applyBlueLightState();
-    initAccountSettings();
-    initNotifications();
+    const safeCalls = [
+        ['hydrateAudioPrefs', hydrateAudioPrefs],
+        ['updateAudioToggleLabels', updateAudioToggleLabels],
+        ['applyBlueLightState', applyBlueLightState],
+        ['initAccountSettings', initAccountSettings],
+        ['initNotifications', initNotifications],
+    ];
+    safeCalls.forEach(([name, fn]) => {
+        try {
+            if (typeof fn === 'function') fn();
+        } catch (err) {
+            console.warn(`goToSettingsHub:${name} failed`, err);
+        }
+    });
 }
 function toggleSettingsHub() {
     const current = document.querySelector('.screen.active')?.id || '';
@@ -5697,10 +5755,11 @@ ${buildConversationFlavor(userMessage)}
 }
 
 // ========== READING FUNCTIONS ==========
-function setReadingType(type) {
+function setReadingType(type, fromUserClick = false) {
     if (type === 'three' && !canUseFeature('three_card')) {
-        openPaywall('3-card readings', 'premium');
-        return;
+        if (fromUserClick) openPaywall('3-card readings', 'premium');
+        // Fall back to single so screen loads cleanly
+        type = 'single';
     }
     readingType = type;
     document.getElementById('toggleSingle').classList.toggle('active', type==='single');
@@ -5822,8 +5881,8 @@ function showReading() {
     // Chat or personalize prompt
     renderChatSection();
     
-    // Initialize notifications
-    initNotifications();
+    // Initialize notifications (native only)
+    try { initNotifications(); } catch(e) { /* non-native environment */ }
     
 }
 
@@ -6236,6 +6295,99 @@ async function sendChat() {
 let notificationsEnabled = localStorage.getItem('aura_notifications') === 'true';
 let horoscopeNotifEnabled = localStorage.getItem('aura_horoscope_notif') === 'true';
 let notificationTime = localStorage.getItem('aura_notification_time') || '08:00';
+const AURA_AFFIRMATION_NOTIFICATION_ID = 1001;
+const AURA_HOROSCOPE_NOTIFICATION_ID = 1002;
+
+function getNativeLocalNotifications() {
+    return (typeof Capacitor !== 'undefined' && Capacitor?.Plugins?.LocalNotifications) || null;
+}
+
+function isNativeNotificationRuntime() {
+    return !!getNativeLocalNotifications();
+}
+
+function buildNextNotificationDate() {
+    const now = new Date();
+    const [hours, mins] = notificationTime.split(':').map(Number);
+    const target = new Date();
+    target.setHours(hours, mins, 0, 0);
+    if (target <= now) target.setDate(target.getDate() + 1);
+    return target;
+}
+
+async function ensureNotificationPermission() {
+    const LocalNotifications = getNativeLocalNotifications();
+    if (LocalNotifications) {
+        let permission = await LocalNotifications.checkPermissions();
+        if (permission.display !== 'granted') {
+            permission = await LocalNotifications.requestPermissions();
+        }
+        return permission.display === 'granted';
+    }
+
+    if (!('Notification' in window)) return false;
+    const permission = await Notification.requestPermission();
+    return permission === 'granted';
+}
+
+async function clearScheduledNotifications() {
+    const LocalNotifications = getNativeLocalNotifications();
+    if (LocalNotifications) {
+        try {
+            const pending = await LocalNotifications.getPending();
+            if (pending?.notifications?.length) {
+                await LocalNotifications.cancel({ notifications: pending.notifications.map(({ id }) => ({ id })) });
+            }
+        } catch (_) {
+            // best effort only
+        }
+        return;
+    }
+
+    if (window.notificationTimer) {
+        clearTimeout(window.notificationTimer);
+        window.notificationTimer = null;
+    }
+}
+
+async function scheduleNativeNotifications() {
+    const LocalNotifications = getNativeLocalNotifications();
+    if (!LocalNotifications) return false;
+
+    await clearScheduledNotifications();
+    const target = buildNextNotificationDate();
+    const notifications = [];
+
+    if (notificationsEnabled) {
+        notifications.push({
+            id: AURA_AFFIRMATION_NOTIFICATION_ID,
+            title: '✨ Aura Daily Wisdom',
+            body: 'Your daily affirmation is ready. Open AURA for today\'s guidance.',
+            schedule: {
+                at: target,
+                repeats: true,
+                every: 'day'
+            }
+        });
+    }
+
+    if (horoscopeNotifEnabled) {
+        notifications.push({
+            id: AURA_HOROSCOPE_NOTIFICATION_ID,
+            title: '✨ Aura Daily Horoscope',
+            body: 'Your horoscope is ready. Open AURA for today\'s cosmic guidance.',
+            schedule: {
+                at: target,
+                repeats: true,
+                every: 'day'
+            }
+        });
+    }
+
+    if (!notifications.length) return true;
+    await LocalNotifications.schedule({ notifications });
+    return true;
+}
 
 function getNotificationElements(source) {
     const useHub = source === 'hub';
@@ -6352,18 +6504,22 @@ function initNotifications() {
         if (timeSelect) timeSelect.value = notificationTime;
     });
 
-    // Sync persisted toggle with current browser permission state.
-    if (notificationsEnabled && 'Notification' in window && Notification.permission === 'denied') {
+    // Sync persisted toggle with current permission state.
+    if (!isNativeNotificationRuntime() && notificationsEnabled && 'Notification' in window && Notification.permission === 'denied') {
         notificationsEnabled = false;
         localStorage.setItem('aura_notifications', 'false');
-        if (toggle) toggle.classList.remove('active');
+        [readingEls.toggle, hubEls.toggle].forEach((toggleEl) => toggleEl?.classList.remove('active'));
     }
 
     updateNotificationStatus();
 
     // Re-schedule after reload when any notification is enabled.
-    if ((notificationsEnabled || horoscopeNotifEnabled) && 'Notification' in window && Notification.permission === 'granted') {
-        scheduleNotification();
+    if (notificationsEnabled || horoscopeNotifEnabled) {
+        if (isNativeNotificationRuntime()) {
+            scheduleNativeNotifications().catch(() => {});
+        } else if ('Notification' in window && Notification.permission === 'granted') {
+            scheduleNotification();
+        }
     }
 }
 
@@ -6853,50 +7009,45 @@ async function toggleNotifications() {
     const hubToggle = getNotificationElements('hub').toggle;
     
     if (!notificationsEnabled) {
-        // Request permission
-        if (!('Notification' in window)) {
-            toast('Notifications not supported');
-            return;
-        }
-        
-        const permission = await Notification.requestPermission();
-        
-        if (permission === 'granted') {
+        const granted = await ensureNotificationPermission();
+        if (granted) {
             notificationsEnabled = true;
             localStorage.setItem('aura_notifications', 'true');
             if (readingToggle) readingToggle.classList.add('active');
             if (hubToggle) hubToggle.classList.add('active');
             
-            // Schedule notification
-            scheduleNotification();
+            if (isNativeNotificationRuntime()) {
+                await scheduleNativeNotifications();
+            } else {
+                scheduleNotification();
+            }
             
-            // Show a test notification
-            showTestNotification();
+            await showTestNotification();
             
             toast('Daily affirmations enabled!');
         } else {
             toast('Please allow notifications to receive daily affirmations');
         }
     } else {
-        // Disable
         notificationsEnabled = false;
         localStorage.setItem('aura_notifications', 'false');
         if (readingToggle) readingToggle.classList.remove('active');
         if (hubToggle) hubToggle.classList.remove('active');
-        
-        // Clear scheduled notification
-        if (window.notificationTimer) {
-            clearTimeout(window.notificationTimer);
-            window.notificationTimer = null;
+        await clearScheduledNotifications();
+        if (horoscopeNotifEnabled) {
+            if (isNativeNotificationRuntime()) {
+                await scheduleNativeNotifications();
+            } else {
+                scheduleNotification();
+            }
         }
-        
         toast('Daily affirmations disabled');
     }
     
     updateNotificationStatus();
 }
 
-function saveNotificationTime(source = 'reading') {
+async function saveNotificationTime(source = 'reading') {
     const timeSelect = getNotificationElements(source).timeSelect;
     if (!timeSelect) return;
     notificationTime = timeSelect.value;
@@ -6904,39 +7055,32 @@ function saveNotificationTime(source = 'reading') {
     const otherSelect = getNotificationElements(source === 'hub' ? 'reading' : 'hub').timeSelect;
     if (otherSelect) otherSelect.value = notificationTime;
     
-    if (notificationsEnabled) {
-        scheduleNotification();
+    if (notificationsEnabled || horoscopeNotifEnabled) {
+        if (isNativeNotificationRuntime()) {
+            await scheduleNativeNotifications();
+        } else {
+            scheduleNotification();
+        }
     }
     
     updateNotificationStatus();
 }
 
 function scheduleNotification() {
+    if (isNativeNotificationRuntime()) return;
     if (!notificationsEnabled && !horoscopeNotifEnabled) return;
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
 
-    // Clear existing timer
     if (window.notificationTimer) {
         clearTimeout(window.notificationTimer);
     }
     
-    // Calculate ms until next notification time
     const now = new Date();
-    const [hours, mins] = notificationTime.split(':').map(Number);
-    const target = new Date();
-    target.setHours(hours, mins, 0, 0);
-    
-    // If time has passed today, schedule for tomorrow
-    if (target <= now) {
-        target.setDate(target.getDate() + 1);
-    }
-    
+    const target = buildNextNotificationDate();
     const msUntilNotification = target - now;
     
-    // Schedule (note: this only works while tab is open - for PWA/native, we'd use service workers)
     window.notificationTimer = setTimeout(() => {
         sendDailyAffirmation();
-        // Reschedule for next day
         scheduleNotification();
     }, msUntilNotification);
     
@@ -6976,9 +7120,8 @@ function sendDailyAffirmation() {
 async function toggleHoroscopeNotif() {
     const toggle = document.getElementById('horoscopeNotifToggleHub');
     if (!horoscopeNotifEnabled) {
-        if (!('Notification' in window)) { toast('Notifications not supported'); return; }
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
+        const granted = await ensureNotificationPermission();
+        if (granted) {
             horoscopeNotifEnabled = true;
             localStorage.setItem('aura_horoscope_notif', 'true');
             if (toggle) toggle.classList.add('active');
@@ -6987,7 +7130,11 @@ async function toggleHoroscopeNotif() {
             } else {
                 toast('Horoscope notifications enabled');
             }
-            scheduleNotification();
+            if (isNativeNotificationRuntime()) {
+                await scheduleNativeNotifications();
+            } else {
+                scheduleNotification();
+            }
         } else {
             toast('Notifications blocked — check your device settings');
         }
@@ -6996,19 +7143,36 @@ async function toggleHoroscopeNotif() {
         localStorage.setItem('aura_horoscope_notif', 'false');
         if (toggle) toggle.classList.remove('active');
         toast('Horoscope notifications disabled');
-        if (!notificationsEnabled) {
-            if (window.notificationTimer) clearTimeout(window.notificationTimer);
+        await clearScheduledNotifications();
+        if (notificationsEnabled) {
+            if (isNativeNotificationRuntime()) {
+                await scheduleNativeNotifications();
+            } else {
+                scheduleNotification();
+            }
         }
     }
     updateNotificationStatus();
 }
 
-function showTestNotification() {
-    if (!('Notification' in window) || Notification.permission !== 'granted') return;
-    if (!Array.isArray(auraDeck) || auraDeck.length === 0) return;
-
+async function showTestNotification() {
     const horoscope = buildDailyHoroscopeModel();
-    const card = auraDeck[Math.floor(Math.random() * auraDeck.length)];
+    const card = Array.isArray(auraDeck) && auraDeck.length > 0 ? auraDeck[Math.floor(Math.random() * auraDeck.length)] : null;
+
+    const LocalNotifications = getNativeLocalNotifications();
+    if (LocalNotifications) {
+        await LocalNotifications.schedule({
+            notifications: [{
+                id: 1099,
+                title: '✨ Aura is set up!',
+                body: horoscope ? `Your horoscope reminders are ready.` : `Your daily wisdom reminders are ready.`,
+                schedule: { at: new Date(Date.now() + 1500) }
+            }]
+        });
+        return;
+    }
+
+    if (!('Notification' in window) || Notification.permission !== 'granted' || !card) return;
 
     const notification = new Notification('✨ Aura is set up!', {
         body: horoscope ? `You'll receive daily horoscope reminders like: "${horoscope.copy}"` : `You'll receive daily wisdom like: "${card.affirmation}"`,
@@ -7442,6 +7606,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAudioToggleLabels();
     applyBlueLightState();
     initPremiumInteractions();
+    bindPrimaryNavigation();
     initAccountSettings();
     checkDisclaimer();
     autoGrowChatInput(document.getElementById('openChatInput'));
@@ -8554,6 +8719,7 @@ function canUseFeature(feature) {
 
 function openPaywall(feature = "premium features", requiredTier = "premium") {
     paywallContext = { feature, tier: requiredTier };
+    window.__paywallReturnScreen = document.querySelector('.screen.active')?.id || window.__lastNonSettingsScreen || 'welcomeScreen';
     const contextEl = document.getElementById("paywallContextText");
     if (contextEl) {
         const tierLabel = requiredTier === "pro" ? "Aura PRO" : "Aura Premium";
@@ -8581,6 +8747,7 @@ async function unlockPremium(tier) {
         updateTokenUI();
         updateSettingsTier();
         closePaywall();
+        resolvePostPurchaseReturnScreen();
         syncEntitlementsFromServer();
         toast("Unlocked: " + tier.toUpperCase());
         return;
@@ -8625,6 +8792,7 @@ async function unlockPremium(tier) {
             applyPurchasedTierFallback(tier, customerInfo);
         }
         closePaywall();
+        resolvePostPurchaseReturnScreen();
         syncEntitlementsFromServer();
         toast("Unlocked: " + auraTier.toUpperCase());
 
@@ -8640,6 +8808,21 @@ async function unlockPremium(tier) {
 
 function closePaywall() {
     document.getElementById("paywallModal").style.display = "none";
+}
+
+function resolvePostPurchaseReturnScreen() {
+    const opener = window.__paywallReturnScreen || '';
+    window.__paywallReturnScreen = '';
+
+    if (!opener) return;
+
+    if (opener === 'chatScreen') {
+        const fallback = selectedCards.length > 0 ? 'readingScreen' : (window.__lastNonSettingsScreen || 'welcomeScreen');
+        goTo(fallback === 'chatScreen' ? 'welcomeScreen' : fallback);
+        return;
+    }
+
+    goTo(opener);
 }
 
 async function restorePurchases() {
@@ -8661,6 +8844,7 @@ async function restorePurchases() {
                 memoryBalance = initMemoryBalance();
                 updateTokenUI();
                 closePaywall();
+                resolvePostPurchaseReturnScreen();
                 toast(`Restored: ${auraTier.toUpperCase()}`);
                 return;
             }
@@ -8677,6 +8861,7 @@ async function restorePurchases() {
             memoryBalance = initMemoryBalance();
             updateTokenUI();
             closePaywall();
+            resolvePostPurchaseReturnScreen();
             toast(`Restored: ${auraTier.toUpperCase()}`);
             return;
         }
