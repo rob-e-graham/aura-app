@@ -1002,14 +1002,8 @@
         }
         .chat-screen .chat-settings-full { order: 6; }
         .daily-dropdown-toggle {
-            width: 100%; background: none; border: none;
-            color: rgba(200, 160, 255, 0.7); font-family: 'Cormorant Garamond', serif;
-            font-size: 14px; letter-spacing: 0.1em; cursor: pointer;
-            padding: 10px 0; text-align: center;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: color 0.2s;
+            width: 100%; justify-content: center; gap: 8px;
         }
-        .daily-dropdown-toggle:hover { color: rgba(200, 160, 255, 1); }
         .daily-dropdown-arrow {
             font-size: 10px; transition: transform 0.3s ease;
             display: inline-block;
@@ -3798,7 +3792,7 @@
                 </div>
                 <!-- Daily Guidance collapsible dropdown -->
                 <div class="daily-dropdown" id="dailyDropdown">
-                    <button class="daily-dropdown-toggle" onclick="toggleDailyDropdown()" id="dailyDropdownToggle">
+                    <button class="chat-top-btn daily-dropdown-toggle" onclick="toggleDailyDropdown()" id="dailyDropdownToggle">
                         ✦ Daily Guidance <span class="daily-dropdown-arrow" id="dailyDropdownArrow">▼</span>
                     </button>
                     <div class="daily-dropdown-body" id="dailyDropdownBody">
