@@ -7605,12 +7605,34 @@ function continueToReading() {
 
 // ========== SHARE ==========
 function shareReading() {
-    const text = `My Aura reading: ${selectedCards.map(c=>c.name).join(' → ')}\n\n"${selectedCards[0].affirmation}"\n\n✨ aura-me.square.site`;
-    
-    if(navigator.share) {
-        navigator.share({title: 'My Aura Reading', text: text}).catch(()=>{});
+    if (!selectedCards || !selectedCards.length) {
+        toast('No reading to share yet.');
+        return;
+    }
+
+    const isSingle = selectedCards.length === 1;
+    const positions = isSingle ? ['Focus'] : ['Past', 'Present', 'Future'];
+    const dateStr = document.getElementById('readingDate')?.textContent || new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+
+    // Build card lines with position + name + meaning + affirmation
+    const cardLines = selectedCards.map((c, i) => {
+        const pos = positions[i];
+        return `${pos}: ${c.name}\n"${c.affirmation}"`;
+    }).join('\n\n');
+
+    // Pull any AI reflection text that was generated
+    const guideEl = document.getElementById('guideMessage');
+    const reflectionText = guideEl ? (guideEl.innerText || guideEl.textContent || '').replace(/\s+/g, ' ').trim() : '';
+    const reflectionSection = reflectionText ? `\n\n— ${reflectionText.slice(0, 280)}${reflectionText.length > 280 ? '…' : ''}` : '';
+
+    const title = isSingle ? `My Aura Reading — ${selectedCards[0].name}` : `My Aura Reading — ${selectedCards.map(c => c.name).join(' · ')}`;
+
+    const text = `✦ AURA Reading · ${dateStr}\n\n${cardLines}${reflectionSection}\n\n✨ aura-me.square.site`;
+
+    if (navigator.share) {
+        navigator.share({ title, text }).catch(() => {});
     } else {
-        navigator.clipboard.writeText(text).then(() => toast('Copied to clipboard!'));
+        navigator.clipboard.writeText(text).then(() => toast('Reading copied to clipboard!'));
     }
 }
 
