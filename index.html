@@ -321,9 +321,19 @@
         .spread-card { width: 105px !important; height: 170px !important; }
         /* Single-card spread  150 × 243 ≈ 1:1.620 */
         .cards-spread.single-card .spread-card { width: 150px !important; height: 243px !important; }
-        /* Orb inside three-card cards — proportioned to taller card */
-        .spread-card-orb { width: 84px !important; height: 84px !important; }
-        .cards-spread.single-card .spread-card-orb { width: 118px !important; height: 118px !important; }
+        /* Orb inside three-card cards — clear accent, not card-fill */
+        .spread-card-orb {
+            width: 70px !important;
+            height: 70px !important;
+            display: block !important;
+            opacity: 0.98 !important;
+            filter: blur(2px) !important;
+        }
+        .cards-spread.single-card .spread-card-orb {
+            width: 108px !important;
+            height: 108px !important;
+            filter: blur(3px) !important;
+        }
 
         .app {
             max-width: 414px;
@@ -1614,8 +1624,11 @@
         /* No pseudo-element rings — single orb only */
         .reading-aura-ball::before,
         .reading-aura-ball::after { display: none; }
-        /* Hide individual card orbs — one blended orb only */
-        .reading-screen .spread-card-orb { display: none; }
+        /* Restore individual card orbs inside each reading card */
+        .reading-screen .spread-card-orb {
+            display: block;
+            opacity: 0.96;
+        }
         @keyframes orbRingDrift {
             0% { transform: rotate(0deg) scale(0.98); }
             50% { transform: rotate(180deg) scale(1.03); }
