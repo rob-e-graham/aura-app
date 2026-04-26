@@ -124,8 +124,6 @@
         }
 
         function handleCustomerInfoUpdate(customerInfo) {
-            // Don't let RevenueCat override a manually-locked debug tier
-            if (window.__debugTierLocked) return;
             const newTier = deriveTierFromCustomerInfo(customerInfo);
             applyAuraTier(newTier, { force: newTier === 'free' });
         }
@@ -212,119 +210,7 @@
             --entry-orb-shift: 0px;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow: hidden; overscroll-behavior-x: none; touch-action: pan-y pinch-zoom; font-size: 17px; }
-
-        /* ── Global legibility bump ── */
-        /* ── Global text size boost — comprehensive sweep ─────── */
-
-        /* Tiny UI chrome → 14px floor */
-        .token-indicator, #chatTokenText,
-        .token-indicator .token-icon,
-        .guide-name, .guide-role, .guide-badge,
-        .reading-date, .tap-hint,
-        .sparkle::before { font-size: 14px !important; }
-
-        /* Supporting / label text → 16px */
-        .settings-hub-subtitle, .settings-hub-row span,
-        .settings-usage-label, .paywall-tier-features li,
-        .disclaimer-content p, .disclaimer-content ul,
-        .local-mode-hint p, .local-mode-notice,
-        .topup-modal p, .topup-option .topup-price, .topup-reset-info,
-        .settings-chip-btn, .audio-chip, .btn-small, .astro-action-btn,
-        .card-detail-meaning, .card-detail-affirmation, .card-detail-position,
-        .personalize-prompt p, .reading-title,
-        .answer-option label, .answer-option span,
-        .chat-screen .chat-message p,
-        .daily-title,
-        .entry-tagline, .entry-divider,
-        .entry-email-btn { font-size: 16px !important; line-height: 1.6 !important; }
-
-        /* Buttons */
-        .chat-top-btn  { font-size: 15px !important; }
-        .btn-primary   { font-size: 17px !important; }
-        .btn-secondary { font-size: 16px !important; }
-
-        /* Main reading / chat body text */
-        .chat-message p, .guide-message p, .affirmation-text,
-        .aura-block p, .chat-input, .open-chat-input,
-        .chat-screen .guide-message p { font-size: 17px !important; line-height: 1.72 !important; }
-
-        /* Card detail */
-        .card-detail-name  { font-size: 20px !important; }
-        .card-detail-meaning, .card-detail-affirmation { font-size: 16px !important; line-height: 1.6 !important; }
-
-        /* Headings */
-        .settings-hub-card h4, .settings-tier-badge { font-size: 18px !important; }
-        .settings-hub-row strong, .settings-hub-row b  { font-size: 17px !important; }
-        .paywall-tier-name { font-size: 20px !important; }
-
-        /* Spread card labels */
-        .spread-card-title { font-size: 14px !important; }
-        .cards-spread.single-card .spread-card-title { font-size: 18px !important; }
-        .spread-card-position { font-size: 13px !important; }
-        .cards-spread.single-card .spread-card-position { font-size: 15px !important; }
-
-        /* Onboarding */
-        .question-text { font-size: 24px !important; }
-
-        /* ── Font audit pass 2 — all remaining sub-14px elements ─── */
-
-        /* Chat UI chips & action buttons → 14px */
-        .chat-actions-toggle, .chat-memory-toggle,
-        .chat-action-btn, .chat-memory-chip,
-        .suggested-q, .global-tab-btn { font-size: 14px !important; line-height: 1.4 !important; }
-
-        /* Composer char-count meta (small UI chrome) → 13px */
-        .composer-meta { font-size: 13px !important; }
-
-        /* Entry / auth screen text */
-        .entry-status, .entry-guest-link,
-        .otp-instructions, .otp-resend { font-size: 14px !important; }
-        .tagline { font-size: 14px !important; }
-
-        /* Settings screen */
-        .settings-hub-status, .settings-email-input,
-        .settings-usage-value, .settings-usage-label,
-        .settings-usage-reset { font-size: 14px !important; }
-        .settings-hub-subtitle { font-size: 15px !important; }
-
-        /* Topup & paywall */
-        .topup-dismiss, .paywall-subtitle { font-size: 14px !important; }
-        .paywall-tier-features { font-size: 15px !important; line-height: 1.7 !important; }
-        .paywall-tier-price { font-size: 15px !important; }
-        .topup-reset-info { font-size: 13px !important; }
-
-        /* Splash (keeps letters tight, slightly up from 12) */
-        .splash-tagline { font-size: 13px !important; }
-
-        /* Reading toggle (Three Cards / One Card / Daily) */
-        .toggle-btn { font-size: 14px !important; }
-
-        /* Guide loading / thinking indicator */
-        .guide-loading-line { font-size: 14px !important; }
-
-        /* Disclaimer section headings */
-        .disclaimer-content h3 { font-size: 14px !important; letter-spacing: 0.08em !important; }
-
-        /* Onboarding / daily / affirmation misc text */
-        .affirmation-label { font-size: 13px !important; }
-        .ai-notice-text { font-size: 14px !important; line-height: 1.6 !important; }
-        .daily-status, .daily-section p { font-size: 14px !important; }
-        .daily-time-select label { font-size: 14px !important; }
-        .question-category { font-size: 13px !important; }
-        .question-subtitle { font-size: 15px !important; }
-        .option-desc { font-size: 14px !important; line-height: 1.5 !important; }
-        .trait-tag { font-size: 13px !important; }
-
-        /* ── Golden-ratio layout  (φ ≈ 1.618) ───────────────────── */
-        /* Three-card spread  105 × 170 ≈ 1:1.619 */
-        .spread-card { width: 105px !important; height: 170px !important; }
-        /* Single-card spread  150 × 243 ≈ 1:1.620 */
-        .cards-spread.single-card .spread-card { width: 150px !important; height: 243px !important; }
-        /* Orb inside three-card cards — proportioned to taller card */
-        .spread-card-orb { width: 84px !important; height: 84px !important; }
-        .cards-spread.single-card .spread-card-orb { width: 118px !important; height: 118px !important; }
-
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow: hidden; overscroll-behavior-x: none; touch-action: pan-y pinch-zoom; }
         .app {
             max-width: 414px;
             margin: 12px auto;
@@ -823,12 +709,12 @@
             border-radius: 50%;
             pointer-events: none;
             z-index: 0;
-            opacity: 0.38;
-            filter: blur(32px) saturate(1.1);
+            opacity: 0.56;
+            filter: blur(18px) saturate(1.06);
             transition: opacity 480ms ease;
-            /* Soft ambient glow — not competing with screen-level orbs */
             background:
-                radial-gradient(circle at 50% 46%, rgba(200,140,255,0.72) 0%, rgba(160,90,230,0.48) 42%, rgba(100,50,180,0.18) 72%, transparent 100%);
+                radial-gradient(circle at 50% 48%, rgba(188, 128, 255, 0.64) 0%, rgba(164, 114, 236, 0.34) 36%, transparent 72%),
+                radial-gradient(circle at 44% 64%, rgba(150, 124, 255, 0.22) 10%, transparent 62%);
             animation: orbBreathGlobal var(--aura-breath-cycle) ease-in-out infinite;
         }
         .edge-fade {
@@ -912,28 +798,6 @@
             box-shadow: 0 0 38px rgba(198, 156, 255, 0.14) inset;
             opacity: 0.4;
             animation: orbRingDrift 16s linear infinite;
-        }
-        .app[data-screen="entryScreen"] .aura-life-orb,
-        .app[data-screen="welcomeScreen"] .aura-life-orb,
-        .app[data-screen="dailyScreen"] .aura-life-orb,
-        .app[data-screen="readingScreen"] .aura-life-orb {
-            opacity: 0 !important;
-            animation: none !important;
-        }
-        .app[data-screen="entryScreen"] .aura-life-orb::before,
-        .app[data-screen="welcomeScreen"] .aura-life-orb::before {
-            animation: none !important;
-            opacity: 0 !important;
-        }
-        /* Chat screen — full 3-layer orb matching landing page */
-        .app[data-screen="chatScreen"] .aura-life-orb {
-            width: 340px; height: 340px;
-            opacity: 0.86 !important;
-            filter: blur(8px) !important;
-            background:
-                radial-gradient(circle at 50% 48%, rgba(232,176,255,1) 0%, rgba(232,176,255,1) 16%, rgba(210,150,255,0.66) 20%, transparent 22%),
-                radial-gradient(circle at 50% 48%, transparent 18%, rgba(160,80,230,0.93) 34%, rgba(136,60,210,1) 45%, rgba(110,50,190,0.53) 52%, transparent 55%),
-                radial-gradient(circle at 46% 54%, transparent 50%, rgba(80,30,150,0.87) 72%, rgba(60,20,130,1) 80%, rgba(50,15,110,0.53) 85%, transparent 88%) !important;
         }
         @keyframes ambientBreath {
             0%, 100% { transform: scale(1); opacity: 0.46; filter: blur(0px); }
@@ -1026,7 +890,6 @@
         }
         .welcome-screen::before { content: none; }
         .welcome-screen::after { content: none; }
-        .daily-screen::before { content: none; }
         .logo {
             position: relative;
             z-index: 1;
@@ -1125,37 +988,7 @@
         }
         .tagline { font-size: 13px; letter-spacing: 0.2em; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 14px; }
         .welcome-subtitle { font-size: 14px; color: var(--text-secondary); max-width: 280px; line-height: 1.6; margin-bottom: 30px; }
-        .welcome-actions { display: flex; flex-direction: column; gap: 10px; align-items: center; margin-top: 12px; margin-bottom: 0; flex-shrink: 0; position: relative; z-index: 3; }
-        /* ── Daily Guidance Dropdown ── */
-        .daily-dropdown {
-            width: 100%; margin-top: 4px; flex-shrink: 0;
-            order: 5;
-        }
-        .chat-screen .chat-settings-full { order: 6; }
-        .chat-top-btn.daily-dropdown-toggle {
-            width: 100%; justify-content: center; gap: 8px;
-            background:
-                linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 40%, rgba(0,0,0,0.08) 100%),
-                rgba(148, 100, 220, 0.18) !important;
-            border: 1px solid rgba(200, 162, 255, 0.38) !important;
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.22),
-                inset 0 -1px 0 rgba(0,0,0,0.10),
-                0 8px 22px rgba(70, 30, 120, 0.26),
-                0 0 14px rgba(180, 130, 255, 0.12) !important;
-            color: rgba(222, 194, 255, 0.95) !important;
-        }
-        .daily-dropdown-arrow {
-            font-size: 10px; transition: transform 0.3s ease;
-            display: inline-block;
-        }
-        .daily-dropdown-arrow.open { transform: rotate(180deg); }
-        .daily-dropdown-body {
-            display: none; flex-direction: column; gap: 10px;
-            padding: 8px 0 4px; width: 100%;
-        }
-        .daily-dropdown-body.open { display: flex; }
-
+        .welcome-actions { display: flex; flex-direction: column; gap: 10px; align-items: center; margin-top: 12px; margin-bottom: 0; flex-shrink: 0; }
         .welcome-daily-link {
             background: none; border: none; cursor: pointer;
             font-family: 'Cormorant Garamond', serif;
@@ -1163,9 +996,6 @@
             color: rgba(200, 160, 255, 0.7);
             padding: 10px 16px;
             transition: color 0.3s ease;
-            position: relative;
-            z-index: 4;
-            pointer-events: auto;
         }
         .welcome-daily-link:hover { color: rgba(200, 160, 255, 1); }
         .screen-cog {
@@ -1175,8 +1005,7 @@
             text-align: center;
             flex-shrink: 0;
             position: relative;
-            z-index: 4;
-            pointer-events: auto;
+            z-index: 2;
         }
 
         /* ── Daily Guidance Screen ── */
@@ -1184,11 +1013,9 @@
             padding: 34px 32px var(--bottom-dock-inset);
             position: relative;
             overflow: hidden;
+            display: flex;
             flex-direction: column;
             align-items: center;
-        }
-        .daily-screen.active {
-            display: flex;
         }
         .daily-cards-area {
             width: 100%;
@@ -1232,31 +1059,15 @@
             border-radius: 28px;
             font-size: 15px;
             letter-spacing: 0.05em;
-            position: relative;
-            z-index: 4;
-            pointer-events: auto;
         }
         .welcome-actions .btn-primary {
-            background:
-                linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 40%, rgba(0,0,0,0.08) 100%),
-                linear-gradient(135deg, rgba(78, 162, 136, 0.36) 0%, rgba(116, 214, 184, 0.22) 100%);
-            border: 1px solid rgba(140, 224, 188, 0.38);
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.24),
-                inset 0 -1px 0 rgba(0,0,0,0.10),
-                0 8px 22px rgba(36, 82, 68, 0.28),
-                0 0 16px rgba(100, 200, 160, 0.10);
+            background: linear-gradient(135deg, rgba(78, 162, 136, 0.34) 0%, rgba(116, 214, 184, 0.24) 100%);
+            border-color: rgba(124, 214, 177, 0.46);
+            box-shadow: 0 0 0 1px rgba(124,214,177,0.14) inset, 0 8px 22px rgba(36, 82, 68, 0.26);
         }
         .welcome-actions .btn-secondary {
-            background:
-                linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 40%, rgba(0,0,0,0.08) 100%),
-                linear-gradient(135deg, rgba(200, 160, 255, 0.22) 0%, rgba(255, 180, 200, 0.18) 100%);
-            border: 1px solid rgba(210, 170, 255, 0.36);
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.22),
-                inset 0 -1px 0 rgba(0,0,0,0.10),
-                0 8px 20px rgba(18, 10, 30, 0.24),
-                0 0 14px rgba(190, 150, 255, 0.10);
+            background: linear-gradient(135deg, rgba(200, 160, 255, 0.22) 0%, rgba(255, 180, 200, 0.2) 100%);
+            border-color: rgba(200, 160, 255, 0.34);
         }
         .welcome-orb-wrap {
             position: relative;
@@ -1268,17 +1079,19 @@
         }
         .welcome-orb {
             position: absolute;
-            left: 50%; top: 50%;
-            width: 340px; height: 340px;
+            left: 50%;
+            top: 50%;
+            width: 280px;
+            height: 280px;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            pointer-events: none; z-index: 0;
-            /* 3-layer orb — soft=5% matching generator: crisp core, solid rings, minimal blur */
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.9;
+            filter: blur(24px);
             background:
-                radial-gradient(circle at 50% 48%, rgba(232,176,255,1) 0%, rgba(232,176,255,1) 16%, rgba(210,150,255,0.66) 20%, transparent 22%),
-                radial-gradient(circle at 50% 48%, transparent 18%, rgba(160,80,230,0.93) 34%, rgba(136,60,210,1) 45%, rgba(110,50,190,0.53) 52%, transparent 55%),
-                radial-gradient(circle at 46% 54%, transparent 50%, rgba(80,30,150,0.87) 72%, rgba(60,20,130,1) 80%, rgba(50,15,110,0.53) 85%, transparent 88%);
-            filter: blur(8px);
+                radial-gradient(circle at 50% 48%, rgba(196, 134, 255, 0.74) 0%, rgba(168, 108, 236, 0.42) 36%, transparent 72%),
+                radial-gradient(circle at 42% 62%, rgba(148, 122, 255, 0.3) 10%, transparent 60%);
             animation: orbBreathGlobal var(--aura-breath-cycle) ease-in-out infinite;
         }
         @keyframes orbBreathGlobal {
@@ -1300,56 +1113,44 @@
             font-family: 'Inter', sans-serif;
             cursor: pointer;
             transition: transform 220ms ease, border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
-            backdrop-filter: blur(22px) saturate(1.9);
-            -webkit-backdrop-filter: blur(22px) saturate(1.9);
+            backdrop-filter: blur(10px) saturate(1.05);
+            -webkit-backdrop-filter: blur(10px) saturate(1.05);
             background:
-                linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 40%, rgba(0,0,0,0.08) 100%),
-                linear-gradient(180deg, rgba(34, 40, 52, 0.32) 0%, rgba(18, 22, 30, 0.22) 100%),
-                radial-gradient(130% 130% at 18% 14%, rgba(120, 236, 195, 0.07) 0%, transparent 56%);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+                linear-gradient(180deg, rgba(34, 40, 48, 0.34) 0%, rgba(20, 24, 30, 0.24) 100%),
+                radial-gradient(120% 120% at 20% 18%, rgba(118, 230, 190, 0.08) 0%, transparent 54%);
+            border: 1px solid rgba(170, 236, 205, 0.20);
             box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.24),
-                inset 0 -1px 0 rgba(0,0,0,0.12),
-                inset 0 0 0 1px rgba(255,255,255,0.04),
-                0 8px 22px rgba(8, 10, 14, 0.26),
-                0 2px 6px rgba(8, 10, 14, 0.16);
+                inset 0 0 0 1px rgba(255,255,255,0.03),
+                inset 0 10px 18px -14px rgba(164, 242, 210, 0.12),
+                0 8px 16px rgba(8, 10, 14, 0.22);
         }
         .btn-primary { padding: 16px 40px; border-radius: 100px; font-size: 14px; letter-spacing: 0.08em; }
-        .btn-secondary { padding: 14px 24px; border-radius: 100px; font-size: 13px; }
+        .btn-secondary { padding: 14px 24px; border-radius: 14px; font-size: 13px; }
         .btn-primary:hover,
         .btn-secondary:hover {
             transform: translateY(-1px);
-            border-color: rgba(255,255,255,0.26);
+            border-color: rgba(184, 242, 214, 0.34);
             background:
-                linear-gradient(180deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.04) 40%, rgba(0,0,0,0.06) 100%),
-                linear-gradient(180deg, rgba(38, 46, 58, 0.38) 0%, rgba(22, 26, 34, 0.28) 100%),
-                radial-gradient(130% 130% at 18% 14%, rgba(120, 236, 195, 0.10) 0%, transparent 58%);
+                linear-gradient(180deg, rgba(38, 45, 54, 0.40) 0%, rgba(22, 26, 33, 0.30) 100%),
+                radial-gradient(120% 120% at 20% 18%, rgba(118, 230, 190, 0.11) 0%, transparent 56%);
             box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.28),
-                inset 0 -1px 0 rgba(0,0,0,0.10),
-                inset 0 0 0 1px rgba(255,255,255,0.05),
-                0 12px 28px rgba(8, 10, 14, 0.30),
-                0 0 20px rgba(118, 230, 190, 0.07);
+                inset 0 0 0 1px rgba(255,255,255,0.04),
+                inset 0 12px 20px -14px rgba(164, 242, 210, 0.16),
+                0 10px 18px rgba(8, 10, 14, 0.26),
+                0 0 18px rgba(118, 230, 190, 0.06);
         }
         .btn-primary.accent {
             background:
-                linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 40%, rgba(0,0,0,0.10) 100%),
-                linear-gradient(135deg, rgba(188, 144, 255, 0.22) 0%, rgba(122, 224, 192, 0.12) 50%, rgba(255, 180, 200, 0.10) 100%);
-            border: 1px solid rgba(210, 170, 255, 0.32);
+                linear-gradient(135deg, rgba(188, 144, 255, 0.22) 0%, rgba(122, 224, 192, 0.14) 50%, rgba(255, 180, 200, 0.12) 100%),
+                linear-gradient(180deg, rgba(34, 40, 48, 0.36) 0%, rgba(20, 24, 30, 0.28) 100%);
+            border-color: rgba(200, 160, 255, 0.28);
             box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.26),
-                inset 0 -1px 0 rgba(0,0,0,0.12),
                 inset 0 0 0 1px rgba(255,255,255,0.04),
-                0 10px 24px rgba(18, 10, 30, 0.28),
-                0 0 18px rgba(190, 150, 255, 0.10);
+                inset 0 12px 20px -14px rgba(212, 174, 255, 0.16),
+                0 10px 18px rgba(18, 12, 26, 0.24);
         }
-        .btn-gradient {
-            background:
-                linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 40%, rgba(0,0,0,0.08) 100%),
-                var(--accent-gradient);
-            border-color: rgba(210, 170, 255, 0.32);
-        }
-        .btn-small { padding: 10px 18px; font-size: 12px; border-radius: 100px; }
+        .btn-gradient { background: var(--accent-gradient); border-color: rgba(200, 160, 255, 0.3); }
+        .btn-small { padding: 10px 18px; font-size: 12px; }
         
         /* Disclaimer Modal */
         .disclaimer-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: flex; justify-content: center; align-items: center; padding: 14px; }
@@ -1600,22 +1401,48 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 420px;
-            height: 420px;
+            width: 430px;
+            height: 430px;
             border-radius: 50%;
             pointer-events: none;
             z-index: 1;
-            /* background set dynamically by applyReadingAtmosphere() */
-            filter: blur(10px);
+            background:
+              radial-gradient(circle at 50% 45%, var(--reading-orb-a, rgba(190, 140, 255, 0.34)) 0%, transparent 50%),
+              radial-gradient(circle at 38% 60%, var(--reading-orb-b, rgba(255, 185, 210, 0.24)) 0%, transparent 58%),
+              radial-gradient(circle at 65% 42%, var(--reading-orb-c, rgba(120, 220, 190, 0.22)) 0%, transparent 54%),
+              radial-gradient(circle at 56% 72%, var(--reading-orb-d, rgba(255, 210, 140, 0.20)) 0%, transparent 58%),
+              conic-gradient(
+                from 10deg,
+                rgba(118, 220, 196, var(--reading-orb-rainbow-alpha, 0.12)) 0deg,
+                rgba(120, 178, 255, var(--reading-orb-rainbow-alpha, 0.12)) 95deg,
+                rgba(196, 144, 255, var(--reading-orb-rainbow-alpha, 0.12)) 190deg,
+                rgba(255, 178, 148, var(--reading-orb-rainbow-alpha, 0.12)) 285deg,
+                rgba(118, 220, 196, var(--reading-orb-rainbow-alpha, 0.12)) 360deg
+              );
+            filter: blur(12px);
             animation: orbBreathGlobal var(--aura-breath-cycle) ease-in-out infinite;
             display: block;
-            opacity: 0.82;
         }
-        /* No pseudo-element rings — single orb only */
         .reading-aura-ball::before,
-        .reading-aura-ball::after { display: none; }
-        /* Hide individual card orbs — one blended orb only */
-        .reading-screen .spread-card-orb { display: none; }
+        .reading-aura-ball::after {
+            content: '';
+            position: absolute;
+            inset: 12%;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.35;
+        }
+        .reading-aura-ball::before {
+            border: 1px solid var(--reading-ring-a, rgba(220, 185, 255, 0.25));
+            box-shadow: 0 0 34px var(--reading-ring-a-glow, rgba(200,160,255,0.18)) inset;
+            animation: orbRingDrift 13s linear infinite;
+        }
+        .reading-aura-ball::after {
+            inset: 24%;
+            border: 1px solid var(--reading-ring-b, rgba(255, 215, 195, 0.22));
+            box-shadow: 0 0 22px var(--reading-ring-b-glow, rgba(255,185,210,0.14)) inset;
+            animation: orbRingDrift 17s linear infinite reverse;
+        }
         @keyframes orbRingDrift {
             0% { transform: rotate(0deg) scale(0.98); }
             50% { transform: rotate(180deg) scale(1.03); }
@@ -1640,7 +1467,7 @@
             left: 50%;
             top: 50%;
             width: 420px;
-            height: 250px;
+            height: 220px;
             transform: translate(-50%, -50%);
             border-radius: 50%;
             pointer-events: none;
@@ -1652,15 +1479,15 @@
                 mistDrift 15s ease-in-out infinite;
         }
         .cards-spread.single-card { gap: 0; }
-        .spread-card { width: 105px; height: 150px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 12px 8px 10px; cursor: pointer; transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease; box-shadow: 0 4px 20px rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.15); transform: translateZ(0); }
+        .spread-card { width: 105px; height: 150px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 12px 8px 10px; cursor: pointer; transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 1px solid rgba(137, 214, 184, 0.2); transform: translateZ(0); }
         .spread-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
         .spread-card.active { transform: translateY(0) scale(1.01); border-color: rgba(137,214,184,0.72); box-shadow: 0 0 0 1px rgba(137,214,184,0.24), 0 10px 28px rgba(0,0,0,0.34); }
         .cards-spread.single-card .spread-card { width: 150px; height: 210px; padding: 16px 12px 14px; }
-        .spread-card-title { font-family: 'Cormorant Garamond', serif; font-size: 11px; font-weight: 500; text-align: center; color: rgba(255,255,255,0.92); text-transform: uppercase; letter-spacing: 0.03em; line-height: 1.2; }
+        .spread-card-title { font-family: 'Cormorant Garamond', serif; font-size: 11px; font-weight: 500; text-align: center; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.03em; line-height: 1.2; }
         .cards-spread.single-card .spread-card-title { font-size: 14px; }
-        .spread-card-orb { width: 80px; height: 80px; border-radius: 50%; filter: blur(3px); animation: orbSoftPulse 5.6s ease-in-out infinite; }
-        .cards-spread.single-card .spread-card-orb { width: 110px; height: 110px; filter: blur(4px); }
-        .spread-card-position { font-size: 8px; font-weight: 500; color: rgba(255,255,255,0.50); letter-spacing: 0.1em; text-transform: uppercase; }
+        .spread-card-orb { width: 50px; height: 50px; border-radius: 50%; filter: blur(8px); animation: orbSoftPulse 5.6s ease-in-out infinite; }
+        .cards-spread.single-card .spread-card-orb { width: 70px; height: 70px; filter: blur(10px); }
+        .spread-card-position { font-size: 8px; font-weight: 500; color: rgba(0,0,0,0.5); letter-spacing: 0.1em; text-transform: uppercase; }
         .cards-spread.single-card .spread-card-position { font-size: 10px; }
         .cards-spread .spread-card:nth-child(2) .spread-card-orb { animation-delay: 0.9s; }
         .cards-spread .spread-card:nth-child(3) .spread-card-orb { animation-delay: 1.8s; }
@@ -2204,7 +2031,7 @@
 
         /* Dedicated Chat Screen */
         .chat-screen {
-            padding: max(44px, calc(env(safe-area-inset-top, 44px) + 10px)) 32px var(--bottom-dock-inset);
+            padding: 34px 32px var(--bottom-dock-inset);
             position: relative;
             overflow: hidden;
         }
@@ -2405,45 +2232,38 @@
             width: 100%;
             min-height: 42px;
             padding: 8px 10px;
-            border-radius: 100px;
-            border: 1px solid rgba(255, 200, 160, 0.22);
-            background:
-                linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 40%, rgba(0,0,0,0.08) 100%),
-                rgba(255, 140, 80, 0.09);
+            border-radius: 14px;
+            border: 1px solid rgba(198, 112, 52, 0.68);
+            background: rgba(255, 140, 80, 0.05);
             color: rgba(255, 233, 216, 0.96);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.02em;
             cursor: pointer;
             transition: all 220ms ease;
-            backdrop-filter: blur(22px) saturate(1.9);
-            -webkit-backdrop-filter: blur(22px) saturate(1.9);
+            backdrop-filter: blur(8px) saturate(1.02);
+            -webkit-backdrop-filter: blur(8px) saturate(1.02);
             box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.22),
-                inset 0 -1px 0 rgba(0,0,0,0.10),
-                0 6px 16px rgba(8, 10, 14, 0.24),
-                0 0 12px rgba(202, 110, 50, 0.08);
+                inset 0 0 0 1px rgba(255, 193, 149, 0.12),
+                0 6px 12px rgba(8, 10, 14, 0.24),
+                0 0 12px rgba(202, 110, 50, 0.10);
         }
         .chat-top-btn:hover {
-            border-color: rgba(255, 210, 175, 0.36);
+            border-color: rgba(220, 134, 72, 0.82);
             color: #fff;
             transform: translateY(-1px);
-            background:
-                linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 40%, rgba(0,0,0,0.06) 100%),
-                rgba(255, 145, 86, 0.12);
+            background: rgba(255, 145, 86, 0.09);
             box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.28),
-                inset 0 -1px 0 rgba(0,0,0,0.08),
-                0 10px 20px rgba(8, 10, 14, 0.28),
-                0 0 16px rgba(220, 130, 64, 0.12);
+                inset 0 0 0 1px rgba(255, 198, 160, 0.16),
+                0 10px 16px rgba(8, 10, 14, 0.28),
+                0 0 14px rgba(220, 130, 64, 0.14);
         }
         .chat-top-btn:active {
             transform: translateY(0) scale(0.985);
             box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.20),
-                inset 0 -1px 0 rgba(0,0,0,0.10),
-                0 4px 10px rgba(8, 10, 14, 0.22),
-                0 0 10px rgba(220, 130, 64, 0.10);
+                inset 0 0 0 1px rgba(255, 198, 160, 0.18),
+                0 6px 12px rgba(8, 10, 14, 0.24),
+                0 0 10px rgba(220, 130, 64, 0.14);
         }
         .chat-bottom-nav {
             order: 5;
@@ -2550,9 +2370,6 @@
             backdrop-filter: blur(10px) saturate(1.05);
             -webkit-backdrop-filter: blur(10px) saturate(1.05);
             transition: transform 180ms ease, border-color 220ms ease, box-shadow 220ms ease;
-            position: relative;
-            z-index: 5;
-            pointer-events: auto;
         }
         .settings-cog-btn:hover {
             border-color: rgba(190, 242, 222, 0.68);
@@ -2566,7 +2383,7 @@
         .settings-cog-btn:active {
             transform: scale(0.97);
         }
-        .settings-hub-screen { gap: 16px; background: var(--app-bg, #0a0812); min-height: 100%; }
+        .settings-hub-screen { gap: 16px; }
         /* ═══ SPLASH SCREEN ═══ */
         .splash-screen {
             position: fixed; inset: 0;
@@ -2645,18 +2462,19 @@
         }
         .entry-orb {
             position: absolute;
-            left: 50%; top: 50%;
-            width: 340px; height: 340px;
+            left: 50%;
+            top: 50%;
+            width: 280px;
+            height: 280px;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            pointer-events: none; z-index: 0;
+            pointer-events: none;
+            z-index: 0;
             opacity: 0.86;
-            /* Same 3-layer engine as welcome orb */
+            filter: blur(24px);
             background:
-                radial-gradient(circle at 50% 48%, rgba(232,176,255,1) 0%, rgba(232,176,255,1) 16%, rgba(210,150,255,0.66) 20%, transparent 22%),
-                radial-gradient(circle at 50% 48%, transparent 18%, rgba(160,80,230,0.93) 34%, rgba(136,60,210,1) 45%, rgba(110,50,190,0.53) 52%, transparent 55%),
-                radial-gradient(circle at 46% 54%, transparent 50%, rgba(80,30,150,0.87) 72%, rgba(60,20,130,1) 80%, rgba(50,15,110,0.53) 85%, transparent 88%);
-            filter: blur(8px);
+                radial-gradient(circle at 50% 48%, rgba(196, 134, 255, 0.74) 0%, rgba(168, 108, 236, 0.42) 36%, transparent 72%),
+                radial-gradient(circle at 42% 62%, rgba(148, 122, 255, 0.3) 10%, transparent 60%);
             animation: orbBreathGlobal var(--aura-breath-cycle) ease-in-out infinite;
         }
         .entry-card {
@@ -2972,34 +2790,6 @@
             text-align: center;
             margin-top: 4px;
         }
-
-        /* ── Local AI reminder (soft, non-blocking) ── */
-        .local-mode-notice {
-            font-size: 11px;
-            color: rgba(255,255,255,0.34);
-            text-align: center;
-            padding: 10px 16px 6px;
-            margin-top: 4px;
-            letter-spacing: 0.025em;
-        }
-        .local-mode-hint {
-            margin: 6px 0 2px;
-            padding: 9px 14px;
-            border-radius: 12px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.07);
-            font-size: 12px;
-            color: rgba(255,255,255,0.36);
-            text-align: center;
-            line-height: 1.5;
-        }
-        .local-mode-cta {
-            color: rgba(185, 148, 255, 0.75);
-            cursor: pointer;
-            border-bottom: 1px solid rgba(185, 148, 255, 0.3);
-            transition: color 180ms ease, border-color 180ms ease;
-        }
-        .local-mode-cta:hover { color: rgba(205, 170, 255, 0.95); border-color: rgba(205, 170, 255, 0.55); }
 
         /* Paywall modal classes */
         .paywall-overlay {
@@ -3698,11 +3488,11 @@
         
         .fade-in { animation: fadeIn 0.6s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .card-reveal { animation: cardReveal 0.55s cubic-bezier(0.34, 1.4, 0.64, 1) both; }
-        @keyframes cardReveal {
-            0% { opacity: 0; transform: translateY(32px) scale(0.88); }
-            60% { opacity: 1; }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
+        .card-reveal { animation: cardReveal 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes cardReveal { 
+            0% { opacity: 0; transform: translateY(60px) rotateX(30deg) scale(0.8); } 
+            50% { opacity: 1; transform: translateY(-10px) rotateX(-5deg) scale(1.02); }
+            100% { opacity: 1; transform: translateY(0) rotateX(0) scale(1); } 
         }/* ===== Aura Structured Output ===== */
 
 .aura-block {
@@ -3923,17 +3713,71 @@
 <div class="screen welcome-screen" id="welcomeScreen">
             <h1 class="logo">AURA</h1>
             <p class="tagline misty-copy">Know Yourself</p>
+            <p class="chat-screen-subtitle" style="margin-top:2px;">Let's Hold Space Together</p>
             <div class="welcome-orb-wrap">
                 <div class="welcome-orb"></div>
             </div>
 
             <div class="welcome-actions">
-                <button class="btn-primary" id="welcomeDrawBtn" onclick="goToDrawScreen()">Draw Your Cards</button>
-                <button class="btn-secondary btn-gradient" id="welcomeChatBtn" onclick="openAuraChat()">Chat with Aura</button>
+                <button class="btn-primary" onclick="goTo('shuffleScreen')">Draw Your Cards</button>
+                <button class="btn-secondary btn-gradient" onclick="openAuraChat()">Chat with Aura</button>
+                <button class="welcome-daily-link" onclick="goTo('dailyScreen')">✦ Your Daily Guidance</button>
+            </div>
+            <div class="screen-cog">
+                <button class="settings-cog-btn" onclick="goToSettingsHub()" aria-label="Settings" title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+            </div>
+        </div>
+
+        <div class="screen daily-screen" id="dailyScreen">
+            <div class="daily-header">
+                <button class="daily-back-btn" onclick="goTo('welcomeScreen')" aria-label="Back">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <h2 class="daily-title misty-copy">Daily Guidance</h2>
+                <div style="width:20px"></div>
+            </div>
+            <p class="chat-screen-subtitle">Wisdom &amp; Reflection</p>
+
+            <div class="welcome-orb-wrap">
+                <div class="welcome-orb"></div>
             </div>
 
-            <div class="screen-cog">
-                <button class="settings-cog-btn" id="welcomeSettingsBtn" onclick="goToSettingsHub()" aria-label="Settings" title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+            <div class="chat-section fade-in">
+                <div class="chat-messages" id="dailyChatMessages"></div>
+                <div class="chat-input-container">
+                    <textarea class="chat-input" id="dailyChatInput" placeholder="Chat with Aura..." rows="1" oninput="autoGrowChatInput(this)" onkeydown="handleChatComposerKeydown(event, 'daily')"></textarea>
+                    <button class="chat-send" id="dailyChatSendBtn" onclick="sendDailyChat()">→</button>
+                </div>
+                <div class="chat-nav-row">
+                    <button class="chat-top-btn" onclick="goTo('readingScreen')">Reading</button>
+                    <button class="chat-top-btn" onclick="goTo('shuffleScreen')">Draw</button>
+                    <button class="chat-top-btn" onclick="openAuraGuideSite()">Store</button>
+                </div>
+                <div class="daily-cards-area">
+                    <div class="affirmation-box fade-in" id="welcomeAffirmationBox">
+                        <p class="affirmation-label">Today's Affirmation</p>
+                        <p class="affirmation-text" id="welcomeAffirmation"></p>
+                    </div>
+                    <div class="astro-insight-card fade-in" id="welcomeAstroCard">
+                        <div class="astro-collapse-header" onclick="toggleWelcomeHoroscopeCollapse()">
+                            <p class="astro-daily-title" id="welcomeAstroDailyTitle">Daily Horoscope</p>
+                            <span class="astro-collapse-toggle" id="welcomeAstroCollapseToggle">▼</span>
+                        </div>
+                        <div class="astro-daily-insight" id="welcomeAstroCollapseBody">
+                            <p class="astro-daily-copy" id="welcomeAstroDailyCopy"></p>
+                            <div class="astro-pill-row" id="welcomeAstroPillRow"></div>
+                            <div class="astro-chart-note" id="welcomeAstroChartNote"></div>
+                            <div class="astro-actions">
+                                <button class="btn-secondary btn-gradient btn-small astro-action-btn" onclick="sendHoroscopeToChat()">Ask Aura</button>
+                                <button class="btn-secondary btn-gradient btn-small astro-action-btn" id="welcomeAstroMoreInfoBtn" onclick="toggleWelcomeHoroscopeMoreInfo()">More Info</button>
+                            </div>
+                            <div class="astro-more-copy" id="welcomeAstroMoreCopy"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-settings-full fade-in">
+                    <button class="settings-cog-btn" onclick="goToSettingsHub()" aria-label="Settings" title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+                </div>
             </div>
         </div>
 
@@ -3945,6 +3789,7 @@
                     <span id="chatTokenText">Local Mode</span>
                 </div>
             </div>
+            <p class="chat-screen-subtitle">Let's Hold Space Together</p>
             <div class="chat-section fade-in">
                 <div class="chat-messages" id="openChatMessages"></div>
                 <div id="openChatMemory"></div>
@@ -3956,37 +3801,9 @@
                     <span class="composer-count" id="openComposerCount">0/600</span>
                 </div>
                 <div class="chat-nav-row">
-                    <button class="chat-top-btn" onclick="goToReadingScreen()">Reading</button>
-                    <button class="chat-top-btn" onclick="goToDrawScreen()">Draw</button>
+                    <button class="chat-top-btn" onclick="goTo('readingScreen')">Reading</button>
+                    <button class="chat-top-btn" onclick="goTo('shuffleScreen')">Draw</button>
                     <button class="chat-top-btn" onclick="openAuraGuideSite()">Store</button>
-                </div>
-                <!-- Daily Guidance collapsible dropdown -->
-                <div class="daily-dropdown" id="dailyDropdown">
-                    <button class="chat-top-btn daily-dropdown-toggle" onclick="toggleDailyDropdown()" id="dailyDropdownToggle">
-                        ✦ Daily Guidance <span class="daily-dropdown-arrow" id="dailyDropdownArrow">▼</span>
-                    </button>
-                    <div class="daily-dropdown-body" id="dailyDropdownBody">
-                        <div class="affirmation-box" id="welcomeAffirmationBox">
-                            <p class="affirmation-label">Today's Affirmation</p>
-                            <p class="affirmation-text" id="welcomeAffirmation"></p>
-                        </div>
-                        <div class="astro-insight-card" id="welcomeAstroCard">
-                            <div class="astro-collapse-header" onclick="toggleWelcomeHoroscopeCollapse()">
-                                <p class="astro-daily-title" id="welcomeAstroDailyTitle">Daily Horoscope</p>
-                                <span class="astro-collapse-toggle" id="welcomeAstroCollapseToggle">▼</span>
-                            </div>
-                            <div class="astro-daily-insight" id="welcomeAstroCollapseBody">
-                                <p class="astro-daily-copy" id="welcomeAstroDailyCopy"></p>
-                                <div class="astro-pill-row" id="welcomeAstroPillRow"></div>
-                                <div class="astro-chart-note" id="welcomeAstroChartNote"></div>
-                                <div class="astro-actions">
-                                    <button class="btn-secondary btn-gradient btn-small astro-action-btn" onclick="sendHoroscopeToChat()">Ask Aura</button>
-                                    <button class="btn-secondary btn-gradient btn-small astro-action-btn" id="welcomeAstroMoreInfoBtn" onclick="toggleWelcomeHoroscopeMoreInfo()">More Info</button>
-                                </div>
-                                <div class="astro-more-copy" id="welcomeAstroMoreCopy"></div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div class="chat-settings-full fade-in">
                     <button class="settings-cog-btn" onclick="goToSettingsHub()" aria-label="Settings" title="Settings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
@@ -4061,11 +3878,6 @@
                 <div class="settings-hub-row">
                     <button class="settings-chip-btn" onclick="openPaywall('Aura Premium', 'premium')">View Plans</button>
                     <button class="settings-chip-btn" onclick="restorePurchases()">Restore Purchases</button>
-                </div>
-                <!-- Shown for premium/pro — lets them top up tokens or memory without going through paywall -->
-                <div id="topupActionsRow" class="settings-hub-row" style="display:none; margin-top:6px;">
-                    <button class="settings-chip-btn" onclick="openTokenTopUp()">Buy Tokens</button>
-                    <button class="settings-chip-btn" onclick="openMemoryTopUp()">Expand Memory</button>
                 </div>
             </div>
 
@@ -4151,8 +3963,8 @@
             </div>
             <p class="tap-hint">Tap to shuffle & draw</p>
             <div class="reading-type-toggle">
-                <button class="toggle-btn active" id="toggleSingle" onclick="setReadingType('single', true)">Single Card</button>
-                <button class="toggle-btn" id="toggleThree" onclick="setReadingType('three', true)">3-Card Reading</button>
+                <button class="toggle-btn" id="toggleSingle" onclick="setReadingType('single')">Single Card</button>
+                <button class="toggle-btn active" id="toggleThree" onclick="setReadingType('three')">3-Card Reading</button>
             </div>
             <button class="btn-secondary btn-gradient btn-small create-guide-btn" onclick="startOnboarding()">✨ Personalize your Aura Guide</button>
             <div class="chat-settings-full fade-in">
@@ -4186,7 +3998,7 @@
             <div id="chatOrPersonalize"></div>
             
             <div class="action-buttons fade-in">
-                <button class="btn-secondary btn-gradient" onclick="goToDrawScreen()">Draw</button>
+                <button class="btn-secondary btn-gradient" onclick="newReading()">Reading</button>
                 <button class="btn-secondary btn-gradient" onclick="shareReading()">Share</button>
                 <button class="btn-secondary btn-gradient" onclick="openAuraChat()">Chat</button>
             </div>
@@ -4237,93 +4049,26 @@
 <script>
 // ========== CARD DECK ==========
 const auraDeck = [
-    // ── MAJOR ARCANA ──────────────────────────────────────────
-    {id:1, group:"major", name:"Leap", affirmation:"Leap and become.", meaning:"A new adventure begins. Trust yourself and step into the unknown with open arms.", colors:["#F5F5F0","#4D4D89","#38442C"], bg:"#0e0e1a", keywords:["beginnings","trust","freedom","adventure"]},
-    {id:2, group:"major", name:"Alchemy", affirmation:"Will shapes the world.", meaning:"You have every tool you need. Focus your will and shape reality with intention.", colors:["#D4AF37","#6078C8","#D9E1C1"], bg:"#1a1500", keywords:["manifestation","skill","willpower","creation"]},
-    {id:3, group:"major", name:"Oracle", affirmation:"Trust the hidden knowing.", meaning:"Wisdom flows below the surface. Be still and your deeper knowing will speak.", colors:["#3F51B5","#BBAF6D","#CDC5DD"], bg:"#0a0d1e", keywords:["intuition","mystery","wisdom","inner voice"]},
-    {id:4, group:"major", name:"Bloom", affirmation:"Creation blooms through you.", meaning:"Life flourishes when given love and care. Nurture yourself and what you are growing.", colors:["#7CB342","#936FB9","#C6DDC5"], bg:"#0e1a06", keywords:["growth","nurture","abundance","creation"]},
-    {id:5, group:"major", name:"Sovereign", affirmation:"Structure steadies power.", meaning:"Clear structures create freedom, not limits. Where do you need firmer ground?", colors:["#C62828","#5FC9C9","#E2D1C0"], bg:"#1a0505", keywords:["stability","authority","structure","boundaries"]},
-    {id:6, group:"major", name:"Ritual", affirmation:"Wisdom lives in ritual.", meaning:"Ancient wisdom lives in practice and ritual. What traditions can guide you now?", colors:["#1565C0","#D49853","#BEBDE5"], bg:"#040f1e", keywords:["tradition","guidance","teaching","ritual"]},
-    {id:7, group:"major", name:"Love", affirmation:"Choose with an open heart.", meaning:"The deepest choices come from the heart. What does love ask of you right now?", colors:["#F48FB1","#29AD81","#51271F"], bg:"#1a0912", keywords:["love","choice","values","commitment"]},
-    {id:8, group:"major", name:"Momentum", affirmation:"Direction turns force into victory.", meaning:"Your will is strong. Channel it with discipline and let nothing break your focus.", colors:["#FBC02D","#4773E1","#49561A"], bg:"#1a1200", keywords:["drive","control","victory","determination"]},
-    {id:9, group:"major", name:"Courage", affirmation:"Soft power endures.", meaning:"Strength flows from gentleness, not force. Meet life's challenges with calm power.", colors:["#FB8C00","#448BE4","#E7EAB8"], bg:"#1a0d00", keywords:["patience","compassion","inner strength","resilience"]},
-    {id:10, group:"major", name:"Stillness", affirmation:"Light the way within.", meaning:"Step back from the noise of the world and let the quiet guide you forward.", colors:["#8E24AA","#75C860","#E2C1D8"], bg:"#0f041a", keywords:["solitude","reflection","inner wisdom","retreat"]},
-    {id:11, group:"major", name:"Turning", affirmation:"Change is always turning.", meaning:"Life moves in great cycles. What feels like chance is part of a larger pattern.", colors:["#26A69A","#C6626B","#C1D4E1"], bg:"#03130f", keywords:["cycles","change","opportunity","fate"]},
-    {id:12, group:"major", name:"Balance", affirmation:"Truth restores balance.", meaning:"Truth and fairness are the bedrock of peace. See things clearly before acting.", colors:["#1E88E5","#D49054","#BDBEE5"], bg:"#040f1b", keywords:["justice","clarity","fairness","honesty"]},
-    {id:13, group:"major", name:"Surrender", affirmation:"Stillness reveals another view.", meaning:"Stop pushing. A completely new view waits in the pause between effort and outcome.", colors:["#00ACC1","#E45544","#B8CCEA"], bg:"#00131a", keywords:["perspective","surrender","patience","acceptance"]},
-    {id:14, group:"major", name:"Renewal", affirmation:"Release opens the next door.", meaning:"Something must end so something new can breathe. Let go with grace and trust.", colors:["#5E35B1","#A3BF69","#DAC3DF"], bg:"#0b0419", keywords:["endings","transformation","rebirth","acceptance"]},
-    {id:15, group:"major", name:"Harmony", affirmation:"Blend gently, become whole.", meaning:"The middle path holds wisdom. Small adjustments bring everything into balance.", colors:["#4DD0E1","#CD685B","#22334E"], bg:"#051619", keywords:["moderation","flow","balance","alchemy"]},
-    {id:16, group:"major", name:"Shadow", affirmation:"Name the chain, reclaim yourself.", meaning:"What binds you most may be invisible to you. Name the pattern and step free.", colors:["#B71C1C","#59CFCF","#E4D1BF"], bg:"#170303", keywords:["awareness","liberation","shadow","attachment"]},
-    {id:17, group:"major", name:"Breakthrough", affirmation:"What falls clears the truth.", meaning:"What seemed solid needed to fall. The disruption is clearing space for truth.", colors:["#F4511E","#4BBADD","#E8DCBA"], bg:"#1a0800", keywords:["upheaval","breakthrough","revelation","change"]},
-    {id:18, group:"major", name:"Hope", affirmation:"Hope is a healing light.", meaning:"Hope is not naive — it is necessary. Hold your vision of what is possible.", colors:["#81D4FA","#B55021","#1C2655"], bg:"#0b1419", keywords:["hope","healing","inspiration","future"]},
-    {id:19, group:"major", name:"Dream", affirmation:"Feel what hides beneath.", meaning:"Not everything is as it appears. Trust your feelings more than what seems obvious.", colors:["#7986CB","#8F8348","#342A46"], bg:"#0c0e1a", keywords:["intuition","illusion","cycles","subconscious"]},
-    {id:20, group:"major", name:"Radiance", affirmation:"Radiance is your nature.", meaning:"Joy is your birthright. Let yourself shine without apology or reservation.", colors:["#FDD835","#4562E3","#43561A"], bg:"#1a1500", keywords:["joy","vitality","clarity","warmth"]},
-    {id:21, group:"major", name:"Calling", affirmation:"Rise to your true call.", meaning:"Something deep is summoning your full self. Answer with everything you have.", colors:["#FFF8E1","#1B40BB","#465719"], bg:"#1a1900", keywords:["awakening","purpose","renewal","transformation"]},
-    {id:22, group:"major", name:"Wholeness", affirmation:"You belong to the whole.", meaning:"You have arrived. Everything has led here. You are part of something complete.", colors:["#2E7D32","#B96FB5","#C5DDD2"], bg:"#03100a", keywords:["completion","integration","fulfillment","belonging"]},
-
-    // ── ENERGY (WANDS) ────────────────────────────────────────
-    {id:23, group:"energy", name:"Spark", affirmation:"Spark the beginning.", meaning:"A new creative force is alive in you. The moment to begin is right now.", colors:["#FFB300","#4473E4","#E0EAB8"], bg:"#1a1000", keywords:["inspiration","potential","start","fire"]},
-    {id:24, group:"energy", name:"Horizon", affirmation:"Choose your horizon.", meaning:"You stand at a choice point. Where will you direct your vision and will?", colors:["#FFA000","#447FE4","#E4EAB8"], bg:"#1a0f00", keywords:["vision","planning","ambition","direction"]},
-    {id:25, group:"energy", name:"Venture", affirmation:"Expansion follows courage.", meaning:"Your first steps are beginning to bloom. Keep your eyes on the horizon and grow.", colors:["#FB8C00","#448BE4","#E7EAB8"], bg:"#1a0d00", keywords:["growth","foresight","expansion","courage"]},
-    {id:26, group:"energy", name:"Gathering", affirmation:"Celebrate what has taken root.", meaning:"Pause and honour what you've built. Joy shared with others multiplies.", colors:["#FDD835","#4562E3","#43561A"], bg:"#1a1500", keywords:["celebration","community","joy","achievement"]},
-    {id:27, group:"energy", name:"Tension", affirmation:"Friction shapes strength.", meaning:"Resistance is information. Use the tension to refine your direction and strength.", colors:["#E53935","#56CFD2","#E5D2BE"], bg:"#180404", keywords:["challenge","competition","growth","tension"]},
-    {id:28, group:"energy", name:"Triumph", affirmation:"Let victory be visible.", meaning:"You've done the work — now let yourself be seen and celebrated.", colors:["#FBC02D","#4773E1","#49561A"], bg:"#1a1200", keywords:["success","recognition","confidence","achievement"]},
-    {id:29, group:"energy", name:"Resolve", affirmation:"Stand for your fire.", meaning:"Hold your ground. What you've built is worth standing up for.", colors:["#F4511E","#4BBADD","#E8DCBA"], bg:"#1a0800", keywords:["perseverance","defence","conviction","boundaries"]},
-    {id:30, group:"energy", name:"Surge", affirmation:"Energy moves fast.", meaning:"Things are accelerating. Stay present and let the momentum carry you forward.", colors:["#FF7043","#1B95BB","#574719"], bg:"#1a0800", keywords:["speed","action","movement","acceleration"]},
-    {id:31, group:"energy", name:"Grit", affirmation:"Guard the flame.", meaning:"You've come so far. Stay alert but don't let exhaustion harden into fear.", colors:["#BF360C","#4DB9DB","#E7DCBB"], bg:"#160600", keywords:["resilience","persistence","caution","vigilance"]},
-    {id:32, group:"energy", name:"Burden", affirmation:"Lay down what burns you.", meaning:"You're carrying more than you need to. What can be released or put down?", colors:["#8E2424","#64C4C4","#E0D1C2"], bg:"#0f0404", keywords:["overwhelm","responsibility","release","delegation"]},
-    {id:33, group:"energy", name:"Ember", affirmation:"Curiosity carries the spark.", meaning:"Let wonder be your guide. Follow what lights you up without needing all the answers.", colors:["#FF9800","#4484E4","#E5EAB8"], bg:"#1a0e00", keywords:["curiosity","enthusiasm","learning","spark"]},
-    {id:34, group:"energy", name:"Wildfire", affirmation:"Move like a living flame.", meaning:"Act boldly and with full passion. The right moment is always now.", colors:["#F44336","#4CD2DC","#543C1C"], bg:"#190403", keywords:["boldness","passion","action","impulse"]},
-    {id:35, group:"energy", name:"Magnetism", affirmation:"Warmth leads with confidence.", meaning:"Your presence lights the room. Lead from the heart and others will follow naturally.", colors:["#C77800","#4483E4","#E5EAB8"], bg:"#150c00", keywords:["confidence","leadership","charisma","warmth"]},
-    {id:36, group:"energy", name:"Mastery", affirmation:"Master the fire.", meaning:"You have learned to channel your fire wisely. Your vision is a gift to the world.", colors:["#C9A227","#5E78CA","#D9E2C0"], bg:"#141000", keywords:["mastery","vision","leadership","legacy"]},
-
-    // ── HEART (CUPS) ──────────────────────────────────────────
-    {id:37, group:"heart", name:"Opening", affirmation:"Open to what flows.", meaning:"A new feeling is beginning to stir. Make space for it without forcing it.", colors:["#26C6DA","#CD685B","#BFCDE3"], bg:"#021619", keywords:["love","openness","potential","new emotion"]},
-    {id:38, group:"heart", name:"Bond", affirmation:"Connection is sacred.", meaning:"A sacred bond is forming. Meet it with full presence and honesty.", colors:["#F48FB1","#29AD81","#51271F"], bg:"#1a0912", keywords:["partnership","love","attraction","union"]},
-    {id:39, group:"heart", name:"Joy", affirmation:"Joy multiplies when shared.", meaning:"Celebrate with those you love. Happiness lives most fully in community.", colors:["#4DB6AC","#B67279","#C7D3DC"], bg:"#05120f", keywords:["friendship","celebration","joy","gratitude"]},
-    {id:40, group:"heart", name:"Reflection", affirmation:"Listen to what feeling wants.", meaning:"Quiet the noise. Your heart has been trying to tell you something important.", colors:["#80CBC4","#8D4950","#2B3B45"], bg:"#0d1917", keywords:["introspection","contemplation","listening","longing"]},
-    {id:41, group:"heart", name:"Grief", affirmation:"Grieve, then turn toward love.", meaning:"Loss is real and your pain is valid. Feel it fully, then notice what still remains.", colors:["#1E88E5","#D49054","#BDBEE5"], bg:"#040f1b", keywords:["grief","loss","perspective","healing"]},
-    {id:42, group:"heart", name:"Memory", affirmation:"Memory can be medicine.", meaning:"The past holds gifts for the present. Revisit what once brought you genuine joy.", colors:["#90CAF9","#B36423","#1C1F54"], bg:"#0e1519", keywords:["nostalgia","kindness","healing","innocence"]},
-    {id:43, group:"heart", name:"Vision", affirmation:"Discern the dream from the haze.", meaning:"Many paths shimmer before you. Look with clear eyes before you reach for any.", colors:["#B39DDB","#769046","#422A46"], bg:"#110d19", keywords:["choices","imagination","discernment","illusion"]},
-    {id:44, group:"heart", name:"Departure", affirmation:"Walk toward deeper truth.", meaning:"What once satisfied no longer does. Trust the pull toward something more meaningful.", colors:["#00897B","#E44454","#B8D6EA"], bg:"#00100e", keywords:["transition","courage","seeking","depth"]},
-    {id:45, group:"heart", name:"Fulfilment", affirmation:"Receive the fullness.", meaning:"Let yourself have what you've longed for. You deserve to receive as well as give.", colors:["#29B6F6","#DE784A","#BAC3E8"], bg:"#031219", keywords:["satisfaction","gratitude","fulfilment","receiving"]},
-    {id:46, group:"heart", name:"Belonging", affirmation:"Love becomes a world.", meaning:"Emotional harmony surrounds you. This is what you've been quietly working toward.", colors:["#26A69A","#C6626B","#C1D4E1"], bg:"#03130f", keywords:["love","harmony","family","blessings"]},
-    {id:47, group:"heart", name:"Tenderness", affirmation:"Let the heart speak.", meaning:"Something new is rising from your depths. Listen with gentleness and without judgment.", colors:["#4FC3F7","#B44F22","#1C2754"], bg:"#051319", keywords:["sensitivity","creativity","messages","intuition"]},
-    {id:48, group:"heart", name:"Devotion", affirmation:"Follow the call of feeling.", meaning:"Follow what moves you at the deepest level. Your heart knows the direction.", colors:["#1976D2","#D39455","#BDBDE5"], bg:"#040d1a", keywords:["romance","pursuit","idealism","emotion"]},
-    {id:49, group:"heart", name:"Compassion", affirmation:"Compassion is a quiet power.", meaning:"Your empathy is your greatest strength. Hold space for others without losing yourself.", colors:["#5C6BC0","#B7AD70","#CEC6DC"], bg:"#080a19", keywords:["empathy","nurturing","intuition","depth"]},
-    {id:50, group:"heart", name:"Calm", affirmation:"Steady the waters.", meaning:"Feel deeply without being swept away. True emotional wisdom lives in the balance.", colors:["#00695C","#E44457","#B8D7EA"], bg:"#000e0c", keywords:["emotional mastery","calm","wisdom","balance"]},
-
-    // ── MIND (SWORDS) ─────────────────────────────────────────
-    {id:51, group:"mind", name:"Clarity", affirmation:"Clear thought cuts through.", meaning:"Truth breaks through confusion. Speak with precision and think with honesty.", colors:["#ECEFF1","#89654D","#2C2E44"], bg:"#191a1b", keywords:["clarity","truth","breakthrough","intellect"]},
-    {id:52, group:"mind", name:"Pause", affirmation:"Pause before the choice.", meaning:"A decision waits. There is no need to rush — sit with both options before choosing.", colors:["#B0BEC5","#89614D","#2C3044"], bg:"#121618", keywords:["decision","balance","choice","stillness"]},
-    {id:53, group:"mind", name:"Ache", affirmation:"Truth can ache before it heals.", meaning:"Grief is the price of love. Let the heartache move through without hardening you.", colors:["#7986CB","#8F8348","#342A46"], bg:"#0c0e1a", keywords:["heartbreak","grief","pain","healing"]},
-    {id:54, group:"mind", name:"Rest", affirmation:"Rest restores the mind.", meaning:"Your mind needs space. Step back from the noise and let stillness restore you fully.", colors:["#CFD8DC","#89604D","#2C3144"], bg:"#161a1b", keywords:["rest","recovery","contemplation","renewal"]},
-    {id:55, group:"mind", name:"Conflict", affirmation:"Win less, understand more.", meaning:"Winning at all costs leaves everyone poorer. What lesson is this situation offering?", colors:["#607D8B","#B28976","#C7CBDB"], bg:"#090e10", keywords:["conflict","learning","perspective","defeat"]},
-    {id:56, group:"mind", name:"Passage", affirmation:"Cross toward calmer air.", meaning:"Moving through difficulty leads to smoother shores ahead. The journey is healing you.", colors:["#90A4AE","#89614D","#2C3044"], bg:"#0e1214", keywords:["transition","healing","movement","peace"]},
-    {id:57, group:"mind", name:"Strategy", affirmation:"Strategy walks in shadow.", meaning:"Use your intelligence wisely. Not every plan needs to be announced or explained.", colors:["#3949AB","#BCB16C","#CEC4DE"], bg:"#060819", keywords:["strategy","planning","cunning","discernment"]},
-    {id:58, group:"mind", name:"Unbinding", affirmation:"The mind can unbind itself.", meaning:"The restriction you feel is largely a story. Question what is actually keeping you stuck.", colors:["#9FA8DA","#8F8447","#342A46"], bg:"#0f1119", keywords:["restriction","overthinking","release","freedom"]},
-    {id:59, group:"mind", name:"Fear", affirmation:"Name the fear, loosen its grip.", meaning:"The anxiety feels larger in the dark. Name it, sit with it, and watch it loosen its grip.", colors:["#283593","#C2B766","#CEC3E0"], bg:"#040619", keywords:["anxiety","fear","worry","night"]},
-    {id:60, group:"mind", name:"Ending", affirmation:"An ending clears the field.", meaning:"Something has come to its absolute end. This painful clarity opens a new dawn.", colors:["#455A64","#B28976","#C7CBDB"], bg:"#070b0d", keywords:["endings","pain","clarity","new beginning"]},
-    {id:61, group:"mind", name:"Inquiry", affirmation:"Question sharply, learn deeply.", meaning:"Ask the hard questions with genuine curiosity. Honest inquiry is the door to understanding.", colors:["#81D4FA","#B55021","#1C2655"], bg:"#0b1419", keywords:["curiosity","communication","learning","questioning"]},
-    {id:62, group:"mind", name:"Precision", affirmation:"Move with precision.", meaning:"Act decisively. When clarity arrives in full, move without hesitation or delay.", colors:["#42A5F5","#DC8C4C","#1C1F54"], bg:"#060f19", keywords:["decisiveness","speed","ambition","boldness"]},
-    {id:63, group:"mind", name:"Discernment", affirmation:"Discernment protects peace.", meaning:"See clearly, speak truthfully, and cut through what no longer serves your highest good.", colors:["#5E35B1","#A3BF69","#DAC3DF"], bg:"#0b0419", keywords:["clarity","discernment","truth","boundaries"]},
-    {id:64, group:"mind", name:"Reason", affirmation:"Reason with integrity.", meaning:"Lead with a calm and ethical mind. Your clarity is a genuine gift to those around you.", colors:["#1A237E","#C9BF5F","#CEC0E2"], bg:"#030419", keywords:["wisdom","authority","ethics","integrity"]},
-
-    // ── FOUNDATION (PENTACLES) ────────────────────────────────
-    {id:65, group:"foundation", name:"Seed", affirmation:"Plant what you want to grow.", meaning:"A real opportunity is here for you. Invest in it with care and it will flourish.", colors:["#43A047","#B573B2","#C7DBD2"], bg:"#061007", keywords:["opportunity","abundance","beginnings","prosperity"]},
-    {id:66, group:"foundation", name:"Rhythm", affirmation:"Balance is a living practice.", meaning:"Keep all the important things in motion at once. Life is a practice of balance.", colors:["#7CB342","#936FB9","#C6DDC5"], bg:"#0e1a06", keywords:["balance","adaptability","priorities","flexibility"]},
-    {id:67, group:"foundation", name:"Craft", affirmation:"Build with care and skill.", meaning:"Skilled collaboration creates something truly lasting. Take genuine pride in the work.", colors:["#689F38","#976DBA","#C5DDC6"], bg:"#0b1306", keywords:["teamwork","skill","craftsmanship","mastery"]},
-    {id:68, group:"foundation", name:"Holding", affirmation:"Hold gently, not too hard.", meaning:"Security comes from within, not from clinging to what you fear losing.", colors:["#827717","#5C67CC","#D5E3BF"], bg:"#100f03", keywords:["security","control","attachment","generosity"]},
-    {id:69, group:"foundation", name:"Scarcity", affirmation:"Support exists, even now.", meaning:"Help is closer than it seems right now. Allow yourself to receive what is being offered.", colors:["#8D6E63","#76A2B2","#DBD6C7"], bg:"#110d0b", keywords:["hardship","support","community","hope"]},
-    {id:70, group:"foundation", name:"Exchange", affirmation:"Give and receive in balance.", meaning:"True generosity flows in both directions. Give freely and receive with gratitude.", colors:["#66BB6A","#B375B0","#C7DBD2"], bg:"#0a170b", keywords:["generosity","sharing","balance","gratitude"]},
-    {id:71, group:"foundation", name:"Patience", affirmation:"Patience ripens the harvest.", meaning:"You have planted and tended well. Now wait. The harvest comes in its own perfect time.", colors:["#9CCC65","#916CBC","#2A4829"], bg:"#111800", keywords:["patience","growth","assessment","investment"]},
-    {id:72, group:"foundation", name:"Practice", affirmation:"Devotion becomes mastery.", meaning:"Devotion shown through daily effort is the path to real mastery. Show up and trust.", colors:["#2E7D32","#B96FB5","#C5DDD2"], bg:"#03100a", keywords:["dedication","focus","craftsmanship","discipline"]},
-    {id:73, group:"foundation", name:"Abundance", affirmation:"Let abundance feel natural.", meaning:"You have built something beautiful. Allow yourself to enjoy and inhabit what you've created.", colors:["#388E3C","#B771B4","#C6DCD2"], bg:"#051207", keywords:["abundance","independence","beauty","self-sufficiency"]},
-    {id:74, group:"foundation", name:"Legacy", affirmation:"Legacy lives in the roots.", meaning:"What you build now echoes far into the future. Create something worthy of passing on.", colors:["#1B5E20","#C067BA","#C3DFD3"], bg:"#030c04", keywords:["legacy","family","prosperity","tradition"]},
-    {id:75, group:"foundation", name:"Learning", affirmation:"Learn the language of the earth.", meaning:"Approach the physical world with full curiosity. There is much still left to learn here.", colors:["#8BC34A","#916CBC","#C5DEC4"], bg:"#0f1706", keywords:["learning","practicality","potential","study"]},
-    {id:76, group:"foundation", name:"Commitment", affirmation:"Commit to the long road.", meaning:"Slow and methodical will carry you further than any rush. Stay committed to the long road.", colors:["#33691E","#A867C1","#C3DFC9"], bg:"#060e04", keywords:["patience","reliability","determination","progress"]},
-    {id:77, group:"foundation", name:"Nurture", affirmation:"Nourish what nourishes you.", meaning:"Your care sustains everything and everyone around you. Remember also to nourish yourself.", colors:["#A5D6A7","#894D87","#2C4439"], bg:"#121917", keywords:["nurturing","abundance","home","self-care"]},
-    {id:78, group:"foundation", name:"Stability", affirmation:"Steward the realm well.", meaning:"You have built something lasting and true. Lead now with generosity, wisdom, and abundance.", colors:["#558B2F","#9B6CBC","#C5DEC7"], bg:"#0a1106", keywords:["prosperity","leadership","abundance","legacy"]}
+    {id:1,name:"New Beginnings",affirmation:"I embrace fresh starts with open arms",meaning:"A chapter is closing, making way for something new. Trust the process of change.",colors:["#A8E8D0","#70D8B8","#50C8A0","#40B890"],bg:"#F0F5F0",keywords:["change","fresh start","letting go","opening"]},
+    {id:2,name:"Inner Strength",affirmation:"Everything I need is already within me",meaning:"You have more capability than you realize. Look inward for answers.",colors:["#FFD080","#F0A050","#E08030","#D06020"],bg:"#F5F0E8",keywords:["confidence","self-reliance","capability","inner resources"]},
+    {id:3,name:"Intuition",affirmation:"I trust my inner knowing",meaning:"Your gut feeling has information your conscious mind may miss. Listen to it.",colors:["#C0C0F0","#9090E0","#7070D0","#5050C0"],bg:"#E8E8F5",keywords:["gut feeling","inner voice","unconscious knowing","listening"]},
+    {id:4,name:"Abundance",affirmation:"I notice and appreciate what I have",meaning:"Focusing on what you have creates more satisfaction than focusing on what you lack.",colors:["#F0C0D0","#E090B0","#D06090","#C04080"],bg:"#F0E8F0",keywords:["gratitude","plenty","appreciation","receiving"]},
+    {id:5,name:"Boundaries",affirmation:"I honor my needs clearly",meaning:"Saying no to some things creates space for better things. Self-protection is healthy.",colors:["#E8A090","#D87060","#C85040","#B83020"],bg:"#F5F0F0",keywords:["limits","self-care","protection","clarity"]},
+    {id:6,name:"Connection",affirmation:"I nurture meaningful relationships",meaning:"Quality relationships require attention. Who deserves more of your energy?",colors:["#F8C0C0","#F090A0","#E86080","#E03060"],bg:"#F8F0F0",keywords:["relationships","belonging","community","authenticity"]},
+    {id:7,name:"Momentum",affirmation:"I move forward with purpose",meaning:"You've built up energy. Now channel it intentionally rather than dispersing it.",colors:["#90C8E8","#60A8D8","#3088C8","#1068B8"],bg:"#E8F0F5",keywords:["progress","action","direction","willpower"]},
+    {id:8,name:"Patience",affirmation:"I trust the timing of my life",meaning:"Some things cannot be rushed. Growth often happens beneath the surface.",colors:["#F8D8A0","#F0B870","#E89840","#E07810"],bg:"#F5F2E8",keywords:["waiting","trust","slow growth","timing"]},
+    {id:9,name:"Reflection",affirmation:"In stillness I find clarity",meaning:"Stepping back from activity helps you see patterns you miss when busy.",colors:["#B8B8C8","#9898B0","#787898","#585880"],bg:"#F0F0F2",keywords:["solitude","thinking","perspective","withdrawal"]},
+    {id:10,name:"Trust",affirmation:"I release what I cannot control",meaning:"Not everything can be figured out in advance. Sometimes you have to step forward anyway.",colors:["#D8A8F0","#C078E0","#A848D0","#9018C0"],bg:"#F2E8F5",keywords:["faith","letting go","uncertainty","surrender"]},
+    {id:11,name:"Authenticity",affirmation:"I show up as I truly am",meaning:"Pretending is exhausting. What would change if you dropped the mask?",colors:["#80D8C8","#50C8B0","#30B898","#10A880"],bg:"#E8F2F0",keywords:["honesty","truth","integrity","real self"]},
+    {id:12,name:"Release",affirmation:"I let go of what no longer serves me",meaning:"Holding on takes energy. What are you ready to put down?",colors:["#A8A8D8","#8080C0","#6060A8","#404090"],bg:"#E8E8F2",keywords:["letting go","surrender","freedom","unburdening"]},
+    {id:13,name:"Change",affirmation:"I welcome transformation",meaning:"Something is ending so something new can begin. Change is rarely comfortable but often necessary.",colors:["#C8B8B8","#A89090","#886868","#684848"],bg:"#F2F0F0",keywords:["transformation","endings","evolution","death and rebirth"]},
+    {id:14,name:"Balance",affirmation:"I find equilibrium in my life",meaning:"Where have you swung too far in one direction? The middle path often holds wisdom.",colors:["#A8E0C0","#78D0A0","#48C080","#28B060"],bg:"#F0F5F2",keywords:["harmony","moderation","center","equilibrium"]},
+    {id:15,name:"Freedom",affirmation:"I break free from limitations",meaning:"Some constraints are external, others are self-imposed. Which can you change?",colors:["#D8A8A8","#C87878","#B84848","#A82828"],bg:"#F5F0F0",keywords:["liberation","choice","breaking patterns","independence"]},
+    {id:16,name:"Disruption",affirmation:"From upheaval comes growth",meaning:"When things fall apart, they sometimes fall into better arrangements. Trust the process.",colors:["#E8C8A8","#D8A878","#C88848","#B86828"],bg:"#F5F2F0",keywords:["breakdown","breakthrough","revelation","sudden change"]},
+    {id:17,name:"Hope",affirmation:"I trust that better days are coming",meaning:"After difficulty comes relief. Hold onto the possibility of improvement.",colors:["#A0D8F0","#70C8E8","#40B8E0","#20A8D8"],bg:"#E8F0F5",keywords:["optimism","future","possibility","renewal"]},
+    {id:18,name:"Mystery",affirmation:"I'm comfortable not knowing everything",meaning:"Some things remain uncertain. Sitting with ambiguity is a skill worth developing.",colors:["#C8B8E8","#A898D8","#8878C8","#6858B8"],bg:"#F0E8F5",keywords:["unknown","uncertainty","exploration","curiosity"]},
+    {id:19,name:"Joy",affirmation:"I give myself permission to be happy",meaning:"Happiness isn't frivolous. Your wellbeing matters and affects others positively.",colors:["#FFE878","#FFD040","#FFC010","#F0A000"],bg:"#F8F5E8",keywords:["happiness","celebration","light","play"]},
+    {id:20,name:"Completion",affirmation:"I honor how far I've come",meaning:"Before rushing to the next thing, pause to recognize what you've accomplished.",colors:["#90E8D0","#60D8B8","#30C8A0","#10B888"],bg:"#E8F5F0",keywords:["fulfillment","achievement","integration","wholeness"]}
 ];
 
 // ========== QUESTIONNAIRE ==========
@@ -4423,7 +4168,7 @@ const questions = [
 ];
 
 // ========== STATE ==========
-let readingType = 'single';
+let readingType = 'three';
 let selectedCards = [];
 let readingCount = parseInt(localStorage.getItem('aura_readings') || '0');
 let hasGuide = localStorage.getItem('aura_guide') ? true : false;
@@ -4442,15 +4187,6 @@ let atmosphereSettleTimer = null;
 const rand = arr => arr[Math.floor(Math.random()*arr.length)];
 const toast = msg => { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); };
 const darken = (hex,amt=10) => { const n=parseInt(hex.replace('#',''),16); return '#'+(1<<24|Math.max(0,(n>>16)-amt)<<16|Math.max(0,((n>>8)&0xFF)-amt)<<8|Math.max(0,(n&0xFF)-amt)).toString(16).slice(1); };
-
-// chromoDeep — produce a deep, dark chromotherapy background from a card's saturated colour.
-// factor 0.14 keeps the hue clearly visible but very dark (like a rich ink).
-const chromoDeep = (hex, factor = 0.14) => {
-    if (!hex || !hex.startsWith('#')) return '#0a0812';
-    const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
-    const dr = Math.round(r * factor), dg = Math.round(g * factor), db = Math.round(b * factor);
-    return `#${dr.toString(16).padStart(2,'0')}${dg.toString(16).padStart(2,'0')}${db.toString(16).padStart(2,'0')}`;
-};
 const getGuideAnswers = () => (guideConfig?.answers || answers || {});
 const getUserBirthdate = () => String(getGuideAnswers().birthdate || '').trim();
 let horoscopeMoreInfoOpen = false;
@@ -4747,15 +4483,6 @@ function renderWelcomeHoroscope() {
     card.classList.toggle('collapsed', collapsed);
 }
 
-function toggleDailyDropdown() {
-    const body = document.getElementById('dailyDropdownBody');
-    const arrow = document.getElementById('dailyDropdownArrow');
-    if (!body) return;
-    const isOpen = body.classList.toggle('open');
-    if (arrow) arrow.classList.toggle('open', isOpen);
-    if (isOpen) renderWelcomeDaily();
-}
-
 function toggleWelcomeHoroscopeCollapse() {
     const card = document.getElementById('welcomeAstroCard');
     if (!card) return;
@@ -4845,7 +4572,7 @@ function refreshScreenLayout(screenId = '') {
         prepareTypedWordmark(document.getElementById('shuffleLogoMain'), true);
         setReadingType(readingType);
     }
-    if (screenId === 'chatScreen') {
+    if (screenId === 'welcomeScreen' || screenId === 'dailyScreen') {
         renderWelcomeDaily();
     }
 }
@@ -4853,13 +4580,11 @@ function refreshScreenLayout(screenId = '') {
 const goTo = id => {
     const target = document.getElementById(id);
     if (!target) return;
-    const app = document.querySelector('.app');
     if (id !== 'settingsHubScreen') {
         window.__lastNonSettingsScreen = id;
     }
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     target.classList.add('active');
-    if (app) app.dataset.screen = id;
     applyMotionProfile(id);
     updateGlobalTabbar(id);
     if (id === 'shuffleScreen') {
@@ -4871,35 +4596,6 @@ const goTo = id => {
     }
     refreshScreenLayout(id);
 };
-function goToDrawScreen() {
-    window.__lastPrimaryAction = 'draw';
-    goTo('shuffleScreen');
-}
-function goToReadingScreen() {
-    window.__lastPrimaryAction = 'reading';
-    if (selectedCards.length > 0) {
-        showReading();
-        return;
-    }
-    goToDrawScreen();
-}
-function bindPrimaryNavigation() {
-    const bindClick = (id, handler) => {
-        const el = document.getElementById(id);
-        if (!el || el.dataset.boundPrimaryNav === '1') return;
-        el.dataset.boundPrimaryNav = '1';
-        el.addEventListener('click', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            handler();
-        }, true);
-    };
-
-    bindClick('welcomeDrawBtn', () => goToDrawScreen());
-    bindClick('welcomeChatBtn', () => openAuraChat());
-    bindClick('welcomeDailyBtn', () => goTo('dailyScreen'));
-    bindClick('welcomeSettingsBtn', () => goToSettingsHub());
-}
 function updateGlobalTabbar(activeScreenId) {
     const tabbar = document.getElementById('globalTabbar');
     if (!tabbar) return;
@@ -4911,20 +4607,11 @@ function goToSettingsHub() {
         window.__lastNonSettingsScreen = current;
     }
     goTo('settingsHubScreen');
-    const safeCalls = [
-        ['hydrateAudioPrefs', hydrateAudioPrefs],
-        ['updateAudioToggleLabels', updateAudioToggleLabels],
-        ['applyBlueLightState', applyBlueLightState],
-        ['initAccountSettings', initAccountSettings],
-        ['initNotifications', initNotifications],
-    ];
-    safeCalls.forEach(([name, fn]) => {
-        try {
-            if (typeof fn === 'function') fn();
-        } catch (err) {
-            console.warn(`goToSettingsHub:${name} failed`, err);
-        }
-    });
+    hydrateAudioPrefs();
+    updateAudioToggleLabels();
+    applyBlueLightState();
+    initAccountSettings();
+    initNotifications();
 }
 function toggleSettingsHub() {
     const current = document.querySelector('.screen.active')?.id || '';
@@ -6010,8 +5697,11 @@ ${buildConversationFlavor(userMessage)}
 }
 
 // ========== READING FUNCTIONS ==========
-function setReadingType(type, fromUserClick = false) {
-    // Both single and 3-card are free. No paywall here.
+function setReadingType(type) {
+    if (type === 'three' && !canUseFeature('three_card')) {
+        openPaywall('3-card readings', 'premium');
+        return;
+    }
     readingType = type;
     document.getElementById('toggleSingle').classList.toggle('active', type==='single');
     document.getElementById('toggleThree').classList.toggle('active', type==='three');
@@ -6103,13 +5793,9 @@ function showReading() {
     const spreadEl = document.getElementById('cardsSpread');
     spreadEl.className = 'cards-spread' + (isSingle ? ' single-card' : '');
     spreadEl.innerHTML = selectedCards.map((c,i) => `
-        <div class="spread-card card-reveal" onclick="highlightCard(${i})" style="background:linear-gradient(160deg,${chromoDeep(c.colors[0],0.18)},${chromoDeep(c.colors[2]||c.colors[1],0.10)});animation-delay:${i*0.15}s">
+        <div class="spread-card card-reveal" onclick="highlightCard(${i})" style="background:linear-gradient(180deg,${c.bg},${darken(c.bg,15)});animation-delay:${i*0.15}s">
             <p class="spread-card-title">${c.name}</p>
-            <div class="spread-card-orb" style="background:
-                radial-gradient(circle at 50% 48%, ${c.colors[0]} 0%, ${c.colors[0]} 16%, ${c.colors[0]}aa 20%, transparent 22%),
-                radial-gradient(circle at 50% 48%, transparent 18%, ${c.colors[1]}ee 34%, ${c.colors[1]} 45%, ${c.colors[1]}88 52%, transparent 55%),
-                radial-gradient(circle at 46% 54%, transparent 50%, ${c.colors[2]||c.colors[1]}dd 72%, ${c.colors[2]||c.colors[1]} 80%, ${c.colors[2]||c.colors[1]}88 85%, transparent 88%)">
-            </div>
+            <div class="spread-card-orb" style="background:radial-gradient(circle,${c.colors[0]} 0%,transparent 30%),radial-gradient(circle,${c.colors[1]} 25%,transparent 50%),radial-gradient(circle,${c.colors[2]} 40%,transparent 65%),radial-gradient(circle,${c.colors[3]} 55%,transparent 80%)"></div>
             <p class="spread-card-position">${positions[i]}</p>
         </div>`).join('');
     
@@ -6136,8 +5822,8 @@ function showReading() {
     // Chat or personalize prompt
     renderChatSection();
     
-    // Initialize notifications (native only)
-    try { initNotifications(); } catch(e) { /* non-native environment */ }
+    // Initialize notifications
+    initNotifications();
     
 }
 
@@ -6246,17 +5932,9 @@ async function generateInitialReflection() {
 
     const staticParagraphs = extractParagraphsFromHtml(buildStaticHtml());
 
-    // Free tier: render local static reflection and add a soft upgrade reminder.
+    // If dynamic intro is not enabled, render the local intro once and stop.
     if (!canUseFeature('dynamic_intro')) {
         await renderGuideMessageAnimated(host, staticParagraphs);
-        // Soft reminder — not a paywall, just a gentle note
-        const existing = host.parentElement?.querySelector('.local-mode-notice');
-        if (!existing && host.parentElement) {
-            const noteEl = document.createElement('div');
-            noteEl.className = 'local-mode-notice fade-in';
-            noteEl.innerHTML = `✦ Local reading &nbsp;·&nbsp; <span class="local-mode-cta" onclick="startOnboarding()">Personalize for AI-powered interpretations</span>`;
-            host.parentElement.appendChild(noteEl);
-        }
         return;
     }
 
@@ -6348,7 +6026,10 @@ function renderChatSection() {
 }
 
 async function openAuraChat() {
-    // Chat is free for everyone — local AI always available as fallback.
+    if (!canUseFeature('chat')) {
+        openPaywall('AI chat', 'premium');
+        return;
+    }
     goTo('chatScreen');
     removeLegacyChatArtifacts();
     autoGrowChatInput(document.getElementById('openChatInput'));
@@ -6360,7 +6041,10 @@ async function openAuraChat() {
     if (chatEl && !chatEl.dataset.seeded) {
         const name = getUserName();
         const greeting = name ? `Hey ${name}.` : 'Hey.';
-        const chatIntro = `${greeting} We can talk about anything — your cards, your day, what's weighing on you. What's on your mind?`;
+        const isLocalMode = auraTier === 'free';
+        const chatIntro = isLocalMode
+            ? `${greeting} I'm here to reflect with you. For deeper, personalized conversations, try Premium.`
+            : `${greeting} We can chat about anything you want. What's on your mind?`;
         chatEl.dataset.seeded = '1';
         await renderAuraReplyAnimated(chatEl, chatIntro, {
             attachActions: true,
@@ -6386,7 +6070,7 @@ function removeLegacyChatArtifacts() {
 }
 
 function openAuraGuideSite() {
-    window.open('https://aura-me.square.site/', '_blank', 'noopener,noreferrer');
+    window.open('https://aura-app-8va5.onrender.com', '_blank', 'noopener,noreferrer');
 }
 
 function resolveChatUi(mode) {
@@ -6418,7 +6102,10 @@ function resolveChatUi(mode) {
 
 async function sendAuraMessage(mode = 'reading') {
     if (isTyping) return;
-    // Chat is always open — no paywall. Local AI is the free fallback.
+    if (!canUseFeature('chat')) {
+        openPaywall('AI chat', 'premium');
+        return;
+    }
 
     const ui = resolveChatUi(mode);
     if (!ui.input || !ui.chatEl) return;
@@ -6439,18 +6126,13 @@ async function sendAuraMessage(mode = 'reading') {
 
     // Determine if we use local or cloud AI
     const useCloud = auraTier !== 'free' && canSendCloudMessage(500);
-    const useLocalFallback = !useCloud;
+    const useLocalFallback = !useCloud; // Free tier OR exhausted tokens → always use local
     const tokensExhausted = auraTier !== 'free' && !canSendCloudMessage(500);
-    const isFreeLocalMode = auraTier === 'free';
 
-    // Soft inline reminder (shown once per chat session, never blocks)
-    if (useLocalFallback && !ui._localHintShown) {
-        ui._localHintShown = true;
-        const hintMsg = tokensExhausted
-            ? `✦ Local mode — monthly AI tokens used up. <span class="local-mode-cta" onclick="openTokenTopUp()">Buy more tokens</span> to restore cloud AI.`
-            : `✦ Local reflections · <span class="local-mode-cta" onclick="startOnboarding()">Personalize your guide</span> for AI-powered responses.`;
-        ui.chatEl.innerHTML += `<div class="local-mode-hint fade-in"><p>${hintMsg}</p></div>`;
-        smoothFollowChat(ui.chatEl, true);
+    // Show token top-up hint for exhausted premium users, but DON'T block — let them chat with local AI
+    if (tokensExhausted && !ui._tokenHintShown) {
+        ui._tokenHintShown = true;
+        toast('Cloud tokens used up — using local mode. Buy more tokens for AI-powered responses.');
     }
 
     ui.chatEl.innerHTML += `<div class="chat-message guide typing-indicator"><p>${useCloud ? 'Aura Guide is thinking...' : 'Reflecting...'}</p></div>`;
@@ -6554,99 +6236,6 @@ async function sendChat() {
 let notificationsEnabled = localStorage.getItem('aura_notifications') === 'true';
 let horoscopeNotifEnabled = localStorage.getItem('aura_horoscope_notif') === 'true';
 let notificationTime = localStorage.getItem('aura_notification_time') || '08:00';
-const AURA_AFFIRMATION_NOTIFICATION_ID = 1001;
-const AURA_HOROSCOPE_NOTIFICATION_ID = 1002;
-
-function getNativeLocalNotifications() {
-    return (typeof Capacitor !== 'undefined' && Capacitor?.Plugins?.LocalNotifications) || null;
-}
-
-function isNativeNotificationRuntime() {
-    return !!getNativeLocalNotifications();
-}
-
-function buildNextNotificationDate() {
-    const now = new Date();
-    const [hours, mins] = notificationTime.split(':').map(Number);
-    const target = new Date();
-    target.setHours(hours, mins, 0, 0);
-    if (target <= now) target.setDate(target.getDate() + 1);
-    return target;
-}
-
-async function ensureNotificationPermission() {
-    const LocalNotifications = getNativeLocalNotifications();
-    if (LocalNotifications) {
-        let permission = await LocalNotifications.checkPermissions();
-        if (permission.display !== 'granted') {
-            permission = await LocalNotifications.requestPermissions();
-        }
-        return permission.display === 'granted';
-    }
-
-    if (!('Notification' in window)) return false;
-    const permission = await Notification.requestPermission();
-    return permission === 'granted';
-}
-
-async function clearScheduledNotifications() {
-    const LocalNotifications = getNativeLocalNotifications();
-    if (LocalNotifications) {
-        try {
-            const pending = await LocalNotifications.getPending();
-            if (pending?.notifications?.length) {
-                await LocalNotifications.cancel({ notifications: pending.notifications.map(({ id }) => ({ id })) });
-            }
-        } catch (_) {
-            // best effort only
-        }
-        return;
-    }
-
-    if (window.notificationTimer) {
-        clearTimeout(window.notificationTimer);
-        window.notificationTimer = null;
-    }
-}
-
-async function scheduleNativeNotifications() {
-    const LocalNotifications = getNativeLocalNotifications();
-    if (!LocalNotifications) return false;
-
-    await clearScheduledNotifications();
-    const target = buildNextNotificationDate();
-    const notifications = [];
-
-    if (notificationsEnabled) {
-        notifications.push({
-            id: AURA_AFFIRMATION_NOTIFICATION_ID,
-            title: '✨ Aura Daily Wisdom',
-            body: 'Your daily affirmation is ready. Open AURA for today\'s guidance.',
-            schedule: {
-                at: target,
-                repeats: true,
-                every: 'day'
-            }
-        });
-    }
-
-    if (horoscopeNotifEnabled) {
-        notifications.push({
-            id: AURA_HOROSCOPE_NOTIFICATION_ID,
-            title: '✨ Aura Daily Horoscope',
-            body: 'Your horoscope is ready. Open AURA for today\'s cosmic guidance.',
-            schedule: {
-                at: target,
-                repeats: true,
-                every: 'day'
-            }
-        });
-    }
-
-    if (!notifications.length) return true;
-    await LocalNotifications.schedule({ notifications });
-    return true;
-}
 
 function getNotificationElements(source) {
     const useHub = source === 'hub';
@@ -6763,22 +6352,18 @@ function initNotifications() {
         if (timeSelect) timeSelect.value = notificationTime;
     });
 
-    // Sync persisted toggle with current permission state.
-    if (!isNativeNotificationRuntime() && notificationsEnabled && 'Notification' in window && Notification.permission === 'denied') {
+    // Sync persisted toggle with current browser permission state.
+    if (notificationsEnabled && 'Notification' in window && Notification.permission === 'denied') {
         notificationsEnabled = false;
         localStorage.setItem('aura_notifications', 'false');
-        [readingEls.toggle, hubEls.toggle].forEach((toggleEl) => toggleEl?.classList.remove('active'));
+        if (toggle) toggle.classList.remove('active');
     }
 
     updateNotificationStatus();
 
     // Re-schedule after reload when any notification is enabled.
-    if (notificationsEnabled || horoscopeNotifEnabled) {
-        if (isNativeNotificationRuntime()) {
-            scheduleNativeNotifications().catch(() => {});
-        } else if ('Notification' in window && Notification.permission === 'granted') {
-            scheduleNotification();
-        }
+    if ((notificationsEnabled || horoscopeNotifEnabled) && 'Notification' in window && Notification.permission === 'granted') {
+        scheduleNotification();
     }
 }
 
@@ -6847,8 +6432,6 @@ function updateSettingsTier() {
     const badge = document.getElementById('settingsTierStatus');
     const label = document.getElementById('settingsTierLabel');
     const usagePanel = document.getElementById('settingsUsagePanel');
-    const topupRow = document.getElementById('topupActionsRow');
-    if (topupRow) topupRow.style.display = auraTier !== 'free' ? 'flex' : 'none';
 
     // Tier badge
     if (badge) {
@@ -7270,45 +6853,50 @@ async function toggleNotifications() {
     const hubToggle = getNotificationElements('hub').toggle;
     
     if (!notificationsEnabled) {
-        const granted = await ensureNotificationPermission();
-        if (granted) {
+        // Request permission
+        if (!('Notification' in window)) {
+            toast('Notifications not supported');
+            return;
+        }
+        
+        const permission = await Notification.requestPermission();
+        
+        if (permission === 'granted') {
             notificationsEnabled = true;
             localStorage.setItem('aura_notifications', 'true');
             if (readingToggle) readingToggle.classList.add('active');
             if (hubToggle) hubToggle.classList.add('active');
             
-            if (isNativeNotificationRuntime()) {
-                await scheduleNativeNotifications();
-            } else {
-                scheduleNotification();
-            }
+            // Schedule notification
+            scheduleNotification();
             
-            await showTestNotification();
+            // Show a test notification
+            showTestNotification();
             
             toast('Daily affirmations enabled!');
         } else {
             toast('Please allow notifications to receive daily affirmations');
         }
     } else {
+        // Disable
         notificationsEnabled = false;
         localStorage.setItem('aura_notifications', 'false');
         if (readingToggle) readingToggle.classList.remove('active');
         if (hubToggle) hubToggle.classList.remove('active');
-        await clearScheduledNotifications();
-        if (horoscopeNotifEnabled) {
-            if (isNativeNotificationRuntime()) {
-                await scheduleNativeNotifications();
-            } else {
-                scheduleNotification();
-            }
+        
+        // Clear scheduled notification
+        if (window.notificationTimer) {
+            clearTimeout(window.notificationTimer);
+            window.notificationTimer = null;
         }
+        
         toast('Daily affirmations disabled');
     }
     
     updateNotificationStatus();
 }
 
-async function saveNotificationTime(source = 'reading') {
+function saveNotificationTime(source = 'reading') {
     const timeSelect = getNotificationElements(source).timeSelect;
     if (!timeSelect) return;
     notificationTime = timeSelect.value;
@@ -7316,32 +6904,39 @@ async function saveNotificationTime(source = 'reading') {
     const otherSelect = getNotificationElements(source === 'hub' ? 'reading' : 'hub').timeSelect;
     if (otherSelect) otherSelect.value = notificationTime;
     
-    if (notificationsEnabled || horoscopeNotifEnabled) {
-        if (isNativeNotificationRuntime()) {
-            await scheduleNativeNotifications();
-        } else {
-            scheduleNotification();
-        }
+    if (notificationsEnabled) {
+        scheduleNotification();
     }
     
     updateNotificationStatus();
 }
 
 function scheduleNotification() {
-    if (isNativeNotificationRuntime()) return;
     if (!notificationsEnabled && !horoscopeNotifEnabled) return;
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
 
+    // Clear existing timer
     if (window.notificationTimer) {
         clearTimeout(window.notificationTimer);
     }
     
+    // Calculate ms until next notification time
     const now = new Date();
-    const target = buildNextNotificationDate();
+    const [hours, mins] = notificationTime.split(':').map(Number);
+    const target = new Date();
+    target.setHours(hours, mins, 0, 0);
+    
+    // If time has passed today, schedule for tomorrow
+    if (target <= now) {
+        target.setDate(target.getDate() + 1);
+    }
+    
     const msUntilNotification = target - now;
     
+    // Schedule (note: this only works while tab is open - for PWA/native, we'd use service workers)
     window.notificationTimer = setTimeout(() => {
         sendDailyAffirmation();
+        // Reschedule for next day
         scheduleNotification();
     }, msUntilNotification);
     
@@ -7381,8 +6976,9 @@ function sendDailyAffirmation() {
 async function toggleHoroscopeNotif() {
     const toggle = document.getElementById('horoscopeNotifToggleHub');
     if (!horoscopeNotifEnabled) {
-        const granted = await ensureNotificationPermission();
-        if (granted) {
+        if (!('Notification' in window)) { toast('Notifications not supported'); return; }
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
             horoscopeNotifEnabled = true;
             localStorage.setItem('aura_horoscope_notif', 'true');
             if (toggle) toggle.classList.add('active');
@@ -7391,11 +6987,7 @@ async function toggleHoroscopeNotif() {
             } else {
                 toast('Horoscope notifications enabled');
             }
-            if (isNativeNotificationRuntime()) {
-                await scheduleNativeNotifications();
-            } else {
-                scheduleNotification();
-            }
+            scheduleNotification();
         } else {
             toast('Notifications blocked — check your device settings');
         }
@@ -7404,36 +6996,19 @@ async function toggleHoroscopeNotif() {
         localStorage.setItem('aura_horoscope_notif', 'false');
         if (toggle) toggle.classList.remove('active');
         toast('Horoscope notifications disabled');
-        await clearScheduledNotifications();
-        if (notificationsEnabled) {
-            if (isNativeNotificationRuntime()) {
-                await scheduleNativeNotifications();
-            } else {
-                scheduleNotification();
-            }
+        if (!notificationsEnabled) {
+            if (window.notificationTimer) clearTimeout(window.notificationTimer);
         }
     }
     updateNotificationStatus();
 }
 
-async function showTestNotification() {
+function showTestNotification() {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    if (!Array.isArray(auraDeck) || auraDeck.length === 0) return;
+
     const horoscope = buildDailyHoroscopeModel();
-    const card = Array.isArray(auraDeck) && auraDeck.length > 0 ? auraDeck[Math.floor(Math.random() * auraDeck.length)] : null;
-
-    const LocalNotifications = getNativeLocalNotifications();
-    if (LocalNotifications) {
-        await LocalNotifications.schedule({
-            notifications: [{
-                id: 1099,
-                title: '✨ Aura is set up!',
-                body: horoscope ? `Your horoscope reminders are ready.` : `Your daily wisdom reminders are ready.`,
-                schedule: { at: new Date(Date.now() + 1500) }
-            }]
-        });
-        return;
-    }
-
-    if (!('Notification' in window) || Notification.permission !== 'granted' || !card) return;
+    const card = auraDeck[Math.floor(Math.random() * auraDeck.length)];
 
     const notification = new Notification('✨ Aura is set up!', {
         body: horoscope ? `You'll receive daily horoscope reminders like: "${horoscope.copy}"` : `You'll receive daily wisdom like: "${card.affirmation}"`,
@@ -7566,26 +7141,30 @@ function hexToRgba(hex, alpha = 0.16) {
 
 function applyReadingAtmosphere() {
     if (!selectedCards.length) return;
-    // One 3-layer orb blending each card's primary colour
-    const card1 = selectedCards[0];
-    const card2 = selectedCards[1] || card1;
-    const card3 = selectedCards[2] || card2;
-    const layer1 = card1.colors?.[0] || '#8E24AA'; // inner — card 1 primary
-    const layer2 = card2.colors?.[0] || '#26A69A'; // mid   — card 2 primary
-    const layer3 = card3.colors?.[0] || '#1976D2'; // outer — card 3 primary
-    const orbEl = document.querySelector('.reading-aura-ball');
-    if (orbEl) {
-        orbEl.style.background = [
-            `radial-gradient(circle at 50% 48%, ${layer1} 0%, ${layer1} 16%, ${layer1}aa 20%, transparent 22%)`,
-            `radial-gradient(circle at 50% 48%, transparent 18%, ${layer2}ee 34%, ${layer2} 45%, ${layer2}88 52%, transparent 55%)`,
-            `radial-gradient(circle at 46% 54%, transparent 50%, ${layer3}dd 72%, ${layer3} 80%, ${layer3}88 85%, transparent 88%)`
-        ].join(',');
-    }
+    const fallbackPalette = ['#74d9c2', '#7aa9ff', '#c790ff', '#ffb18f'];
+    const cardPalette = selectedCards
+        .flatMap((c) => Array.isArray(c.colors) ? c.colors : [])
+        .filter(Boolean);
+    const uniquePalette = [...new Set(cardPalette.map((hex) => String(hex).toLowerCase()))];
+    const p1 = uniquePalette[0] || fallbackPalette[0];
+    const p2 = uniquePalette[1] || fallbackPalette[1];
+    const p3 = uniquePalette[2] || fallbackPalette[2];
+    const p4 = uniquePalette[3] || fallbackPalette[3];
     const anchor = selectedCards.length > 1 ? selectedCards[1] : selectedCards[0];
-    const c1 = anchor.colors?.[1] || layer2;
-    const c2 = anchor.colors?.[2] || layer3;
+    const c1 = anchor.colors?.[1] || p1;
+    const c2 = anchor.colors?.[2] || p2;
+    // Bloom phase: stronger card-linked atmosphere for first moments after draw.
     document.documentElement.style.setProperty('--dynamic-glow-a', hexToRgba(c1, 0.13));
     document.documentElement.style.setProperty('--dynamic-glow-b', hexToRgba(c2, 0.10));
+    document.documentElement.style.setProperty('--reading-orb-a', hexToRgba(p1, 0.28));
+    document.documentElement.style.setProperty('--reading-orb-b', hexToRgba(p2, 0.22));
+    document.documentElement.style.setProperty('--reading-orb-c', hexToRgba(p3, 0.20));
+    document.documentElement.style.setProperty('--reading-orb-d', hexToRgba(p4, 0.19));
+    document.documentElement.style.setProperty('--reading-ring-a', hexToRgba(p2, 0.42));
+    document.documentElement.style.setProperty('--reading-ring-a-glow', hexToRgba(p3, 0.20));
+    document.documentElement.style.setProperty('--reading-ring-b', hexToRgba(p4, 0.38));
+    document.documentElement.style.setProperty('--reading-ring-b-glow', hexToRgba(p1, 0.16));
+    document.documentElement.style.setProperty('--reading-orb-rainbow-alpha', '0.14');
 
     if (atmosphereSettleTimer) clearTimeout(atmosphereSettleTimer);
     atmosphereSettleTimer = setTimeout(() => {
@@ -7780,278 +7359,13 @@ function continueToReading() {
 }
 
 // ========== SHARE ==========
-function buildReadingShareImage(cards, dateStr) {
-    const W = 1080, H = 1440;
-    const canvas = document.createElement('canvas');
-    canvas.width = W; canvas.height = H;
-    const ctx = canvas.getContext('2d');
-
-    // ── Orb engine — ported directly from Aura Orb Generator v4 ──
-    const hexRgba = (hex, a) => {
-        if (!hex || !hex.startsWith('#')) return `rgba(180,130,255,${a})`;
-        return `rgba(${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)},${a})`;
-    };
-    const drawOrb = (cx, cy, maxR, layers, soft = 0.55) => {
-        [...layers].sort((a, b) => b.size - a.size).forEach(l => {
-            const r = maxR * l.size;
-            if (r < 1) return;
-            for (let p = 0; p < 3; p++) {
-                const pr = r * (1 + p * 0.18);
-                const a  = p === 0 ? 0.92 : p === 1 ? 0.45 : 0.2;
-                const fs = Math.max(0.01, 1 - soft);
-                const g  = ctx.createRadialGradient(cx, cy, 0, cx, cy, pr);
-                g.addColorStop(0,                          hexRgba(l.color, a));
-                g.addColorStop(fs * 0.4,                   hexRgba(l.color, a * 0.9));
-                g.addColorStop(fs,                         hexRgba(l.color, a * 0.45));
-                g.addColorStop(Math.min(0.99, fs + (1 - fs) * 0.55), hexRgba(l.color, a * 0.1));
-                g.addColorStop(1,                          hexRgba(l.color, 0));
-                ctx.fillStyle = g;
-                ctx.fillRect(cx - pr, cy - pr, pr * 2, pr * 2);
-            }
-        });
-    };
-
-    // Build orb layers from a card's color palette (core → outer rings)
-    const cardToOrbLayers = (card) => {
-        const cols = card.colors || ['#c0a0f0', '#8060d0', '#604090'];
-        return [
-            { color: cols[0], size: 0.22 },  // bright core
-            { color: cols[1], size: 0.55 },  // mid ring
-            { color: cols[2] || cols[1], size: 0.88 }, // outer glow
-        ];
-    };
-
-    // ── Background ──
-    const bgGrad = ctx.createLinearGradient(0, 0, W, H);
-    bgGrad.addColorStop(0,   '#0c0a14');
-    bgGrad.addColorStop(0.5, '#0f0c1a');
-    bgGrad.addColorStop(1,   '#090810');
-    ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, W, H);
-
-    // Starfield
-    ctx.fillStyle = 'rgba(255,255,255,0.55)';
-    [0.12,0.34,0.56,0.78,0.23,0.67,0.45,0.89,0.11,0.99,0.38,0.61,0.72,0.18,0.92].forEach((s,i) => {
-        ctx.beginPath();
-        ctx.arc((s * W * 1.3) % W, (s * H * 1.7 + i * 97) % H, 0.7 + (i%3)*0.55, 0, Math.PI*2);
-        ctx.fill();
-    });
-
-    // ── Helpers ──
-    const roundRect = (x, y, w, h, r) => {
-        ctx.beginPath();
-        ctx.moveTo(x+r, y);
-        ctx.lineTo(x+w-r, y); ctx.quadraticCurveTo(x+w, y, x+w, y+r);
-        ctx.lineTo(x+w, y+h-r); ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
-        ctx.lineTo(x+r, y+h); ctx.quadraticCurveTo(x, y+h, x, y+h-r);
-        ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x, y, x+r, y);
-        ctx.closePath();
-    };
-    const wrapText = (text, x, y, maxW, lineH, maxLines = 4) => {
-        const words = text.split(' '); let line = '', lines = [];
-        for (const word of words) {
-            const test = line ? line + ' ' + word : word;
-            if (ctx.measureText(test).width > maxW && line) {
-                lines.push(line); line = word;
-                if (lines.length >= maxLines) break;
-            } else { line = test; }
-        }
-        if (line && lines.length < maxLines) lines.push(line);
-        lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineH));
-        return lines.length;
-    };
-
-    // ── AURA wordmark ──
-    ctx.textAlign = 'center';
-    ctx.fillStyle = 'rgba(255,255,255,0.97)';
-    ctx.font = '700 108px Georgia, serif';
-    ctx.letterSpacing = '18px';
-    ctx.fillText('AURA', W/2, 130);
-    ctx.font = '400 34px Georgia, serif';
-    ctx.fillStyle = 'rgba(200,170,255,0.70)';
-    ctx.letterSpacing = '12px';
-    ctx.fillText('KNOW YOURSELF', W/2, 186);
-    ctx.font = '400 28px Arial, sans-serif';
-    ctx.fillStyle = 'rgba(255,255,255,0.42)';
-    ctx.letterSpacing = '3px';
-    ctx.fillText(dateStr, W/2, 232);
-
-    ctx.strokeStyle = 'rgba(180,140,255,0.22)'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(80, 258); ctx.lineTo(W-80, 258); ctx.stroke();
-
-    // ── Cards ──
-    const isSingle = cards.length === 1;
-    const positions = isSingle ? ['Focus'] : ['Past', 'Present', 'Future'];
-    const cardW = isSingle ? 580 : 318;
-    const cardH = isSingle ? 500 : 460;
-    const cardY = 282;
-    const gap = 14;
-    const totalW = isSingle ? cardW : cards.length * cardW + (cards.length-1) * gap;
-    const startX = (W - totalW) / 2;
-
-    cards.forEach((card, i) => {
-        const cx = isSingle ? startX : startX + i * (cardW + gap);
-        const cy = cardY;
-        const midX = cx + cardW / 2;
-
-        // Drop shadow
-        ctx.shadowColor = 'rgba(0,0,0,0.65)';
-        ctx.shadowBlur = 40; ctx.shadowOffsetY = 14;
-        roundRect(cx, cy, cardW, cardH, 28);
-        ctx.fillStyle = card.bg || '#12101e'; ctx.fill();
-        ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-
-        // Darken card bg for text contrast
-        ctx.save();
-        roundRect(cx, cy, cardW, cardH, 28);
-        ctx.clip();
-        const darkenGrad = ctx.createLinearGradient(cx, cy, cx, cy + cardH);
-        darkenGrad.addColorStop(0, 'rgba(0,0,0,0.28)');
-        darkenGrad.addColorStop(1, 'rgba(0,0,0,0.68)');
-        ctx.fillStyle = darkenGrad; ctx.fillRect(cx, cy, cardW, cardH);
-
-        // Orb
-        const orbY = cy + cardH * 0.38;
-        const orbR = isSingle ? 155 : 96;
-        drawOrb(midX, orbY, orbR, cardToOrbLayers(card), 0.05);
-        ctx.restore();
-
-        // Card border
-        roundRect(cx, cy, cardW, cardH, 28);
-        const border = ctx.createLinearGradient(cx, cy, cx, cy + cardH);
-        border.addColorStop(0, 'rgba(255,255,255,0.26)');
-        border.addColorStop(0.5, 'rgba(255,255,255,0.08)');
-        border.addColorStop(1, 'rgba(255,255,255,0.03)');
-        ctx.strokeStyle = border; ctx.lineWidth = 1.5; ctx.stroke();
-
-        // Position label
-        ctx.textAlign = 'center';
-        ctx.font = `500 ${isSingle ? 28 : 23}px Arial, sans-serif`;
-        ctx.fillStyle = 'rgba(200,170,255,0.80)';
-        ctx.letterSpacing = '6px';
-        ctx.fillText(positions[i].toUpperCase(), midX, cy + 46);
-
-        // Card name — large and bold
-        ctx.font = `600 ${isSingle ? 56 : 38}px Georgia, serif`;
-        ctx.fillStyle = 'rgba(255,255,255,0.97)';
-        ctx.letterSpacing = '1px';
-        wrapText(card.name, midX, cy + cardH * 0.64, cardW - 36, isSingle ? 64 : 46, 2);
-
-        // Affirmation
-        ctx.font = `italic ${isSingle ? 30 : 22}px Georgia, serif`;
-        ctx.fillStyle = 'rgba(220,200,255,0.78)';
-        ctx.letterSpacing = '0px';
-        wrapText(`"${card.affirmation}"`, midX, cy + cardH * 0.83, cardW - 44, isSingle ? 38 : 30, 2);
-    });
-
-    // ── AI Reflection — full text, fills remaining canvas space ──
-    const guideEl = document.getElementById('guideMessage');
-    const reflection = guideEl ? (guideEl.innerText || guideEl.textContent || '').replace(/\s+/g, ' ').trim() : '';
-    if (reflection) {
-        const reflBoxY = cardY + cardH + 32;
-        const brandingLineY = H - 100;
-        const maxReflH = brandingLineY - reflBoxY - 12;
-        const reflFontSize = 26;   // large enough to read on phone screen
-        const lineH = 40;
-        const padV = 56;           // top + bottom padding inside box
-        const maxLines = Math.max(1, Math.floor((maxReflH - padV) / lineH));
-        const maxTW = W - 180;
-
-        // Count actual lines needed
-        ctx.font = `italic 400 ${reflFontSize}px Georgia, serif`;
-        ctx.letterSpacing = '0px';
-        let ln = '', lc = 0;
-        for (const w of reflection.split(' ')) {
-            const t = ln ? ln + ' ' + w : w;
-            if (ctx.measureText(t).width > maxTW && ln) { lc++; ln = w; }
-            else ln = t;
-        }
-        if (ln) lc++;
-        const usedLines = Math.min(lc, maxLines);
-        const reflBoxH = usedLines * lineH + padV;
-
-        // Box background
-        roundRect(60, reflBoxY, W - 120, reflBoxH, 22);
-        ctx.fillStyle = 'rgba(255,255,255,0.04)'; ctx.fill();
-        roundRect(60, reflBoxY, W - 120, reflBoxH, 22);
-        ctx.strokeStyle = 'rgba(180,140,255,0.16)'; ctx.lineWidth = 1.5; ctx.stroke();
-
-        // "AURA REFLECTION" label
-        ctx.textAlign = 'center';
-        ctx.font = '500 22px Arial, sans-serif';
-        ctx.fillStyle = 'rgba(200,170,255,0.55)';
-        ctx.letterSpacing = '4px';
-        ctx.fillText('AURA REFLECTION', W/2, reflBoxY + 30);
-
-        // Divider inside box
-        ctx.strokeStyle = 'rgba(180,140,255,0.10)'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(120, reflBoxY + 38); ctx.lineTo(W-120, reflBoxY + 38); ctx.stroke();
-
-        // Full reflection text — large and clear
-        ctx.font = `italic 400 ${reflFontSize}px Georgia, serif`;
-        ctx.fillStyle = 'rgba(230,215,255,0.90)';
-        ctx.letterSpacing = '0px';
-        wrapText(reflection, W/2, reflBoxY + padV + 2, maxTW, lineH, maxLines);
-    }
-
-    // ── Branding ──
-    const brandY = H - 70;
-    ctx.strokeStyle = 'rgba(180,140,255,0.16)'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(100, brandY - 30); ctx.lineTo(W-100, brandY - 30); ctx.stroke();
-    ctx.textAlign = 'center';
-    ctx.font = '400 21px Arial, sans-serif';
-    ctx.fillStyle = 'rgba(180,140,255,0.50)';
-    ctx.letterSpacing = '2px';
-    ctx.fillText('✦  aura-me.square.site', W/2, brandY + 6);
-
-    return canvas;
-}
-
-async function shareReading() {
-    if (!selectedCards || !selectedCards.length) {
-        toast('No reading to share yet.');
-        return;
-    }
-
-    const isSingle = selectedCards.length === 1;
-    const positions = isSingle ? ['Focus'] : ['Past', 'Present', 'Future'];
-    const dateStr = document.getElementById('readingDate')?.textContent
-        || new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
-
-    const cardLines = selectedCards.map((c, i) =>
-        `${positions[i]}: ${c.name}\n"${c.affirmation}"`
-    ).join('\n\n');
-
-    const guideEl = document.getElementById('guideMessage');
-    const reflectionText = guideEl ? (guideEl.innerText || guideEl.textContent || '').replace(/\s+/g, ' ').trim() : '';
-    const reflectionSection = reflectionText
-        ? `\n\n— ${reflectionText}`
-        : '';
-
-    const title = isSingle
-        ? `My Aura Reading — ${selectedCards[0].name}`
-        : `My Aura Reading — ${selectedCards.map(c => c.name).join(' · ')}`;
-
-    const text = `✦ AURA Reading · ${dateStr}\n\n${cardLines}${reflectionSection}\n\n✨ aura-me.square.site`;
-
-    // Try to share with generated card image
-    try {
-        const canvas = buildReadingShareImage(selectedCards, dateStr);
-        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-        const file = new File([blob], 'aura-reading.png', { type: 'image/png' });
-
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({ title, text, files: [file] });
-            return;
-        }
-    } catch (imgErr) {
-        console.warn('Image share failed, falling back to text:', imgErr);
-    }
-
-    // Fallback: text-only share or clipboard
-    if (navigator.share) {
-        navigator.share({ title, text }).catch(() => {});
+function shareReading() {
+    const text = `My Aura reading: ${selectedCards.map(c=>c.name).join(' → ')}\n\n"${selectedCards[0].affirmation}"\n\n✨ auralife.me`;
+    
+    if(navigator.share) {
+        navigator.share({title: 'My Aura Reading', text: text}).catch(()=>{});
     } else {
-        navigator.clipboard.writeText(text).then(() => toast('Reading copied to clipboard!'));
+        navigator.clipboard.writeText(text).then(() => toast('Copied to clipboard!'));
     }
 }
 
@@ -8128,7 +7442,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAudioToggleLabels();
     applyBlueLightState();
     initPremiumInteractions();
-    bindPrimaryNavigation();
     initAccountSettings();
     checkDisclaimer();
     autoGrowChatInput(document.getElementById('openChatInput'));
@@ -9228,16 +8541,12 @@ function hasTier(requiredTier) {
 }
 
 function canUseFeature(feature) {
-    // Only one hard paywall: personalization (onboarding).
-    // Chat is always free. 3-card is always free.
-    // AI-powered reading reflection is premium+.
-    // Local AI is always available as a fallback — never blocked.
     const featureTiers = {
-        chat:         "free",     // chat is open to everyone
-        onboarding:   "premium",  // personalizing your Aura Guide requires premium
-        three_card:   "free",     // 3-card spread is free
-        runes_pack:   "pro",      // runes expansion is pro only
-        dynamic_intro:"premium"   // AI-generated reading intro is premium+
+        chat: "free",
+        onboarding: "free",
+        three_card: "premium",
+        runes_pack: "pro",
+        dynamic_intro: "pro"
     };
     const required = featureTiers[feature] || "free";
     return hasTier(required);
@@ -9245,7 +8554,6 @@ function canUseFeature(feature) {
 
 function openPaywall(feature = "premium features", requiredTier = "premium") {
     paywallContext = { feature, tier: requiredTier };
-    window.__paywallReturnScreen = document.querySelector('.screen.active')?.id || window.__lastNonSettingsScreen || 'welcomeScreen';
     const contextEl = document.getElementById("paywallContextText");
     if (contextEl) {
         const tierLabel = requiredTier === "pro" ? "Aura PRO" : "Aura Premium";
@@ -9273,7 +8581,6 @@ async function unlockPremium(tier) {
         updateTokenUI();
         updateSettingsTier();
         closePaywall();
-        resolvePostPurchaseReturnScreen();
         syncEntitlementsFromServer();
         toast("Unlocked: " + tier.toUpperCase());
         return;
@@ -9318,7 +8625,6 @@ async function unlockPremium(tier) {
             applyPurchasedTierFallback(tier, customerInfo);
         }
         closePaywall();
-        resolvePostPurchaseReturnScreen();
         syncEntitlementsFromServer();
         toast("Unlocked: " + auraTier.toUpperCase());
 
@@ -9334,21 +8640,6 @@ async function unlockPremium(tier) {
 
 function closePaywall() {
     document.getElementById("paywallModal").style.display = "none";
-}
-
-function resolvePostPurchaseReturnScreen() {
-    const opener = window.__paywallReturnScreen || '';
-    window.__paywallReturnScreen = '';
-
-    if (!opener) return;
-
-    if (opener === 'chatScreen') {
-        const fallback = selectedCards.length > 0 ? 'readingScreen' : (window.__lastNonSettingsScreen || 'welcomeScreen');
-        goTo(fallback === 'chatScreen' ? 'welcomeScreen' : fallback);
-        return;
-    }
-
-    goTo(opener);
 }
 
 async function restorePurchases() {
@@ -9370,7 +8661,6 @@ async function restorePurchases() {
                 memoryBalance = initMemoryBalance();
                 updateTokenUI();
                 closePaywall();
-                resolvePostPurchaseReturnScreen();
                 toast(`Restored: ${auraTier.toUpperCase()}`);
                 return;
             }
@@ -9387,7 +8677,6 @@ async function restorePurchases() {
             memoryBalance = initMemoryBalance();
             updateTokenUI();
             closePaywall();
-            resolvePostPurchaseReturnScreen();
             toast(`Restored: ${auraTier.toUpperCase()}`);
             return;
         }
@@ -9405,10 +8694,7 @@ function checkPersonalizationPaywall() {
 
 const originalStartOnboarding = startOnboarding;
 startOnboarding = async function() {
-    // Skip RC refresh if debug tier is locked — otherwise RC overwrites debug tier to free
-    if (!window.__debugTierLocked) {
-        await refreshRevenueCatTier();
-    }
+    await refreshRevenueCatTier();
     if (checkPersonalizationPaywall()) return;
     originalStartOnboarding();
 };
@@ -9452,9 +8738,6 @@ function debugSetTier(tier) {
     debugLog(`Setting tier to: ${tier}`, 'info');
     auraTier = tier;
     localStorage.setItem('aura_tier', tier);
-    // Lock this tier so RevenueCat refresh can't override it during this session
-    window.__debugTierLocked = (tier !== 'free');
-    debugLog(`Debug lock: ${window.__debugTierLocked}`, 'info');
     // Force-reset token balance for the new tier (clear old usage)
     const allowance = TOKEN_ALLOWANCES[tier] || 0;
     tokenBalance = {

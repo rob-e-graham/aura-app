@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aura Orb Generator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700&family=Instrument+Serif&family=EB+Garamond:wght@400;500;600&display=swap');
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--bg:#f3efe9;--sf:#fff;--tx:#1a1a1a;--mt:#8a8580;--bd:#e2ddd7;--hv:#f8f6f3;--ac:#c4a882}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+  .app{max-width:1380px;margin:0 auto;padding:24px 20px 60px}
+  header{text-align:center;margin-bottom:24px}
+  header h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:2.3rem;letter-spacing:-.02em}
+  header p{color:var(--mt);font-size:.86rem;margin-top:2px}
+
+  .workspace{display:grid;grid-template-columns:1fr 280px;gap:22px;align-items:start}
+  @media(max-width:960px){.workspace{grid-template-columns:1fr}}
+
+  .preview-area{background:var(--sf);border-radius:14px;border:1px solid var(--bd);padding:18px;display:flex;flex-direction:column;align-items:center;gap:14px;position:sticky;top:14px}
+  .preview-panels{display:flex;gap:14px;width:100%;justify-content:center;flex-wrap:wrap}
+  .panel{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:180px;max-width:380px}
+  .panel-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mt);font-weight:500}
+  .canvas-wrap{position:relative;width:100%;aspect-ratio:1/1;border-radius:6px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.06);transition:aspect-ratio .3s}
+  .checker{background-image:linear-gradient(45deg,#ddd 25%,transparent 25%),linear-gradient(-45deg,#ddd 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#ddd 75%),linear-gradient(-45deg,transparent 75%,#ddd 75%);background-size:14px 14px;background-position:0 0,0 7px,7px -7px,-7px 0}
+  canvas{width:100%;height:100%;display:block}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .btn{font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:500;padding:8px 16px;border-radius:100px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);cursor:pointer;transition:all .15s}
+  .btn:hover{background:var(--tx);color:var(--sf);border-color:var(--tx)}
+  .btn.primary{background:var(--tx);color:var(--sf);border-color:var(--tx)}
+  .btn.primary:hover{opacity:.85}
+
+  .controls{display:flex;flex-direction:column;gap:12px;max-height:calc(100vh - 60px);overflow-y:auto;padding-right:4px}
+  .controls::-webkit-scrollbar{width:3px}
+  .controls::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+
+  .card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px}
+  .card h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:.92rem;margin-bottom:10px}
+
+  .field{margin-bottom:9px}.field:last-child{margin-bottom:0}
+  .field>label{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mt);margin-bottom:3px}
+
+  .color-row{display:flex;gap:6px;align-items:center}
+  .csw{width:28px;height:28px;border-radius:50%;border:2px solid var(--bd);cursor:pointer;overflow:hidden;position:relative;flex-shrink:0}
+  .csw input[type="color"]{position:absolute;width:150%;height:150%;top:-25%;left:-25%;border:none;cursor:pointer;background:none}
+  .chx{font-size:.78rem;color:var(--mt);flex:1;border:1px solid var(--bd);border-radius:6px;padding:5px 7px;background:transparent;outline:none;font-family:'DM Sans',monospace}
+  .chx:focus{border-color:var(--ac)}
+
+  input[type="range"]{-webkit-appearance:none;width:100%;height:3px;border-radius:2px;background:var(--bd);outline:none}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--tx);cursor:pointer}
+
+  .rr{display:flex;align-items:center;gap:6px}
+  .rr input[type="range"]{flex:1}
+  .num-in{width:48px;text-align:center;font-size:.76rem;font-family:'DM Sans',sans-serif;border:1px solid var(--bd);border-radius:5px;padding:4px 2px;background:transparent;color:var(--tx);outline:none;font-variant-numeric:tabular-nums}
+  .num-in:focus{border-color:var(--ac)}
+  .num-unit{font-size:.68rem;color:var(--mt);width:12px}
+
+  .text-input{width:100%;font-family:'DM Sans',sans-serif;font-size:.82rem;padding:6px 9px;border:1px solid var(--bd);border-radius:6px;background:transparent;color:var(--tx);outline:none}
+  .text-input:focus{border-color:var(--ac)}
+  select.text-input{cursor:pointer;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238a8580' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;padding-right:22px}
+
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .toggle-label{font-size:.78rem;color:var(--tx)}
+  .tgl{position:relative;width:36px;height:20px;cursor:pointer;flex-shrink:0}
+  .tgl input{display:none}
+  .tgl .tk{position:absolute;inset:0;background:var(--bd);border-radius:10px;transition:background .2s}
+  .tgl input:checked+.tk{background:var(--tx)}
+  .tgl .tb{position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+  .tgl input:checked~.tb{transform:translateX(16px)}
+
+  .presets{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .pbtn{min-height:84px;border-radius:10px;border:2px solid transparent;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:flex-start;padding:10px;text-align:left}
+  .pbtn:hover{transform:translateY(-1px) scale(1.02)}
+  .pbtn.active{border-color:var(--tx);box-shadow:0 0 0 1px rgba(0,0,0,.04)}
+  .pbtn::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(0,0,0,.28))}
+  .pbtn-label{position:relative;z-index:1;font-size:.68rem;line-height:1.15;letter-spacing:.08em;text-transform:uppercase;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35);font-weight:600}
+
+  .seg{display:flex;gap:2px;background:var(--bg);border-radius:7px;padding:2px}
+  .seg-opt{flex:1;text-align:center;font-size:.7rem;padding:6px 3px;border-radius:5px;cursor:pointer;border:none;background:transparent;color:var(--mt);font-family:'DM Sans',sans-serif;font-weight:500;transition:all .15s;white-space:nowrap}
+  .seg-opt.active{background:var(--sf);color:var(--tx);box-shadow:0 1px 2px rgba(0,0,0,.05)}
+
+  .layers{display:flex;flex-direction:column;gap:7px}
+  .ly{display:flex;align-items:center;gap:5px;padding:6px 7px;background:var(--hv);border-radius:7px}
+  .ly-n{font-size:.66rem;font-weight:600;color:var(--mt);width:11px;text-align:center}
+  .add-btn{width:100%;padding:6px;border:1px dashed var(--bd);border-radius:7px;background:transparent;color:var(--mt);font-size:.73rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+  .add-btn:hover{border-color:var(--tx);color:var(--tx)}
+  .rm{background:none;border:none;color:var(--mt);cursor:pointer;font-size:.85rem;padding:0 2px;line-height:1}
+  .rm:hover{color:#e55}
+
+  .mode-bar{display:flex;gap:2px;background:var(--bg);border-radius:10px;padding:3px;width:100%}
+  .mode-opt{flex:1;text-align:center;font-size:.78rem;font-weight:500;padding:10px 6px;border-radius:8px;cursor:pointer;border:none;background:transparent;color:var(--mt);font-family:'DM Sans',sans-serif;transition:all .15s}
+  .mode-opt.active{background:var(--sf);color:var(--tx);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .mode-desc{font-size:.72rem;color:var(--mt);text-align:center;padding:4px 0}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Aura Orb Generator</h1>
+    <p>Design aura orbs for cards, posters &amp; apparel — export high-res PNGs</p>
+  </header>
+  <div class="workspace">
+    <div class="preview-area">
+      <div class="mode-bar">
+        <button class="mode-opt" onclick="setMode('card')">Card</button>
+        <button class="mode-opt" onclick="setMode('poster')">Poster</button>
+        <button class="mode-opt active" onclick="setMode('tshirt')">T-Shirt</button>
+      </div>
+      <div class="mode-desc" id="modeDesc">Transparent PNG — front &amp; back</div>
+      <div class="preview-panels" id="previewPanels">
+        <div class="panel">
+          <span class="panel-label">Front</span>
+          <div class="canvas-wrap checker" id="frontWrap"><canvas id="frontCanvas"></canvas></div>
+        </div>
+        <div class="panel" id="backPanel">
+          <span class="panel-label">Back</span>
+          <div class="canvas-wrap checker" id="backWrap"><canvas id="backCanvas"></canvas></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="randomize()">Randomize</button>
+        <button class="btn primary" onclick="exportPNG('front')">Export Front</button>
+        <button class="btn primary" id="exportBackBtn" onclick="exportPNG('back')">Export Back</button>
+        <button class="btn" id="exportBothBtn" onclick="exportPNG('both')">Export Both</button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <!-- Presets -->
+      <div class="card">
+        <h3>Presets</h3>
+        <div class="presets" id="presetGrid"></div>
+      </div>
+
+      <!-- Orb Colours -->
+      <div class="card">
+        <h3>Orb Colours</h3>
+        <div class="layers" id="colorLayers"></div>
+        <button class="add-btn" onclick="addLayer()" style="margin-top:7px">+ Add colour ring</button>
+      </div>
+
+      <!-- Orb Shape -->
+      <div class="card">
+        <h3>Orb Shape</h3>
+        <div class="field"><label>Size</label><div class="rr"><input type="range" id="orbSize" min="20" max="100" value="75" oninput="sync(this,'orbSizeN');draw()"><input class="num-in" id="orbSizeN" type="number" min="20" max="100" value="75" oninput="sync(this,'orbSize');draw()"><span class="num-unit">%</span></div></div>
+        <div class="field"><label>Softness</label><div class="rr"><input type="range" id="orbSoft" min="5" max="100" value="55" oninput="sync(this,'orbSoftN');draw()"><input class="num-in" id="orbSoftN" type="number" min="5" max="100" value="55" oninput="sync(this,'orbSoft');draw()"><span class="num-unit">%</span></div></div>
+        <div class="field"><label>Y Offset</label><div class="rr"><input type="range" id="orbYOff" min="-30" max="30" value="5" oninput="sync(this,'orbYOffN');draw()"><input class="num-in" id="orbYOffN" type="number" min="-30" max="30" value="5" oninput="sync(this,'orbYOff');draw()"><span class="num-unit">%</span></div></div>
+        <div class="field"><label>X Offset</label><div class="rr"><input type="range" id="orbXOff" min="-30" max="30" value="0" oninput="sync(this,'orbXOffN');draw()"><input class="num-in" id="orbXOffN" type="number" min="-30" max="30" value="0" oninput="sync(this,'orbXOff');draw()"><span class="num-unit">%</span></div></div>
+      </div>
+
+      <!-- Front Text -->
+      <div class="card">
+        <h3>Front — Text</h3>
+        <div class="field"><label>Title (above orb)</label><input class="text-input" id="frontTitle" value="AURA" oninput="draw()"></div>
+        <div class="field"><label>Title Size</label><div class="rr"><input type="range" id="ftSize" min="20" max="160" value="72" oninput="sync(this,'ftSizeN');draw()"><input class="num-in" id="ftSizeN" type="number" min="20" max="160" value="72" oninput="sync(this,'ftSize');draw()"><span class="num-unit">px</span></div></div>
+        <div class="field"><label>Subtitle (below orb)</label><input class="text-input" id="frontSub" value="" oninput="draw()" placeholder="Optional"></div>
+        <div class="field"><label>Subtitle Size</label><div class="rr"><input type="range" id="fsSize" min="12" max="80" value="28" oninput="sync(this,'fsSizeN');draw()"><input class="num-in" id="fsSizeN" type="number" min="12" max="80" value="28" oninput="sync(this,'fsSize');draw()"><span class="num-unit">px</span></div></div>
+        <div class="field"><label>Text–Orb Gap</label><div class="rr"><input type="range" id="ftGap" min="0" max="20" value="4" oninput="sync(this,'ftGapN');draw()"><input class="num-in" id="ftGapN" type="number" min="0" max="20" value="4" oninput="sync(this,'ftGap');draw()"><span class="num-unit">%</span></div></div>
+      </div>
+
+      <!-- Back Text -->
+      <div class="card" id="backCard">
+        <h3>Back — Text</h3>
+        <div class="layers" id="backLines"></div>
+        <button class="add-btn" onclick="addBackLine()" style="margin-top:7px">+ Add text line</button>
+      </div>
+
+      <!-- Background -->
+      <div class="card" id="bgCard">
+        <h3>Background</h3>
+        <div class="field"><label>Colour</label>
+          <div class="color-row"><div class="csw" id="bgSw" style="background:#dbd3e8"><input type="color" id="bgC" value="#dbd3e8" oninput="swUp('bg');draw()"></div><input class="chx" id="bgH" value="#dbd3e8" oninput="hxUp('bg');draw()"></div>
+        </div>
+        <div class="field" id="borderField">
+          <div class="toggle-row"><span class="toggle-label">White border</span><label class="tgl"><input type="checkbox" id="showBorder" checked onchange="draw()"><span class="tk"></span><span class="tb"></span></label></div>
+        </div>
+      </div>
+
+      <!-- Typography -->
+      <div class="card">
+        <h3>Typography</h3>
+        <div class="field"><label>Font</label>
+          <select class="text-input" id="fontSel" onchange="draw()">
+            <option value="EB Garamond" selected>EB Garamond</option>
+            <option value="Cormorant Garamond">Cormorant Garamond</option>
+            <option value="Playfair Display">Playfair Display</option>
+            <option value="Instrument Serif">Instrument Serif</option>
+            <option value="DM Sans">DM Sans</option>
+          </select>
+        </div>
+        <div class="field"><label>Text Colour</label>
+          <div class="color-row"><div class="csw" id="txSw" style="background:#3a3530"><input type="color" id="txC" value="#3a3530" oninput="swUp('tx');draw()"></div><input class="chx" id="txH" value="#3a3530" oninput="hxUp('tx');draw()"></div>
+        </div>
+      </div>
+
+      <!-- Resolution -->
+      <div class="card">
+        <h3>Resolution</h3>
+        <div class="field"><label>Width (px)</label>
+          <div class="seg"><button class="seg-opt" onclick="setRes(1500,this)">1500</button><button class="seg-opt active" onclick="setRes(3000,this)">3000</button><button class="seg-opt" onclick="setRes(4500,this)">4500</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const fC=document.getElementById('frontCanvas'),bC=document.getElementById('backCanvas');
+const fX=fC.getContext('2d'),bX=bC.getContext('2d');
+
+let mode='tshirt'; // card | poster | tshirt
+let exW=3000;
+
+// Mode ratios: card 2.5x3.5, poster 3x4, tshirt 1x1
+const modeConfig={
+  card:{rw:5,rh:7,desc:'Card layout — 2.5×3.5 ratio, coloured background',hasBack:false,hasBorder:false,hasBg:true},
+  poster:{rw:3,rh:4,desc:'Poster layout — white border, coloured field',hasBack:false,hasBorder:true,hasBg:true},
+  tshirt:{rw:1,rh:1,desc:'Transparent PNG — front &amp; back',hasBack:true,hasBorder:false,hasBg:false},
+};
+
+let orbLayers=[
+  {color:'#e8f0a0',size:.2},
+  {color:'#7ecfc0',size:.55},
+  {color:'#c8dca0',size:.9},
+];
+
+let backTextLines=[
+  {text:'STILLNESS',size:64,weight:'500'},
+  {text:'In stillness, clarity gathers.',size:28,weight:'400'},
+];
+
+const presets=[
+  {
+    name:'Stillness',
+    bg:'#F0F0F2',
+    layers:[
+      {color:'#F6F6FF',size:.18},
+      {color:'#7A86A8',size:.52},
+      {color:'#D9CDEE',size:.9},
+    ],
+    backText:[
+      {text:'STILLNESS',size:64,weight:'500'},
+      {text:'In stillness, clarity gathers.',size:28,weight:'400'},
+    ],
+    orbSize:74,orbSoft:72,orbYOff:4,orbXOff:0,
+  },
+  {
+    name:'Radiance',
+    bg:'#F6F1E3',
+    layers:[
+      {color:'#FFE56B',size:.18},
+      {color:'#E9B048',size:.52},
+      {color:'#FFF0C9',size:.9},
+    ],
+    backText:[
+      {text:'RADIANCE',size:64,weight:'500'},
+      {text:'Let yourself be seen.',size:28,weight:'400'},
+    ],
+    orbSize:72,orbSoft:62,orbYOff:4,orbXOff:0,
+  },
+  {
+    name:'The Leap',
+    bg:'#F3F1E6',
+    layers:[
+      {color:'#DDFB79',size:.17},
+      {color:'#9EC85D',size:.5},
+      {color:'#EACB86',size:.9},
+    ],
+    backText:[
+      {text:'THE LEAP',size:64,weight:'500'},
+      {text:'Begin before you are ready.',size:28,weight:'400'},
+    ],
+    orbSize:74,orbSoft:58,orbYOff:4,orbXOff:0,
+  },
+  {
+    name:'Wholeness',
+    bg:'#EAF5EE',
+    layers:[
+      {color:'#A8F0BF',size:.18},
+      {color:'#55C67F',size:.52},
+      {color:'#D7F1E0',size:.9},
+    ],
+    backText:[
+      {text:'WHOLENESS',size:62,weight:'500'},
+      {text:'Nothing is missing now.',size:28,weight:'400'},
+    ],
+    orbSize:73,orbSoft:66,orbYOff:4,orbXOff:0,
+  },
+  {
+    name:'Liberation',
+    bg:'#F4E8EA',
+    layers:[
+      {color:'#D84D61',size:.16},
+      {color:'#7A2432',size:.48},
+      {color:'#B55D6A',size:.88},
+    ],
+    backText:[
+      {text:'LIBERATION',size:60,weight:'500'},
+      {text:'Leave the old shape behind.',size:28,weight:'400'},
+    ],
+    orbSize:72,orbSoft:50,orbYOff:5,orbXOff:0,
+  },
+  {
+    name:'Inner Knowing',
+    bg:'#ECEAF6',
+    layers:[
+      {color:'#C8CCFF',size:.18},
+      {color:'#6974D9',size:.52},
+      {color:'#C8B6EE',size:.9},
+    ],
+    backText:[
+      {text:'INNER KNOWING',size:56,weight:'500'},
+      {text:'What is true still speaks softly.',size:26,weight:'400'},
+    ],
+    orbSize:74,orbSoft:70,orbYOff:4,orbXOff:0,
+  },
+];
+
+// Sync slider <-> number input
+function sync(src,targetId){
+  document.getElementById(targetId).value=src.value;
+}
+
+function swUp(p){const pk=document.getElementById(p+'C'),hx=document.getElementById(p+'H'),sw=document.getElementById(p+'Sw');hx.value=pk.value;sw.style.background=pk.value}
+function hxUp(p){const pk=document.getElementById(p+'C'),hx=document.getElementById(p+'H'),sw=document.getElementById(p+'Sw');if(/^#[0-9a-fA-F]{6}$/.test(hx.value)){pk.value=hx.value;sw.style.background=hx.value}}
+function hexRgba(hex,a){return`rgba(${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)},${a})`}
+
+function setMode(m){
+  mode=m;
+  const cfg=modeConfig[m];
+  document.querySelectorAll('.mode-opt').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase().replace('-','').replace(' ','')===m));
+  document.getElementById('modeDesc').innerHTML=cfg.desc;
+
+  // Show/hide back panel
+  document.getElementById('backPanel').style.display=cfg.hasBack?'':'none';
+  document.getElementById('backCard').style.display=cfg.hasBack?'':'none';
+  document.getElementById('exportBackBtn').style.display=cfg.hasBack?'':'none';
+  document.getElementById('exportBothBtn').style.display=cfg.hasBack?'':'none';
+
+  // Show/hide bg controls
+  document.getElementById('bgCard').style.display=cfg.hasBg?'':'none';
+  document.getElementById('borderField').style.display=cfg.hasBorder?'':'none';
+
+  // Checker
+  document.getElementById('frontWrap').classList.toggle('checker',!cfg.hasBg);
+  document.getElementById('backWrap').classList.toggle('checker',!cfg.hasBg);
+
+  updateCanvasSize();
+  draw();
+}
+
+function updateCanvasSize(){
+  const cfg=modeConfig[mode];
+  const h=Math.round(exW*(cfg.rh/cfg.rw));
+  fC.width=bC.width=exW;
+  fC.height=bC.height=h;
+  document.getElementById('frontWrap').style.aspectRatio=`${cfg.rw}/${cfg.rh}`;
+  document.getElementById('backWrap').style.aspectRatio=`${cfg.rw}/${cfg.rh}`;
+}
+
+function setRes(w,btn){exW=w;btn.parentElement.querySelectorAll('.seg-opt').forEach(b=>b.classList.remove('active'));btn.classList.add('active');updateCanvasSize();draw()}
+
+function initPresets(){
+  const g=document.getElementById('presetGrid');g.innerHTML='';
+  presets.forEach((p,i)=>{
+    const b=document.createElement('button');b.className='pbtn'+(i===0?' active':'');
+    b.style.background=`radial-gradient(circle at 50% 42%, ${p.layers[0].color} 0%, ${p.layers[1].color} 34%, ${p.layers[2].color} 62%, ${p.bg} 100%)`;
+    b.title=`${p.name} — ${p.backText[1].text}`;
+    b.innerHTML=`<span class="pbtn-label">${p.name}</span>`;
+    b.onclick=()=>applyPreset(i);g.appendChild(b);
+  });
+}
+
+function applyPreset(i){
+  const p=presets[i];
+  document.getElementById('bgC').value=p.bg;document.getElementById('bgH').value=p.bg;document.getElementById('bgSw').style.background=p.bg;
+  orbLayers=p.layers.map(l=>({...l}));
+  backTextLines=p.backText.map(l=>({...l}));
+  if(typeof p.orbSize==='number')document.getElementById('orbSize').value=document.getElementById('orbSizeN').value=p.orbSize;
+  if(typeof p.orbSoft==='number')document.getElementById('orbSoft').value=document.getElementById('orbSoftN').value=p.orbSoft;
+  if(typeof p.orbYOff==='number')document.getElementById('orbYOff').value=document.getElementById('orbYOffN').value=p.orbYOff;
+  if(typeof p.orbXOff==='number')document.getElementById('orbXOff').value=document.getElementById('orbXOffN').value=p.orbXOff;
+  renderLayers();renderBackLines();
+  document.querySelectorAll('.pbtn').forEach((b,j)=>b.classList.toggle('active',j===i));draw();
+}
+
+function renderLayers(){
+  const c=document.getElementById('colorLayers');c.innerHTML='';
+  const lb=['Core','Mid ring','Outer ring','Ring 4','Ring 5'];
+  orbLayers.forEach((l,i)=>{
+    const d=document.createElement('div');d.className='ly';
+    d.innerHTML=`<span class="ly-n">${i+1}</span>
+      <div class="csw" style="background:${l.color}"><input type="color" value="${l.color}" oninput="orbLayers[${i}].color=this.value;this.parentElement.style.background=this.value;draw()"></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:2px">
+        <span style="font-size:.66rem;color:var(--mt)">${lb[i]||'Ring'}</span>
+        <div class="rr"><input type="range" min="5" max="100" value="${Math.round(l.size*100)}" oninput="orbLayers[${i}].size=this.value/100;this.nextElementSibling.value=this.value;draw()" style="flex:1"><input class="num-in" type="number" min="5" max="100" value="${Math.round(l.size*100)}" oninput="orbLayers[${i}].size=this.value/100;this.previousElementSibling.value=this.value;draw()"><span class="num-unit">%</span></div>
+      </div>
+      ${orbLayers.length>2?`<button class="rm" onclick="orbLayers.splice(${i},1);renderLayers();draw()">×</button>`:''}`;
+    c.appendChild(d);
+  });
+}
+
+function addLayer(){if(orbLayers.length>=5)return;const el=document.createElement('canvas').getContext('2d');el.fillStyle=`hsl(${Math.random()*360},60%,70%)`;orbLayers.push({color:el.fillStyle,size:.95});renderLayers();draw()}
+
+function renderBackLines(){
+  const c=document.getElementById('backLines');c.innerHTML='';
+  backTextLines.forEach((l,i)=>{
+    const d=document.createElement('div');d.className='ly';d.style.flexDirection='column';d.style.alignItems='stretch';d.style.gap='4px';
+    d.innerHTML=`<div style="display:flex;gap:5px;align-items:center">
+        <span class="ly-n">${i+1}</span>
+        <input class="text-input" value="${l.text}" oninput="backTextLines[${i}].text=this.value;draw()" style="flex:1;font-size:.8rem">
+        ${backTextLines.length>1?`<button class="rm" onclick="backTextLines.splice(${i},1);renderBackLines();draw()">×</button>`:''}
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;padding-left:16px">
+        <span style="font-size:.66rem;color:var(--mt);width:24px">Size</span>
+        <div class="rr" style="flex:1"><input type="range" min="14" max="140" value="${l.size}" oninput="backTextLines[${i}].size=+this.value;this.nextElementSibling.value=this.value;draw()"><input class="num-in" type="number" min="14" max="140" value="${l.size}" oninput="backTextLines[${i}].size=+this.value;this.previousElementSibling.value=this.value;draw()"><span class="num-unit">px</span></div>
+        <select class="text-input" style="width:62px;font-size:.7rem;padding:3px 5px" onchange="backTextLines[${i}].weight=this.value;draw()">
+          <option value="300"${l.weight==='300'?' selected':''}>Light</option>
+          <option value="400"${l.weight==='400'?' selected':''}>Reg</option>
+          <option value="500"${l.weight==='500'?' selected':''}>Med</option>
+          <option value="600"${l.weight==='600'?' selected':''}>Semi</option>
+          <option value="700"${l.weight==='700'?' selected':''}>Bold</option>
+        </select>
+      </div>`;
+    c.appendChild(d);
+  });
+}
+function addBackLine(){if(backTextLines.length>=6)return;backTextLines.push({text:'New line',size:28,weight:'400'});renderBackLines();draw()}
+
+function drawOrb(ctx,cx,cy,maxR,soft){
+  [...orbLayers].sort((a,b)=>b.size-a.size).forEach(l=>{
+    const r=maxR*l.size;if(r<1)return;
+    for(let p=0;p<3;p++){
+      const pr=r*(1+p*.18),a=p===0?.92:p===1?.45:.2,fs=Math.max(.01,1-soft);
+      const g=ctx.createRadialGradient(cx,cy,0,cx,cy,pr);
+      g.addColorStop(0,hexRgba(l.color,a));
+      g.addColorStop(fs*.4,hexRgba(l.color,a*.9));
+      g.addColorStop(fs,hexRgba(l.color,a*.45));
+      g.addColorStop(Math.min(.99,fs+(1-fs)*.55),hexRgba(l.color,a*.1));
+      g.addColorStop(1,hexRgba(l.color,0));
+      ctx.fillStyle=g;ctx.fillRect(cx-pr,cy-pr,pr*2,pr*2);
+    }
+  });
+}
+
+function draw(){
+  const w=fC.width,h=fC.height;
+  const cfg=modeConfig[mode];
+  const bg=document.getElementById('bgC').value;
+  const tc=document.getElementById('txC').value;
+  const font=document.getElementById('fontSel').value;
+  const sz=+document.getElementById('orbSize').value/100;
+  const sf=+document.getElementById('orbSoft').value/100;
+  const yO=+document.getElementById('orbYOff').value/100;
+  const xO=+document.getElementById('orbXOff').value/100;
+  const title=document.getElementById('frontTitle').value;
+  const titleSz=+document.getElementById('ftSize').value;
+  const sub=document.getElementById('frontSub').value;
+  const subSz=+document.getElementById('fsSize').value;
+  const gap=+document.getElementById('ftGap').value/100;
+  const border=document.getElementById('showBorder').checked&&cfg.hasBorder;
+  const scale=w/1200;
+
+  // === FRONT ===
+  fX.clearRect(0,0,w,h);
+
+  let fieldX=0,fieldY=0,fieldW=w,fieldH=h;
+
+  if(cfg.hasBg){
+    if(border){
+      fX.fillStyle='#ffffff';fX.fillRect(0,0,w,h);
+      const mx=w*.07,mt=h*.09,mb=h*.09;
+      fieldX=mx;fieldY=mt;fieldW=w-mx*2;fieldH=h-mt-mb;
+      fX.fillStyle=bg;fX.fillRect(fieldX,fieldY,fieldW,fieldH);
+    } else {
+      fX.fillStyle=bg;fX.fillRect(0,0,w,h);
+    }
+  }
+
+  // Title
+  let textBottomY=fieldY+fieldH*.08;
+  if(title){
+    const ts=Math.round(titleSz*scale);
+    fX.fillStyle=tc;fX.textAlign='center';
+    fX.font=`500 ${ts}px '${font}',serif`;
+    fX.letterSpacing=`${.04*ts}px`;
+    const ty=border?fieldY*.65:fieldY+ts*1.2;
+    fX.fillText(title.toUpperCase(),w/2,ty);
+    fX.letterSpacing='0px';
+    textBottomY=ty+gap*h;
+  }
+
+  // Subtitle below orb
+  let subTopY=fieldY+fieldH-fieldH*.02;
+  if(sub){
+    const ss=Math.round(subSz*scale);
+    fX.fillStyle=tc;fX.textAlign='center';
+    fX.font=`400 ${ss}px '${font}',serif`;
+    fX.letterSpacing=`${.06*ss}px`;
+    const sy=border?h-fieldY*.45:fieldY+fieldH-ss*.5;
+    fX.fillText(sub.toUpperCase(),w/2,sy);
+    fX.letterSpacing='0px';
+    subTopY=sy-ss*1.5-gap*h;
+  }
+
+  // Orb
+  const orbAreaTop=textBottomY;
+  const orbAreaH=subTopY-orbAreaTop;
+  const orbCy=orbAreaTop+orbAreaH*.5+yO*h;
+  const orbCx=w/2+xO*w;
+  const maxR=Math.min(fieldW,orbAreaH)*sz*.48;
+
+  if(cfg.hasBg){
+    fX.save();fX.beginPath();fX.rect(fieldX,fieldY,fieldW,fieldH);fX.clip();
+    drawOrb(fX,orbCx,orbCy,maxR,sf);
+    fX.restore();
+  } else {
+    drawOrb(fX,orbCx,orbCy,maxR,sf);
+  }
+
+  // Re-draw text on top if poster/card (so orb doesn't cover text)
+  if(cfg.hasBg&&title){
+    const ts=Math.round(titleSz*scale);
+    fX.fillStyle=tc;fX.textAlign='center';
+    fX.font=`500 ${ts}px '${font}',serif`;
+    fX.letterSpacing=`${.04*ts}px`;
+    const ty=border?fieldY*.65:fieldY+ts*1.2;
+    fX.fillText(title.toUpperCase(),w/2,ty);
+    fX.letterSpacing='0px';
+  }
+  if(cfg.hasBg&&sub){
+    const ss=Math.round(subSz*scale);
+    fX.fillStyle=tc;fX.textAlign='center';
+    fX.font=`400 ${ss}px '${font}',serif`;
+    fX.letterSpacing=`${.06*ss}px`;
+    const sy=border?h-fieldY*.45:fieldY+fieldH-ss*.5;
+    fX.fillText(sub.toUpperCase(),w/2,sy);
+    fX.letterSpacing='0px';
+  }
+
+  // === BACK (t-shirt only) ===
+  if(!cfg.hasBack)return;
+  bX.clearRect(0,0,w,h);
+
+  if(backTextLines.length>0){
+    bX.fillStyle=tc;bX.textAlign='center';
+    let totalH=0;
+    const ld=backTextLines.map(l=>{const s=Math.round(l.size*scale);totalH+=s*1.6;return{...l,ss:s}});
+    let sy=(h-totalH)/2+ld[0].ss*.5;
+    ld.forEach(l=>{
+      bX.font=`${l.weight} ${l.ss}px '${font}',serif`;
+      bX.letterSpacing=l.ss>40*scale?`${.04*l.ss}px`:`${.015*l.ss}px`;
+      bX.fillText(l.text,w/2,sy);
+      bX.letterSpacing='0px';
+      sy+=l.ss*1.6;
+    });
+  }
+}
+
+function randomize(){
+  const hue=Math.random()*360;
+  const mk=(h,s,l)=>{const e=document.createElement('canvas').getContext('2d');e.fillStyle=`hsl(${h},${s}%,${l}%)`;return e.fillStyle};
+  const bg=mk(hue,18+Math.random()*15,84+Math.random()*6);
+  document.getElementById('bgC').value=bg;document.getElementById('bgH').value=bg;document.getElementById('bgSw').style.background=bg;
+  const n=2+Math.floor(Math.random()*2);orbLayers=[];
+  for(let i=0;i<n;i++){orbLayers.push({color:mk((hue+20+i*(35+Math.random()*45))%360,50+Math.random()*35,55+Math.random()*25),size:.15+(i/(n-1))*.75})}
+  document.getElementById('orbSize').value=document.getElementById('orbSizeN').value=60+Math.round(Math.random()*30);
+  document.getElementById('orbSoft').value=document.getElementById('orbSoftN').value=35+Math.round(Math.random()*50);
+  document.getElementById('orbYOff').value=document.getElementById('orbYOffN').value=Math.round(-5+Math.random()*10);
+  document.getElementById('orbXOff').value=document.getElementById('orbXOffN').value=0;
+  renderLayers();document.querySelectorAll('.pbtn').forEach(b=>b.classList.remove('active'));draw();
+}
+
+function exportPNG(which){
+  const dl=(cv,label)=>{const a=document.createElement('a');a.download=`aura-${label}-${mode}-${cv.width}x${cv.height}.png`;a.href=cv.toDataURL('image/png');a.click()};
+  if(which==='front'||which==='both')dl(fC,'front');
+  if((which==='back'||which==='both')&&modeConfig[mode].hasBack)setTimeout(()=>dl(bC,'back'),which==='both'?400:0);
+}
+
+// Init
+initPresets();renderLayers();renderBackLines();
+setMode('tshirt');
+applyPreset(0);
+</script>
+</body>
+</html>
