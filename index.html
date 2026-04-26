@@ -7605,7 +7605,7 @@ function continueToReading() {
 
 // ========== SHARE ==========
 function shareReading() {
-    const text = `My Aura reading: ${selectedCards.map(c=>c.name).join(' → ')}\n\n"${selectedCards[0].affirmation}"\n\n✨ auralife.me`;
+    const text = `My Aura reading: ${selectedCards.map(c=>c.name).join(' → ')}\n\n"${selectedCards[0].affirmation}"\n\n✨ aura-me.square.site`;
     
     if(navigator.share) {
         navigator.share({title: 'My Aura Reading', text: text}).catch(()=>{});
