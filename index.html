@@ -7803,29 +7803,29 @@ function buildReadingShareImage(cards, dateStr) {
 
     // ── AURA wordmark ──
     ctx.textAlign = 'center';
-    ctx.fillStyle = 'rgba(255,255,255,0.95)';
-    ctx.font = '700 96px Georgia, serif';
-    ctx.letterSpacing = '16px';
-    ctx.fillText('AURA', W/2, 128);
-    ctx.font = '400 32px Georgia, serif';
-    ctx.fillStyle = 'rgba(200,170,255,0.65)';
-    ctx.letterSpacing = '10px';
-    ctx.fillText('KNOW YOURSELF', W/2, 178);
-    ctx.font = '400 26px Arial, sans-serif';
-    ctx.fillStyle = 'rgba(255,255,255,0.38)';
+    ctx.fillStyle = 'rgba(255,255,255,0.97)';
+    ctx.font = '700 108px Georgia, serif';
+    ctx.letterSpacing = '18px';
+    ctx.fillText('AURA', W/2, 130);
+    ctx.font = '400 34px Georgia, serif';
+    ctx.fillStyle = 'rgba(200,170,255,0.70)';
+    ctx.letterSpacing = '12px';
+    ctx.fillText('KNOW YOURSELF', W/2, 186);
+    ctx.font = '400 28px Arial, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.42)';
     ctx.letterSpacing = '3px';
-    ctx.fillText(dateStr, W/2, 220);
+    ctx.fillText(dateStr, W/2, 232);
 
-    ctx.strokeStyle = 'rgba(180,140,255,0.2)'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(100, 246); ctx.lineTo(W-100, 246); ctx.stroke();
+    ctx.strokeStyle = 'rgba(180,140,255,0.22)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(80, 258); ctx.lineTo(W-80, 258); ctx.stroke();
 
     // ── Cards ──
     const isSingle = cards.length === 1;
     const positions = isSingle ? ['Focus'] : ['Past', 'Present', 'Future'];
-    const cardW = isSingle ? 560 : 310;
-    const cardH = isSingle ? 520 : 480;
-    const cardY = 276;
-    const gap = 18;
+    const cardW = isSingle ? 580 : 318;
+    const cardH = isSingle ? 500 : 460;
+    const cardY = 282;
+    const gap = 14;
     const totalW = isSingle ? cardW : cards.length * cardW + (cards.length-1) * gap;
     const startX = (W - totalW) / 2;
 
@@ -7835,8 +7835,8 @@ function buildReadingShareImage(cards, dateStr) {
         const midX = cx + cardW / 2;
 
         // Drop shadow
-        ctx.shadowColor = 'rgba(0,0,0,0.6)';
-        ctx.shadowBlur = 36; ctx.shadowOffsetY = 12;
+        ctx.shadowColor = 'rgba(0,0,0,0.65)';
+        ctx.shadowBlur = 40; ctx.shadowOffsetY = 14;
         roundRect(cx, cy, cardW, cardH, 28);
         ctx.fillStyle = card.bg || '#12101e'; ctx.fill();
         ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
@@ -7846,88 +7846,92 @@ function buildReadingShareImage(cards, dateStr) {
         roundRect(cx, cy, cardW, cardH, 28);
         ctx.clip();
         const darkenGrad = ctx.createLinearGradient(cx, cy, cx, cy + cardH);
-        darkenGrad.addColorStop(0, 'rgba(0,0,0,0.30)');
-        darkenGrad.addColorStop(1, 'rgba(0,0,0,0.65)');
+        darkenGrad.addColorStop(0, 'rgba(0,0,0,0.28)');
+        darkenGrad.addColorStop(1, 'rgba(0,0,0,0.68)');
         ctx.fillStyle = darkenGrad; ctx.fillRect(cx, cy, cardW, cardH);
 
-        // ── Orb — crisp generator quality (soft=0.05) ──
-        const orbY = cy + cardH * 0.40;
-        const orbR = isSingle ? 150 : 100;
+        // Orb
+        const orbY = cy + cardH * 0.38;
+        const orbR = isSingle ? 155 : 96;
         drawOrb(midX, orbY, orbR, cardToOrbLayers(card), 0.05);
-
         ctx.restore();
 
         // Card border
         roundRect(cx, cy, cardW, cardH, 28);
         const border = ctx.createLinearGradient(cx, cy, cx, cy + cardH);
-        border.addColorStop(0, 'rgba(255,255,255,0.24)');
-        border.addColorStop(0.5, 'rgba(255,255,255,0.07)');
+        border.addColorStop(0, 'rgba(255,255,255,0.26)');
+        border.addColorStop(0.5, 'rgba(255,255,255,0.08)');
         border.addColorStop(1, 'rgba(255,255,255,0.03)');
         ctx.strokeStyle = border; ctx.lineWidth = 1.5; ctx.stroke();
 
         // Position label
         ctx.textAlign = 'center';
-        ctx.font = `500 ${isSingle ? 26 : 22}px Arial, sans-serif`;
-        ctx.fillStyle = 'rgba(200,170,255,0.75)';
-        ctx.letterSpacing = '5px';
-        ctx.fillText(positions[i].toUpperCase(), midX, cy + 42);
+        ctx.font = `500 ${isSingle ? 28 : 23}px Arial, sans-serif`;
+        ctx.fillStyle = 'rgba(200,170,255,0.80)';
+        ctx.letterSpacing = '6px';
+        ctx.fillText(positions[i].toUpperCase(), midX, cy + 46);
 
-        // Card name
-        ctx.font = `600 ${isSingle ? 48 : 34}px Georgia, serif`;
+        // Card name — large and bold
+        ctx.font = `600 ${isSingle ? 56 : 38}px Georgia, serif`;
         ctx.fillStyle = 'rgba(255,255,255,0.97)';
         ctx.letterSpacing = '1px';
-        wrapText(card.name, midX, cy + cardH * 0.645, cardW - 40, isSingle ? 56 : 40, 2);
+        wrapText(card.name, midX, cy + cardH * 0.64, cardW - 36, isSingle ? 64 : 46, 2);
 
         // Affirmation
-        ctx.font = `italic ${isSingle ? 26 : 19}px Georgia, serif`;
-        ctx.fillStyle = 'rgba(220,200,255,0.72)';
+        ctx.font = `italic ${isSingle ? 30 : 22}px Georgia, serif`;
+        ctx.fillStyle = 'rgba(220,200,255,0.78)';
         ctx.letterSpacing = '0px';
-        wrapText(`"${card.affirmation}"`, midX, cy + cardH * 0.82, cardW - 48, isSingle ? 34 : 26, 2);
+        wrapText(`"${card.affirmation}"`, midX, cy + cardH * 0.83, cardW - 44, isSingle ? 38 : 30, 2);
     });
 
-    // ── AI Reflection — full text, dynamic height ──
+    // ── AI Reflection — full text, fills remaining canvas space ──
     const guideEl = document.getElementById('guideMessage');
     const reflection = guideEl ? (guideEl.innerText || guideEl.textContent || '').replace(/\s+/g, ' ').trim() : '';
     if (reflection) {
-        const reflBoxY = cardY + cardH + 36;
-        const brandingLineY = H - 110; // space reserved for branding at bottom
-        const maxReflH = brandingLineY - reflBoxY - 16;
-        const lineH = 30;
-        const pad = 44; // vertical padding inside box
-        const maxLines = Math.max(1, Math.floor((maxReflH - pad) / lineH));
+        const reflBoxY = cardY + cardH + 32;
+        const brandingLineY = H - 100;
+        const maxReflH = brandingLineY - reflBoxY - 12;
+        const reflFontSize = 26;   // large enough to read on phone screen
+        const lineH = 40;
+        const padV = 56;           // top + bottom padding inside box
+        const maxLines = Math.max(1, Math.floor((maxReflH - padV) / lineH));
+        const maxTW = W - 180;
 
-        // Count actual lines needed without drawing
-        ctx.font = 'italic 400 21px Georgia, serif';
+        // Count actual lines needed
+        ctx.font = `italic 400 ${reflFontSize}px Georgia, serif`;
         ctx.letterSpacing = '0px';
-        const maxTW = W - 220;
-        let line = '', lineCount = 0;
-        for (const word of reflection.split(' ')) {
-            const test = line ? line + ' ' + word : word;
-            if (ctx.measureText(test).width > maxTW && line) { lineCount++; line = word; }
-            else line = test;
+        let ln = '', lc = 0;
+        for (const w of reflection.split(' ')) {
+            const t = ln ? ln + ' ' + w : w;
+            if (ctx.measureText(t).width > maxTW && ln) { lc++; ln = w; }
+            else ln = t;
         }
-        if (line) lineCount++;
-        const usedLines = Math.min(lineCount, maxLines);
-        const reflBoxH = usedLines * lineH + pad;
+        if (ln) lc++;
+        const usedLines = Math.min(lc, maxLines);
+        const reflBoxH = usedLines * lineH + padV;
 
-        // Box
-        roundRect(80, reflBoxY, W - 160, reflBoxH, 18);
-        ctx.fillStyle = 'rgba(255,255,255,0.035)'; ctx.fill();
-        roundRect(80, reflBoxY, W - 160, reflBoxH, 18);
-        ctx.strokeStyle = 'rgba(180,140,255,0.13)'; ctx.lineWidth = 1; ctx.stroke();
+        // Box background
+        roundRect(60, reflBoxY, W - 120, reflBoxH, 22);
+        ctx.fillStyle = 'rgba(255,255,255,0.04)'; ctx.fill();
+        roundRect(60, reflBoxY, W - 120, reflBoxH, 22);
+        ctx.strokeStyle = 'rgba(180,140,255,0.16)'; ctx.lineWidth = 1.5; ctx.stroke();
 
-        // Label
+        // "AURA REFLECTION" label
         ctx.textAlign = 'center';
-        ctx.font = '500 19px Arial, sans-serif';
-        ctx.fillStyle = 'rgba(200,170,255,0.50)';
-        ctx.letterSpacing = '3px';
-        ctx.fillText('AURA REFLECTION', W/2, reflBoxY + 26);
+        ctx.font = '500 22px Arial, sans-serif';
+        ctx.fillStyle = 'rgba(200,170,255,0.55)';
+        ctx.letterSpacing = '4px';
+        ctx.fillText('AURA REFLECTION', W/2, reflBoxY + 30);
 
-        // Full reflection text
-        ctx.font = 'italic 400 21px Georgia, serif';
-        ctx.fillStyle = 'rgba(210,190,255,0.82)';
+        // Divider inside box
+        ctx.strokeStyle = 'rgba(180,140,255,0.10)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(120, reflBoxY + 38); ctx.lineTo(W-120, reflBoxY + 38); ctx.stroke();
+
+        // Full reflection text — large and clear
+        ctx.font = `italic 400 ${reflFontSize}px Georgia, serif`;
+        ctx.fillStyle = 'rgba(230,215,255,0.90)';
         ctx.letterSpacing = '0px';
-        wrapText(reflection, W/2, reflBoxY + pad + 4, maxTW, lineH, maxLines);
+        wrapText(reflection, W/2, reflBoxY + padV + 2, maxTW, lineH, maxLines);
     }
 
     // ── Branding ──
