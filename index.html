@@ -124,6 +124,8 @@
         }
 
         function handleCustomerInfoUpdate(customerInfo) {
+            // Don't let RevenueCat override a manually-locked debug tier
+            if (window.__debugTierLocked) return;
             const newTier = deriveTierFromCustomerInfo(customerInfo);
             applyAuraTier(newTier, { force: newTier === 'free' });
         }
@@ -1003,10 +1005,16 @@
         .chat-screen .chat-settings-full { order: 6; }
         .chat-top-btn.daily-dropdown-toggle {
             width: 100%; justify-content: center; gap: 8px;
-            background: linear-gradient(135deg, rgba(78, 162, 136, 0.34) 0%, rgba(116, 214, 184, 0.24) 100%) !important;
-            border-color: rgba(124, 214, 177, 0.46) !important;
-            box-shadow: 0 0 0 1px rgba(124,214,177,0.14) inset, 0 8px 22px rgba(36, 82, 68, 0.26) !important;
-            color: rgba(180, 240, 210, 0.9) !important;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 40%, rgba(0,0,0,0.08) 100%),
+                rgba(148, 100, 220, 0.18) !important;
+            border: 1px solid rgba(200, 162, 255, 0.38) !important;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.22),
+                inset 0 -1px 0 rgba(0,0,0,0.10),
+                0 8px 22px rgba(70, 30, 120, 0.26),
+                0 0 14px rgba(180, 130, 255, 0.12) !important;
+            color: rgba(222, 194, 255, 0.95) !important;
         }
         .daily-dropdown-arrow {
             font-size: 10px; transition: transform 0.3s ease;
@@ -1100,13 +1108,26 @@
             pointer-events: auto;
         }
         .welcome-actions .btn-primary {
-            background: linear-gradient(135deg, rgba(78, 162, 136, 0.34) 0%, rgba(116, 214, 184, 0.24) 100%);
-            border-color: rgba(124, 214, 177, 0.46);
-            box-shadow: 0 0 0 1px rgba(124,214,177,0.14) inset, 0 8px 22px rgba(36, 82, 68, 0.26);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 40%, rgba(0,0,0,0.08) 100%),
+                linear-gradient(135deg, rgba(78, 162, 136, 0.36) 0%, rgba(116, 214, 184, 0.22) 100%);
+            border: 1px solid rgba(140, 224, 188, 0.38);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.24),
+                inset 0 -1px 0 rgba(0,0,0,0.10),
+                0 8px 22px rgba(36, 82, 68, 0.28),
+                0 0 16px rgba(100, 200, 160, 0.10);
         }
         .welcome-actions .btn-secondary {
-            background: linear-gradient(135deg, rgba(200, 160, 255, 0.22) 0%, rgba(255, 180, 200, 0.2) 100%);
-            border-color: rgba(200, 160, 255, 0.34);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 40%, rgba(0,0,0,0.08) 100%),
+                linear-gradient(135deg, rgba(200, 160, 255, 0.22) 0%, rgba(255, 180, 200, 0.18) 100%);
+            border: 1px solid rgba(210, 170, 255, 0.36);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.22),
+                inset 0 -1px 0 rgba(0,0,0,0.10),
+                0 8px 20px rgba(18, 10, 30, 0.24),
+                0 0 14px rgba(190, 150, 255, 0.10);
         }
         .welcome-orb-wrap {
             position: relative;
@@ -1152,44 +1173,56 @@
             font-family: 'Inter', sans-serif;
             cursor: pointer;
             transition: transform 220ms ease, border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
-            backdrop-filter: blur(10px) saturate(1.05);
-            -webkit-backdrop-filter: blur(10px) saturate(1.05);
+            backdrop-filter: blur(22px) saturate(1.9);
+            -webkit-backdrop-filter: blur(22px) saturate(1.9);
             background:
-                linear-gradient(180deg, rgba(34, 40, 48, 0.34) 0%, rgba(20, 24, 30, 0.24) 100%),
-                radial-gradient(120% 120% at 20% 18%, rgba(118, 230, 190, 0.08) 0%, transparent 54%);
-            border: 1px solid rgba(170, 236, 205, 0.20);
+                linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 40%, rgba(0,0,0,0.08) 100%),
+                linear-gradient(180deg, rgba(34, 40, 52, 0.32) 0%, rgba(18, 22, 30, 0.22) 100%),
+                radial-gradient(130% 130% at 18% 14%, rgba(120, 236, 195, 0.07) 0%, transparent 56%);
+            border: 1px solid rgba(255, 255, 255, 0.18);
             box-shadow:
-                inset 0 0 0 1px rgba(255,255,255,0.03),
-                inset 0 10px 18px -14px rgba(164, 242, 210, 0.12),
-                0 8px 16px rgba(8, 10, 14, 0.22);
+                inset 0 1px 0 rgba(255,255,255,0.24),
+                inset 0 -1px 0 rgba(0,0,0,0.12),
+                inset 0 0 0 1px rgba(255,255,255,0.04),
+                0 8px 22px rgba(8, 10, 14, 0.26),
+                0 2px 6px rgba(8, 10, 14, 0.16);
         }
         .btn-primary { padding: 16px 40px; border-radius: 100px; font-size: 14px; letter-spacing: 0.08em; }
-        .btn-secondary { padding: 14px 24px; border-radius: 14px; font-size: 13px; }
+        .btn-secondary { padding: 14px 24px; border-radius: 100px; font-size: 13px; }
         .btn-primary:hover,
         .btn-secondary:hover {
             transform: translateY(-1px);
-            border-color: rgba(184, 242, 214, 0.34);
+            border-color: rgba(255,255,255,0.26);
             background:
-                linear-gradient(180deg, rgba(38, 45, 54, 0.40) 0%, rgba(22, 26, 33, 0.30) 100%),
-                radial-gradient(120% 120% at 20% 18%, rgba(118, 230, 190, 0.11) 0%, transparent 56%);
+                linear-gradient(180deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.04) 40%, rgba(0,0,0,0.06) 100%),
+                linear-gradient(180deg, rgba(38, 46, 58, 0.38) 0%, rgba(22, 26, 34, 0.28) 100%),
+                radial-gradient(130% 130% at 18% 14%, rgba(120, 236, 195, 0.10) 0%, transparent 58%);
             box-shadow:
-                inset 0 0 0 1px rgba(255,255,255,0.04),
-                inset 0 12px 20px -14px rgba(164, 242, 210, 0.16),
-                0 10px 18px rgba(8, 10, 14, 0.26),
-                0 0 18px rgba(118, 230, 190, 0.06);
+                inset 0 1px 0 rgba(255,255,255,0.28),
+                inset 0 -1px 0 rgba(0,0,0,0.10),
+                inset 0 0 0 1px rgba(255,255,255,0.05),
+                0 12px 28px rgba(8, 10, 14, 0.30),
+                0 0 20px rgba(118, 230, 190, 0.07);
         }
         .btn-primary.accent {
             background:
-                linear-gradient(135deg, rgba(188, 144, 255, 0.22) 0%, rgba(122, 224, 192, 0.14) 50%, rgba(255, 180, 200, 0.12) 100%),
-                linear-gradient(180deg, rgba(34, 40, 48, 0.36) 0%, rgba(20, 24, 30, 0.28) 100%);
-            border-color: rgba(200, 160, 255, 0.28);
+                linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 40%, rgba(0,0,0,0.10) 100%),
+                linear-gradient(135deg, rgba(188, 144, 255, 0.22) 0%, rgba(122, 224, 192, 0.12) 50%, rgba(255, 180, 200, 0.10) 100%);
+            border: 1px solid rgba(210, 170, 255, 0.32);
             box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.26),
+                inset 0 -1px 0 rgba(0,0,0,0.12),
                 inset 0 0 0 1px rgba(255,255,255,0.04),
-                inset 0 12px 20px -14px rgba(212, 174, 255, 0.16),
-                0 10px 18px rgba(18, 12, 26, 0.24);
+                0 10px 24px rgba(18, 10, 30, 0.28),
+                0 0 18px rgba(190, 150, 255, 0.10);
         }
-        .btn-gradient { background: var(--accent-gradient); border-color: rgba(200, 160, 255, 0.3); }
-        .btn-small { padding: 10px 18px; font-size: 12px; }
+        .btn-gradient {
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 40%, rgba(0,0,0,0.08) 100%),
+                var(--accent-gradient);
+            border-color: rgba(210, 170, 255, 0.32);
+        }
+        .btn-small { padding: 10px 18px; font-size: 12px; border-radius: 100px; }
         
         /* Disclaimer Modal */
         .disclaimer-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: flex; justify-content: center; align-items: center; padding: 14px; }
@@ -2271,38 +2304,45 @@
             width: 100%;
             min-height: 42px;
             padding: 8px 10px;
-            border-radius: 14px;
-            border: 1px solid rgba(198, 112, 52, 0.68);
-            background: rgba(255, 140, 80, 0.05);
+            border-radius: 100px;
+            border: 1px solid rgba(255, 200, 160, 0.22);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 40%, rgba(0,0,0,0.08) 100%),
+                rgba(255, 140, 80, 0.09);
             color: rgba(255, 233, 216, 0.96);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.02em;
             cursor: pointer;
             transition: all 220ms ease;
-            backdrop-filter: blur(8px) saturate(1.02);
-            -webkit-backdrop-filter: blur(8px) saturate(1.02);
+            backdrop-filter: blur(22px) saturate(1.9);
+            -webkit-backdrop-filter: blur(22px) saturate(1.9);
             box-shadow:
-                inset 0 0 0 1px rgba(255, 193, 149, 0.12),
-                0 6px 12px rgba(8, 10, 14, 0.24),
-                0 0 12px rgba(202, 110, 50, 0.10);
+                inset 0 1px 0 rgba(255,255,255,0.22),
+                inset 0 -1px 0 rgba(0,0,0,0.10),
+                0 6px 16px rgba(8, 10, 14, 0.24),
+                0 0 12px rgba(202, 110, 50, 0.08);
         }
         .chat-top-btn:hover {
-            border-color: rgba(220, 134, 72, 0.82);
+            border-color: rgba(255, 210, 175, 0.36);
             color: #fff;
             transform: translateY(-1px);
-            background: rgba(255, 145, 86, 0.09);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 40%, rgba(0,0,0,0.06) 100%),
+                rgba(255, 145, 86, 0.12);
             box-shadow:
-                inset 0 0 0 1px rgba(255, 198, 160, 0.16),
-                0 10px 16px rgba(8, 10, 14, 0.28),
-                0 0 14px rgba(220, 130, 64, 0.14);
+                inset 0 1px 0 rgba(255,255,255,0.28),
+                inset 0 -1px 0 rgba(0,0,0,0.08),
+                0 10px 20px rgba(8, 10, 14, 0.28),
+                0 0 16px rgba(220, 130, 64, 0.12);
         }
         .chat-top-btn:active {
             transform: translateY(0) scale(0.985);
             box-shadow:
-                inset 0 0 0 1px rgba(255, 198, 160, 0.18),
-                0 6px 12px rgba(8, 10, 14, 0.24),
-                0 0 10px rgba(220, 130, 64, 0.14);
+                inset 0 1px 0 rgba(255,255,255,0.20),
+                inset 0 -1px 0 rgba(0,0,0,0.10),
+                0 4px 10px rgba(8, 10, 14, 0.22),
+                0 0 10px rgba(220, 130, 64, 0.10);
         }
         .chat-bottom-nav {
             order: 5;
@@ -2832,6 +2872,34 @@
             text-align: center;
             margin-top: 4px;
         }
+
+        /* ── Local AI reminder (soft, non-blocking) ── */
+        .local-mode-notice {
+            font-size: 11px;
+            color: rgba(255,255,255,0.34);
+            text-align: center;
+            padding: 10px 16px 6px;
+            margin-top: 4px;
+            letter-spacing: 0.025em;
+        }
+        .local-mode-hint {
+            margin: 6px 0 2px;
+            padding: 9px 14px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+            font-size: 12px;
+            color: rgba(255,255,255,0.36);
+            text-align: center;
+            line-height: 1.5;
+        }
+        .local-mode-cta {
+            color: rgba(185, 148, 255, 0.75);
+            cursor: pointer;
+            border-bottom: 1px solid rgba(185, 148, 255, 0.3);
+            transition: color 180ms ease, border-color 180ms ease;
+        }
+        .local-mode-cta:hover { color: rgba(205, 170, 255, 0.95); border-color: rgba(205, 170, 255, 0.55); }
 
         /* Paywall modal classes */
         .paywall-overlay {
@@ -3755,7 +3823,6 @@
 <div class="screen welcome-screen" id="welcomeScreen">
             <h1 class="logo">AURA</h1>
             <p class="tagline misty-copy">Know Yourself</p>
-            <p class="chat-screen-subtitle" style="margin-top:2px;">Let's Hold Space Together</p>
             <div class="welcome-orb-wrap">
                 <div class="welcome-orb"></div>
             </div>
@@ -3778,7 +3845,6 @@
                     <span id="chatTokenText">Local Mode</span>
                 </div>
             </div>
-            <p class="chat-screen-subtitle">Let's Hold Space Together</p>
             <div class="chat-section fade-in">
                 <div class="chat-messages" id="openChatMessages"></div>
                 <div id="openChatMemory"></div>
@@ -3895,6 +3961,11 @@
                 <div class="settings-hub-row">
                     <button class="settings-chip-btn" onclick="openPaywall('Aura Premium', 'premium')">View Plans</button>
                     <button class="settings-chip-btn" onclick="restorePurchases()">Restore Purchases</button>
+                </div>
+                <!-- Shown for premium/pro — lets them top up tokens or memory without going through paywall -->
+                <div id="topupActionsRow" class="settings-hub-row" style="display:none; margin-top:6px;">
+                    <button class="settings-chip-btn" onclick="openTokenTopUp()">Buy Tokens</button>
+                    <button class="settings-chip-btn" onclick="openMemoryTopUp()">Expand Memory</button>
                 </div>
             </div>
 
@@ -5764,11 +5835,7 @@ ${buildConversationFlavor(userMessage)}
 
 // ========== READING FUNCTIONS ==========
 function setReadingType(type, fromUserClick = false) {
-    if (type === 'three' && !canUseFeature('three_card')) {
-        if (fromUserClick) openPaywall('3-card readings', 'premium');
-        // Fall back to single so screen loads cleanly
-        type = 'single';
-    }
+    // Both single and 3-card are free. No paywall here.
     readingType = type;
     document.getElementById('toggleSingle').classList.toggle('active', type==='single');
     document.getElementById('toggleThree').classList.toggle('active', type==='three');
@@ -5999,9 +6066,17 @@ async function generateInitialReflection() {
 
     const staticParagraphs = extractParagraphsFromHtml(buildStaticHtml());
 
-    // If dynamic intro is not enabled, render the local intro once and stop.
+    // Free tier: render local static reflection and add a soft upgrade reminder.
     if (!canUseFeature('dynamic_intro')) {
         await renderGuideMessageAnimated(host, staticParagraphs);
+        // Soft reminder — not a paywall, just a gentle note
+        const existing = host.parentElement?.querySelector('.local-mode-notice');
+        if (!existing && host.parentElement) {
+            const noteEl = document.createElement('div');
+            noteEl.className = 'local-mode-notice fade-in';
+            noteEl.innerHTML = `✦ Local reading &nbsp;·&nbsp; <span class="local-mode-cta" onclick="startOnboarding()">Personalize for AI-powered interpretations</span>`;
+            host.parentElement.appendChild(noteEl);
+        }
         return;
     }
 
@@ -6093,10 +6168,7 @@ function renderChatSection() {
 }
 
 async function openAuraChat() {
-    if (!canUseFeature('chat')) {
-        openPaywall('AI chat', 'premium');
-        return;
-    }
+    // Chat is free for everyone — local AI always available as fallback.
     goTo('chatScreen');
     removeLegacyChatArtifacts();
     autoGrowChatInput(document.getElementById('openChatInput'));
@@ -6108,10 +6180,7 @@ async function openAuraChat() {
     if (chatEl && !chatEl.dataset.seeded) {
         const name = getUserName();
         const greeting = name ? `Hey ${name}.` : 'Hey.';
-        const isLocalMode = auraTier === 'free';
-        const chatIntro = isLocalMode
-            ? `${greeting} I'm here to reflect with you. For deeper, personalized conversations, try Premium.`
-            : `${greeting} We can chat about anything you want. What's on your mind?`;
+        const chatIntro = `${greeting} We can talk about anything — your cards, your day, what's weighing on you. What's on your mind?`;
         chatEl.dataset.seeded = '1';
         await renderAuraReplyAnimated(chatEl, chatIntro, {
             attachActions: true,
@@ -6169,10 +6238,7 @@ function resolveChatUi(mode) {
 
 async function sendAuraMessage(mode = 'reading') {
     if (isTyping) return;
-    if (!canUseFeature('chat')) {
-        openPaywall('AI chat', 'premium');
-        return;
-    }
+    // Chat is always open — no paywall. Local AI is the free fallback.
 
     const ui = resolveChatUi(mode);
     if (!ui.input || !ui.chatEl) return;
@@ -6193,13 +6259,18 @@ async function sendAuraMessage(mode = 'reading') {
 
     // Determine if we use local or cloud AI
     const useCloud = auraTier !== 'free' && canSendCloudMessage(500);
-    const useLocalFallback = !useCloud; // Free tier OR exhausted tokens → always use local
+    const useLocalFallback = !useCloud;
     const tokensExhausted = auraTier !== 'free' && !canSendCloudMessage(500);
+    const isFreeLocalMode = auraTier === 'free';
 
-    // Show token top-up hint for exhausted premium users, but DON'T block — let them chat with local AI
-    if (tokensExhausted && !ui._tokenHintShown) {
-        ui._tokenHintShown = true;
-        toast('Cloud tokens used up — using local mode. Buy more tokens for AI-powered responses.');
+    // Soft inline reminder (shown once per chat session, never blocks)
+    if (useLocalFallback && !ui._localHintShown) {
+        ui._localHintShown = true;
+        const hintMsg = tokensExhausted
+            ? `✦ Local mode — monthly AI tokens used up. <span class="local-mode-cta" onclick="openTokenTopUp()">Buy more tokens</span> to restore cloud AI.`
+            : `✦ Local reflections · <span class="local-mode-cta" onclick="startOnboarding()">Personalize your guide</span> for AI-powered responses.`;
+        ui.chatEl.innerHTML += `<div class="local-mode-hint fade-in"><p>${hintMsg}</p></div>`;
+        smoothFollowChat(ui.chatEl, true);
     }
 
     ui.chatEl.innerHTML += `<div class="chat-message guide typing-indicator"><p>${useCloud ? 'Aura Guide is thinking...' : 'Reflecting...'}</p></div>`;
@@ -6596,6 +6667,8 @@ function updateSettingsTier() {
     const badge = document.getElementById('settingsTierStatus');
     const label = document.getElementById('settingsTierLabel');
     const usagePanel = document.getElementById('settingsUsagePanel');
+    const topupRow = document.getElementById('topupActionsRow');
+    if (topupRow) topupRow.style.display = auraTier !== 'free' ? 'flex' : 'none';
 
     // Tier badge
     if (badge) {
@@ -8714,12 +8787,16 @@ function hasTier(requiredTier) {
 }
 
 function canUseFeature(feature) {
+    // Only one hard paywall: personalization (onboarding).
+    // Chat is always free. 3-card is always free.
+    // AI-powered reading reflection is premium+.
+    // Local AI is always available as a fallback — never blocked.
     const featureTiers = {
-        chat: "free",
-        onboarding: "free",
-        three_card: "premium",
-        runes_pack: "pro",
-        dynamic_intro: "pro"
+        chat:         "free",     // chat is open to everyone
+        onboarding:   "premium",  // personalizing your Aura Guide requires premium
+        three_card:   "free",     // 3-card spread is free
+        runes_pack:   "pro",      // runes expansion is pro only
+        dynamic_intro:"premium"   // AI-generated reading intro is premium+
     };
     const required = featureTiers[feature] || "free";
     return hasTier(required);
@@ -8887,7 +8964,10 @@ function checkPersonalizationPaywall() {
 
 const originalStartOnboarding = startOnboarding;
 startOnboarding = async function() {
-    await refreshRevenueCatTier();
+    // Skip RC refresh if debug tier is locked — otherwise RC overwrites debug tier to free
+    if (!window.__debugTierLocked) {
+        await refreshRevenueCatTier();
+    }
     if (checkPersonalizationPaywall()) return;
     originalStartOnboarding();
 };
@@ -8931,6 +9011,9 @@ function debugSetTier(tier) {
     debugLog(`Setting tier to: ${tier}`, 'info');
     auraTier = tier;
     localStorage.setItem('aura_tier', tier);
+    // Lock this tier so RevenueCat refresh can't override it during this session
+    window.__debugTierLocked = (tier !== 'free');
+    debugLog(`Debug lock: ${window.__debugTierLocked}`, 'info');
     // Force-reset token balance for the new tier (clear old usage)
     const allowance = TOKEN_ALLOWANCES[tier] || 0;
     tokenBalance = {

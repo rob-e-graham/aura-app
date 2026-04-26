@@ -336,7 +336,27 @@ app.post("/api/llama", optionalAuth, handleAiRequest);
 app.get("/api/account/state", requireAuth, async (req, res) => {
   try {
     const entitlement = await getUserEntitlement(req.userId);
-    const bal = await getTokenBalance(req.userId);
+    let bal = await getTokenBalance(req.userId);
+
+    // Auto-create usage row if missing for a paid user (e.g. webhook was missed)
+    if (!bal && entitlement?.tier && entitlement.tier !== "free") {
+      const sb = getSupabase();
+      if (sb) {
+        const tokenAllowance = TOKEN_ALLOWANCES[entitlement.tier] || 0;
+        const storageAllowance = MEMORY_ALLOWANCES[entitlement.tier] || 0;
+        await sb.from("user_usage").insert({
+          user_id: req.userId,
+          ai_tokens_limit: tokenAllowance,
+          ai_tokens_used: 0,
+          ai_tokens_bonus: 0,
+          storage_limit: storageAllowance,
+          storage_used: 0,
+          storage_bonus: 0
+        });
+        bal = await getTokenBalance(req.userId);
+      }
+    }
+
     const monthlyLeft = bal ? Math.max(0, bal.monthly_allowance - bal.monthly_used) : 0;
 
     return res.json({
@@ -534,6 +554,12 @@ app.post("/api/memory/sync", requireAuth, async (req, res) => {
     if (error) {
       console.error("Memory sync save error:", error.message);
       return res.status(500).json({ error: "Failed to save memory" });
+    }
+
+    // Also update storage_used so the counter persists across logins
+    const entryCount = typeof req.body?.entry_count === "number" ? req.body.entry_count : null;
+    if (entryCount !== null) {
+      await sb.from("user_usage").update({ storage_used: entryCount }).eq("user_id", req.userId);
     }
 
     res.json({ ok: true });

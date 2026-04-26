@@ -69,10 +69,12 @@
   .tgl .tb{position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 2px rgba(0,0,0,.12)}
   .tgl input:checked~.tb{transform:translateX(16px)}
 
-  .presets{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-  .pbtn{aspect-ratio:1;border-radius:8px;border:2px solid transparent;cursor:pointer;transition:all .15s}
-  .pbtn:hover{transform:scale(1.06)}
-  .pbtn.active{border-color:var(--tx)}
+  .presets{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .pbtn{min-height:84px;border-radius:10px;border:2px solid transparent;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:flex-start;padding:10px;text-align:left}
+  .pbtn:hover{transform:translateY(-1px) scale(1.02)}
+  .pbtn.active{border-color:var(--tx);box-shadow:0 0 0 1px rgba(0,0,0,.04)}
+  .pbtn::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(0,0,0,.28))}
+  .pbtn-label{position:relative;z-index:1;font-size:.68rem;line-height:1.15;letter-spacing:.08em;text-transform:uppercase;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35);font-weight:600}
 
   .seg{display:flex;gap:2px;background:var(--bg);border-radius:7px;padding:2px}
   .seg-opt{flex:1;text-align:center;font-size:.7rem;padding:6px 3px;border-radius:5px;cursor:pointer;border:none;background:transparent;color:var(--mt);font-family:'DM Sans',sans-serif;font-weight:500;transition:all .15s;white-space:nowrap}
@@ -224,23 +226,95 @@ let orbLayers=[
 ];
 
 let backTextLines=[
-  {text:'THE LEAP',size:64,weight:'500'},
-  {text:'Take the step.',size:30,weight:'400'},
+  {text:'STILLNESS',size:64,weight:'500'},
+  {text:'In stillness, clarity gathers.',size:28,weight:'400'},
 ];
 
 const presets=[
-  {bg:'#dbd3e8',layers:[{color:'#f5d76e',size:.2},{color:'#e88aad',size:.55},{color:'#c8a0d8',size:.9}]},
-  {bg:'#f2d8f5',layers:[{color:'#7ba3f7',size:.2},{color:'#d074e8',size:.55},{color:'#e8b0f0',size:.9}]},
-  {bg:'#e8d5c4',layers:[{color:'#f5d76e',size:.2},{color:'#e8945a',size:.55},{color:'#d8a878',size:.9}]},
-  {bg:'#d8e8d0',layers:[{color:'#f5f0a0',size:.2},{color:'#7ad85a',size:.55},{color:'#a8d8a0',size:.9}]},
-  {bg:'#f5e0e0',layers:[{color:'#f5708a',size:.15},{color:'#e8506a',size:.45},{color:'#f0a8b8',size:.85}]},
-  {bg:'#f0ead0',layers:[{color:'#f5d76e',size:.2},{color:'#e8a040',size:.5},{color:'#e8c088',size:.85}]},
-  {bg:'#d6e8e8',layers:[{color:'#e8f0a8',size:.2},{color:'#6abae8',size:.5},{color:'#90c8d8',size:.9}]},
-  {bg:'#e0ddd4',layers:[{color:'#f5e8d0',size:.2},{color:'#8a7a6a',size:.5},{color:'#b8a898',size:.9}]},
-  {bg:'#dce8f0',layers:[{color:'#e8f0a0',size:.2},{color:'#7ecfc0',size:.55},{color:'#a8d8c8',size:.9}]},
-  {bg:'#f5eee0',layers:[{color:'#ffd76e',size:.18},{color:'#e8a840',size:.48},{color:'#e8c878',size:.88}]},
-  {bg:'#e8e0f0',layers:[{color:'#c0d0f5',size:.2},{color:'#5a6ae8',size:.5},{color:'#8888e0',size:.9}]},
-  {bg:'#f0e8dd',layers:[{color:'#ff8a5c',size:.18},{color:'#ff6b6b',size:.5},{color:'#f0a8a0',size:.88}]},
+  {
+    name:'Stillness',
+    bg:'#F0F0F2',
+    layers:[
+      {color:'#F6F6FF',size:.18},
+      {color:'#7A86A8',size:.52},
+      {color:'#D9CDEE',size:.9},
+    ],
+    backText:[
+      {text:'STILLNESS',size:64,weight:'500'},
+      {text:'In stillness, clarity gathers.',size:28,weight:'400'},
+    ],
+    orbSize:74,orbSoft:72,orbYOff:4,orbXOff:0,
+  },
+  {
+    name:'Radiance',
+    bg:'#F6F1E3',
+    layers:[
+      {color:'#FFE56B',size:.18},
+      {color:'#E9B048',size:.52},
+      {color:'#FFF0C9',size:.9},
+    ],
+    backText:[
+      {text:'RADIANCE',size:64,weight:'500'},
+      {text:'Let yourself be seen.',size:28,weight:'400'},
+    ],
+    orbSize:72,orbSoft:62,orbYOff:4,orbXOff:0,
+  },
+  {
+    name:'The Leap',
+    bg:'#F3F1E6',
+    layers:[
+      {color:'#DDFB79',size:.17},
+      {color:'#9EC85D',size:.5},
+      {color:'#EACB86',size:.9},
+    ],
+    backText:[
+      {text:'THE LEAP',size:64,weight:'500'},
+      {text:'Begin before you are ready.',size:28,weight:'400'},
+    ],
+    orbSize:74,orbSoft:58,orbYOff:4,orbXOff:0,
+  },
+  {
+    name:'Wholeness',
+    bg:'#EAF5EE',
+    layers:[
+      {color:'#A8F0BF',size:.18},
+      {color:'#55C67F',size:.52},
+      {color:'#D7F1E0',size:.9},
+    ],
+    backText:[
+      {text:'WHOLENESS',size:62,weight:'500'},
+      {text:'Nothing is missing now.',size:28,weight:'400'},
+    ],
+    orbSize:73,orbSoft:66,orbYOff:4,orbXOff:0,
+  },
+  {
+    name:'Liberation',
+    bg:'#F4E8EA',
+    layers:[
+      {color:'#D84D61',size:.16},
+      {color:'#7A2432',size:.48},
+      {color:'#B55D6A',size:.88},
+    ],
+    backText:[
+      {text:'LIBERATION',size:60,weight:'500'},
+      {text:'Leave the old shape behind.',size:28,weight:'400'},
+    ],
+    orbSize:72,orbSoft:50,orbYOff:5,orbXOff:0,
+  },
+  {
+    name:'Inner Knowing',
+    bg:'#ECEAF6',
+    layers:[
+      {color:'#C8CCFF',size:.18},
+      {color:'#6974D9',size:.52},
+      {color:'#C8B6EE',size:.9},
+    ],
+    backText:[
+      {text:'INNER KNOWING',size:56,weight:'500'},
+      {text:'What is true still speaks softly.',size:26,weight:'400'},
+    ],
+    orbSize:74,orbSoft:70,orbYOff:4,orbXOff:0,
+  },
 ];
 
 // Sync slider <-> number input
@@ -290,8 +364,10 @@ function setRes(w,btn){exW=w;btn.parentElement.querySelectorAll('.seg-opt').forE
 function initPresets(){
   const g=document.getElementById('presetGrid');g.innerHTML='';
   presets.forEach((p,i)=>{
-    const b=document.createElement('button');b.className='pbtn'+(i===8?' active':'');
-    b.style.background=`radial-gradient(circle,${p.layers.map(l=>l.color).reverse().join(',')},${p.bg})`;
+    const b=document.createElement('button');b.className='pbtn'+(i===0?' active':'');
+    b.style.background=`radial-gradient(circle at 50% 42%, ${p.layers[0].color} 0%, ${p.layers[1].color} 34%, ${p.layers[2].color} 62%, ${p.bg} 100%)`;
+    b.title=`${p.name} — ${p.backText[1].text}`;
+    b.innerHTML=`<span class="pbtn-label">${p.name}</span>`;
     b.onclick=()=>applyPreset(i);g.appendChild(b);
   });
 }
@@ -299,7 +375,13 @@ function initPresets(){
 function applyPreset(i){
   const p=presets[i];
   document.getElementById('bgC').value=p.bg;document.getElementById('bgH').value=p.bg;document.getElementById('bgSw').style.background=p.bg;
-  orbLayers=p.layers.map(l=>({...l}));renderLayers();
+  orbLayers=p.layers.map(l=>({...l}));
+  backTextLines=p.backText.map(l=>({...l}));
+  if(typeof p.orbSize==='number')document.getElementById('orbSize').value=document.getElementById('orbSizeN').value=p.orbSize;
+  if(typeof p.orbSoft==='number')document.getElementById('orbSoft').value=document.getElementById('orbSoftN').value=p.orbSoft;
+  if(typeof p.orbYOff==='number')document.getElementById('orbYOff').value=document.getElementById('orbYOffN').value=p.orbYOff;
+  if(typeof p.orbXOff==='number')document.getElementById('orbXOff').value=document.getElementById('orbXOffN').value=p.orbXOff;
+  renderLayers();renderBackLines();
   document.querySelectorAll('.pbtn').forEach((b,j)=>b.classList.toggle('active',j===i));draw();
 }
 
@@ -499,7 +581,7 @@ function exportPNG(which){
 // Init
 initPresets();renderLayers();renderBackLines();
 setMode('tshirt');
-applyPreset(8);
+applyPreset(0);
 </script>
 </body>
 </html>
