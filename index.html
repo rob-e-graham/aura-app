@@ -7605,39 +7605,62 @@ function continueToReading() {
 
 // ========== SHARE ==========
 function buildReadingShareImage(cards, dateStr) {
-    // Render a portrait share card (1080×1440) using Canvas — no external libs needed
     const W = 1080, H = 1440;
     const canvas = document.createElement('canvas');
     canvas.width = W; canvas.height = H;
     const ctx = canvas.getContext('2d');
 
+    // ── Orb engine — ported directly from Aura Orb Generator v4 ──
+    const hexRgba = (hex, a) => {
+        if (!hex || !hex.startsWith('#')) return `rgba(180,130,255,${a})`;
+        return `rgba(${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)},${a})`;
+    };
+    const drawOrb = (cx, cy, maxR, layers, soft = 0.55) => {
+        [...layers].sort((a, b) => b.size - a.size).forEach(l => {
+            const r = maxR * l.size;
+            if (r < 1) return;
+            for (let p = 0; p < 3; p++) {
+                const pr = r * (1 + p * 0.18);
+                const a  = p === 0 ? 0.92 : p === 1 ? 0.45 : 0.2;
+                const fs = Math.max(0.01, 1 - soft);
+                const g  = ctx.createRadialGradient(cx, cy, 0, cx, cy, pr);
+                g.addColorStop(0,                          hexRgba(l.color, a));
+                g.addColorStop(fs * 0.4,                   hexRgba(l.color, a * 0.9));
+                g.addColorStop(fs,                         hexRgba(l.color, a * 0.45));
+                g.addColorStop(Math.min(0.99, fs + (1 - fs) * 0.55), hexRgba(l.color, a * 0.1));
+                g.addColorStop(1,                          hexRgba(l.color, 0));
+                ctx.fillStyle = g;
+                ctx.fillRect(cx - pr, cy - pr, pr * 2, pr * 2);
+            }
+        });
+    };
+
+    // Build orb layers from a card's color palette (core → outer rings)
+    const cardToOrbLayers = (card) => {
+        const cols = card.colors || ['#c0a0f0', '#8060d0', '#604090'];
+        return [
+            { color: cols[0], size: 0.22 },  // bright core
+            { color: cols[1], size: 0.55 },  // mid ring
+            { color: cols[2] || cols[1], size: 0.88 }, // outer glow
+        ];
+    };
+
     // ── Background ──
-    const bg = ctx.createLinearGradient(0, 0, W, H);
-    bg.addColorStop(0,   '#0c0a14');
-    bg.addColorStop(0.5, '#0f0c1a');
-    bg.addColorStop(1,   '#090810');
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
+    const bgGrad = ctx.createLinearGradient(0, 0, W, H);
+    bgGrad.addColorStop(0,   '#0c0a14');
+    bgGrad.addColorStop(0.5, '#0f0c1a');
+    bgGrad.addColorStop(1,   '#090810');
+    ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, W, H);
 
-    // Subtle radial glow behind cards
-    const glow = ctx.createRadialGradient(W/2, H*0.48, 0, W/2, H*0.48, W*0.72);
-    glow.addColorStop(0,   'rgba(120,80,200,0.18)');
-    glow.addColorStop(0.5, 'rgba(80,60,160,0.08)');
-    glow.addColorStop(1,   'transparent');
-    ctx.fillStyle = glow;
-    ctx.fillRect(0, 0, W, H);
-
-    // Scatter a few tiny stars
+    // Starfield
     ctx.fillStyle = 'rgba(255,255,255,0.55)';
-    const starSeeds = [0.12,0.34,0.56,0.78,0.23,0.67,0.45,0.89,0.11,0.99,0.38,0.61];
-    starSeeds.forEach((s, i) => {
-        const sx = (s * W * 1.3) % W;
-        const sy = (s * H * 1.7 + i * 97) % H;
-        const r = 0.8 + (i % 3) * 0.6;
-        ctx.beginPath(); ctx.arc(sx, sy, r, 0, Math.PI*2); ctx.fill();
+    [0.12,0.34,0.56,0.78,0.23,0.67,0.45,0.89,0.11,0.99,0.38,0.61,0.72,0.18,0.92].forEach((s,i) => {
+        ctx.beginPath();
+        ctx.arc((s * W * 1.3) % W, (s * H * 1.7 + i * 97) % H, 0.7 + (i%3)*0.55, 0, Math.PI*2);
+        ctx.fill();
     });
 
-    // ── Helper: rounded rect ──
+    // ── Helpers ──
     const roundRect = (x, y, w, h, r) => {
         ctx.beginPath();
         ctx.moveTo(x+r, y);
@@ -7647,11 +7670,8 @@ function buildReadingShareImage(cards, dateStr) {
         ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x, y, x+r, y);
         ctx.closePath();
     };
-
-    // ── Helper: wrap text ──
     const wrapText = (text, x, y, maxW, lineH, maxLines = 4) => {
-        const words = text.split(' ');
-        let line = '', lines = [];
+        const words = text.split(' '); let line = '', lines = [];
         for (const word of words) {
             const test = line ? line + ' ' + word : word;
             if (ctx.measureText(test).width > maxW && line) {
@@ -7666,125 +7686,116 @@ function buildReadingShareImage(cards, dateStr) {
 
     // ── AURA wordmark ──
     ctx.textAlign = 'center';
-    ctx.letterSpacing = '0.18em';
     ctx.fillStyle = 'rgba(255,255,255,0.92)';
-    ctx.font = '700 72px "Georgia", serif';
+    ctx.font = '700 72px Georgia, serif';
+    ctx.letterSpacing = '12px';
     ctx.fillText('AURA', W/2, 118);
-
-    ctx.font = '400 26px "Georgia", serif';
+    ctx.font = '400 24px Georgia, serif';
     ctx.fillStyle = 'rgba(200,170,255,0.55)';
-    ctx.letterSpacing = '0.22em';
-    ctx.fillText('KNOW YOURSELF', W/2, 160);
+    ctx.letterSpacing = '8px';
+    ctx.fillText('KNOW YOURSELF', W/2, 158);
+    ctx.font = '400 21px Arial, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.28)';
+    ctx.letterSpacing = '2px';
+    ctx.fillText(dateStr, W/2, 196);
 
-    // Date
-    ctx.font = '400 22px "Arial", sans-serif';
-    ctx.fillStyle = 'rgba(255,255,255,0.32)';
-    ctx.letterSpacing = '0.06em';
-    ctx.fillText(dateStr, W/2, 200);
-
-    // ── Divider ──
-    ctx.strokeStyle = 'rgba(180,140,255,0.22)';
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(120, 222); ctx.lineTo(W-120, 222); ctx.stroke();
+    ctx.strokeStyle = 'rgba(180,140,255,0.2)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(100, 218); ctx.lineTo(W-100, 218); ctx.stroke();
 
     // ── Cards ──
     const isSingle = cards.length === 1;
     const positions = isSingle ? ['Focus'] : ['Past', 'Present', 'Future'];
-    const cardW = isSingle ? 520 : 290;
-    const cardH = isSingle ? 480 : 440;
-    const cardY = 260;
-    const totalCardsW = isSingle ? cardW : cards.length * cardW + (cards.length-1) * 24;
-    const startX = (W - totalCardsW) / 2;
+    const cardW = isSingle ? 540 : 296;
+    const cardH = isSingle ? 500 : 460;
+    const cardY = 250;
+    const gap = 20;
+    const totalW = isSingle ? cardW : cards.length * cardW + (cards.length-1) * gap;
+    const startX = (W - totalW) / 2;
 
     cards.forEach((card, i) => {
-        const cx = isSingle ? startX : startX + i * (cardW + 24);
+        const cx = isSingle ? startX : startX + i * (cardW + gap);
         const cy = cardY;
+        const midX = cx + cardW / 2;
 
-        // Card shadow
-        ctx.shadowColor = 'rgba(0,0,0,0.5)';
-        ctx.shadowBlur = 28;
-        ctx.shadowOffsetY = 8;
-
-        // Card background gradient using card's own colors
-        const cardGrad = ctx.createLinearGradient(cx, cy, cx, cy + cardH);
-        cardGrad.addColorStop(0, card.bg || '#1a1228');
-        cardGrad.addColorStop(1, darken ? darken(card.bg || '#1a1228', 20) : '#0e0a1a');
-        roundRect(cx, cy, cardW, cardH, 22);
-        ctx.fillStyle = cardGrad;
-        ctx.fill();
+        // Drop shadow
+        ctx.shadowColor = 'rgba(0,0,0,0.55)';
+        ctx.shadowBlur = 32; ctx.shadowOffsetY = 10;
+        roundRect(cx, cy, cardW, cardH, 24);
+        ctx.fillStyle = card.bg || '#12101e'; ctx.fill();
         ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
 
-        // Card border
-        roundRect(cx, cy, cardW, cardH, 22);
-        const border = ctx.createLinearGradient(cx, cy, cx, cy+cardH);
-        border.addColorStop(0, 'rgba(255,255,255,0.18)');
-        border.addColorStop(1, 'rgba(255,255,255,0.05)');
-        ctx.strokeStyle = border; ctx.lineWidth = 1.5; ctx.stroke();
+        // Card dark overlay to deepen bg for contrast
+        ctx.save();
+        roundRect(cx, cy, cardW, cardH, 24);
+        ctx.clip();
+        const darkenGrad = ctx.createLinearGradient(cx, cy, cx, cy + cardH);
+        darkenGrad.addColorStop(0, 'rgba(0,0,0,0.25)');
+        darkenGrad.addColorStop(1, 'rgba(0,0,0,0.55)');
+        ctx.fillStyle = darkenGrad; ctx.fillRect(cx, cy, cardW, cardH);
 
-        // Inner orb glow using card colors
-        const orbX = cx + cardW/2, orbY = cy + cardH*0.38;
-        const orbR = isSingle ? 120 : 80;
-        const orb = ctx.createRadialGradient(orbX, orbY, 0, orbX, orbY, orbR);
-        orb.addColorStop(0,   (card.colors?.[0] || 'rgba(180,130,255,0.6)') + 'cc');
-        orb.addColorStop(0.4, (card.colors?.[1] || 'rgba(120,80,200,0.3)') + '66');
-        orb.addColorStop(1,   'transparent');
-        ctx.fillStyle = orb;
-        ctx.beginPath(); ctx.arc(orbX, orbY, orbR, 0, Math.PI*2); ctx.fill();
+        // ── Orb (generator quality) ──
+        const orbY = cy + cardH * 0.40;
+        const orbR = isSingle ? 130 : 90;
+        drawOrb(midX, orbY, orbR, cardToOrbLayers(card), 0.52);
+
+        ctx.restore();
+
+        // Card glass border
+        roundRect(cx, cy, cardW, cardH, 24);
+        const border = ctx.createLinearGradient(cx, cy, cx, cy + cardH);
+        border.addColorStop(0, 'rgba(255,255,255,0.22)');
+        border.addColorStop(0.5, 'rgba(255,255,255,0.06)');
+        border.addColorStop(1, 'rgba(255,255,255,0.03)');
+        ctx.strokeStyle = border; ctx.lineWidth = 1.5; ctx.stroke();
 
         // Position label
         ctx.textAlign = 'center';
-        ctx.font = `500 ${isSingle ? 20 : 16}px "Arial", sans-serif`;
-        ctx.fillStyle = 'rgba(200,170,255,0.6)';
-        ctx.letterSpacing = '0.14em';
-        ctx.fillText(positions[i].toUpperCase(), cx + cardW/2, cy + 32);
+        ctx.font = `500 ${isSingle ? 19 : 15}px Arial, sans-serif`;
+        ctx.fillStyle = 'rgba(200,170,255,0.65)';
+        ctx.letterSpacing = '4px';
+        ctx.fillText(positions[i].toUpperCase(), midX, cy + 34);
 
         // Card name
-        ctx.font = `600 ${isSingle ? 34 : 24}px "Georgia", serif`;
+        ctx.font = `600 ${isSingle ? 36 : 25}px Georgia, serif`;
         ctx.fillStyle = 'rgba(255,255,255,0.95)';
-        ctx.letterSpacing = '0.04em';
-        // Wrap if needed
-        const nameMaxW = cardW - 32;
-        wrapText(card.name, cx + cardW/2, cy + cardH*0.64, nameMaxW, isSingle ? 40 : 30, 2);
+        ctx.letterSpacing = '1px';
+        wrapText(card.name, midX, cy + cardH * 0.645, cardW - 40, isSingle ? 42 : 31, 2);
 
         // Affirmation
-        ctx.font = `italic ${isSingle ? 20 : 14}px "Georgia", serif`;
-        ctx.fillStyle = 'rgba(220,200,255,0.6)';
-        ctx.letterSpacing = '0.02em';
-        const affirmMaxW = cardW - 40;
-        wrapText(`"${card.affirmation}"`, cx + cardW/2, cy + cardH*0.80, affirmMaxW, isSingle ? 26 : 20, 2);
+        ctx.font = `italic ${isSingle ? 20 : 14}px Georgia, serif`;
+        ctx.fillStyle = 'rgba(220,200,255,0.58)';
+        ctx.letterSpacing = '0px';
+        wrapText(`"${card.affirmation}"`, midX, cy + cardH * 0.80, cardW - 48, isSingle ? 27 : 20, 2);
     });
 
-    // ── AI Reflection snippet ──
+    // ── AI Reflection ──
     const guideEl = document.getElementById('guideMessage');
     const reflection = guideEl ? (guideEl.innerText || guideEl.textContent || '').replace(/\s+/g, ' ').trim() : '';
     if (reflection) {
-        const reflY = cardY + cardH + 52;
-        // Reflection box
-        roundRect(80, reflY - 32, W - 160, 160, 16);
-        ctx.fillStyle = 'rgba(255,255,255,0.04)';
-        ctx.fill();
-        roundRect(80, reflY - 32, W - 160, 160, 16);
-        ctx.strokeStyle = 'rgba(180,140,255,0.14)'; ctx.lineWidth = 1; ctx.stroke();
+        const reflBoxY = cardY + cardH + 40;
+        const reflBoxH = 170;
+        roundRect(80, reflBoxY, W - 160, reflBoxH, 18);
+        ctx.fillStyle = 'rgba(255,255,255,0.035)'; ctx.fill();
+        roundRect(80, reflBoxY, W - 160, reflBoxH, 18);
+        ctx.strokeStyle = 'rgba(180,140,255,0.13)'; ctx.lineWidth = 1; ctx.stroke();
 
         ctx.textAlign = 'center';
-        ctx.font = 'italic 400 22px "Georgia", serif';
-        ctx.fillStyle = 'rgba(210,190,255,0.72)';
-        ctx.letterSpacing = '0.01em';
-        const snippet = reflection.length > 160 ? reflection.slice(0, 157) + '…' : reflection;
-        wrapText(snippet, W/2, reflY, W - 240, 32, 4);
+        ctx.font = 'italic 400 21px Georgia, serif';
+        ctx.fillStyle = 'rgba(210,190,255,0.70)';
+        ctx.letterSpacing = '0px';
+        const snippet = reflection.length > 180 ? reflection.slice(0, 177) + '…' : reflection;
+        wrapText(snippet, W/2, reflBoxY + 38, W - 220, 32, 4);
     }
 
-    // ── Bottom branding ──
-    const brandY = H - 72;
-    ctx.strokeStyle = 'rgba(180,140,255,0.18)';
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(120, brandY - 28); ctx.lineTo(W-120, brandY - 28); ctx.stroke();
-
+    // ── Branding ──
+    const brandY = H - 70;
+    ctx.strokeStyle = 'rgba(180,140,255,0.16)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(100, brandY - 30); ctx.lineTo(W-100, brandY - 30); ctx.stroke();
     ctx.textAlign = 'center';
-    ctx.font = '400 22px "Arial", sans-serif';
-    ctx.fillStyle = 'rgba(180,140,255,0.55)';
-    ctx.letterSpacing = '0.06em';
-    ctx.fillText('✦  aura-me.square.site', W/2, brandY + 8);
+    ctx.font = '400 21px Arial, sans-serif';
+    ctx.fillStyle = 'rgba(180,140,255,0.50)';
+    ctx.letterSpacing = '2px';
+    ctx.fillText('✦  aura-me.square.site', W/2, brandY + 6);
 
     return canvas;
 }
