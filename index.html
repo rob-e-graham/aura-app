@@ -7604,7 +7604,192 @@ function continueToReading() {
 }
 
 // ========== SHARE ==========
-function shareReading() {
+function buildReadingShareImage(cards, dateStr) {
+    // Render a portrait share card (1080×1440) using Canvas — no external libs needed
+    const W = 1080, H = 1440;
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+
+    // ── Background ──
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0,   '#0c0a14');
+    bg.addColorStop(0.5, '#0f0c1a');
+    bg.addColorStop(1,   '#090810');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle radial glow behind cards
+    const glow = ctx.createRadialGradient(W/2, H*0.48, 0, W/2, H*0.48, W*0.72);
+    glow.addColorStop(0,   'rgba(120,80,200,0.18)');
+    glow.addColorStop(0.5, 'rgba(80,60,160,0.08)');
+    glow.addColorStop(1,   'transparent');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, W, H);
+
+    // Scatter a few tiny stars
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    const starSeeds = [0.12,0.34,0.56,0.78,0.23,0.67,0.45,0.89,0.11,0.99,0.38,0.61];
+    starSeeds.forEach((s, i) => {
+        const sx = (s * W * 1.3) % W;
+        const sy = (s * H * 1.7 + i * 97) % H;
+        const r = 0.8 + (i % 3) * 0.6;
+        ctx.beginPath(); ctx.arc(sx, sy, r, 0, Math.PI*2); ctx.fill();
+    });
+
+    // ── Helper: rounded rect ──
+    const roundRect = (x, y, w, h, r) => {
+        ctx.beginPath();
+        ctx.moveTo(x+r, y);
+        ctx.lineTo(x+w-r, y); ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+        ctx.lineTo(x+w, y+h-r); ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+        ctx.lineTo(x+r, y+h); ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+        ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x, y, x+r, y);
+        ctx.closePath();
+    };
+
+    // ── Helper: wrap text ──
+    const wrapText = (text, x, y, maxW, lineH, maxLines = 4) => {
+        const words = text.split(' ');
+        let line = '', lines = [];
+        for (const word of words) {
+            const test = line ? line + ' ' + word : word;
+            if (ctx.measureText(test).width > maxW && line) {
+                lines.push(line); line = word;
+                if (lines.length >= maxLines) break;
+            } else { line = test; }
+        }
+        if (line && lines.length < maxLines) lines.push(line);
+        lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineH));
+        return lines.length;
+    };
+
+    // ── AURA wordmark ──
+    ctx.textAlign = 'center';
+    ctx.letterSpacing = '0.18em';
+    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    ctx.font = '700 72px "Georgia", serif';
+    ctx.fillText('AURA', W/2, 118);
+
+    ctx.font = '400 26px "Georgia", serif';
+    ctx.fillStyle = 'rgba(200,170,255,0.55)';
+    ctx.letterSpacing = '0.22em';
+    ctx.fillText('KNOW YOURSELF', W/2, 160);
+
+    // Date
+    ctx.font = '400 22px "Arial", sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.32)';
+    ctx.letterSpacing = '0.06em';
+    ctx.fillText(dateStr, W/2, 200);
+
+    // ── Divider ──
+    ctx.strokeStyle = 'rgba(180,140,255,0.22)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(120, 222); ctx.lineTo(W-120, 222); ctx.stroke();
+
+    // ── Cards ──
+    const isSingle = cards.length === 1;
+    const positions = isSingle ? ['Focus'] : ['Past', 'Present', 'Future'];
+    const cardW = isSingle ? 520 : 290;
+    const cardH = isSingle ? 480 : 440;
+    const cardY = 260;
+    const totalCardsW = isSingle ? cardW : cards.length * cardW + (cards.length-1) * 24;
+    const startX = (W - totalCardsW) / 2;
+
+    cards.forEach((card, i) => {
+        const cx = isSingle ? startX : startX + i * (cardW + 24);
+        const cy = cardY;
+
+        // Card shadow
+        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur = 28;
+        ctx.shadowOffsetY = 8;
+
+        // Card background gradient using card's own colors
+        const cardGrad = ctx.createLinearGradient(cx, cy, cx, cy + cardH);
+        cardGrad.addColorStop(0, card.bg || '#1a1228');
+        cardGrad.addColorStop(1, darken ? darken(card.bg || '#1a1228', 20) : '#0e0a1a');
+        roundRect(cx, cy, cardW, cardH, 22);
+        ctx.fillStyle = cardGrad;
+        ctx.fill();
+        ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+
+        // Card border
+        roundRect(cx, cy, cardW, cardH, 22);
+        const border = ctx.createLinearGradient(cx, cy, cx, cy+cardH);
+        border.addColorStop(0, 'rgba(255,255,255,0.18)');
+        border.addColorStop(1, 'rgba(255,255,255,0.05)');
+        ctx.strokeStyle = border; ctx.lineWidth = 1.5; ctx.stroke();
+
+        // Inner orb glow using card colors
+        const orbX = cx + cardW/2, orbY = cy + cardH*0.38;
+        const orbR = isSingle ? 120 : 80;
+        const orb = ctx.createRadialGradient(orbX, orbY, 0, orbX, orbY, orbR);
+        orb.addColorStop(0,   (card.colors?.[0] || 'rgba(180,130,255,0.6)') + 'cc');
+        orb.addColorStop(0.4, (card.colors?.[1] || 'rgba(120,80,200,0.3)') + '66');
+        orb.addColorStop(1,   'transparent');
+        ctx.fillStyle = orb;
+        ctx.beginPath(); ctx.arc(orbX, orbY, orbR, 0, Math.PI*2); ctx.fill();
+
+        // Position label
+        ctx.textAlign = 'center';
+        ctx.font = `500 ${isSingle ? 20 : 16}px "Arial", sans-serif`;
+        ctx.fillStyle = 'rgba(200,170,255,0.6)';
+        ctx.letterSpacing = '0.14em';
+        ctx.fillText(positions[i].toUpperCase(), cx + cardW/2, cy + 32);
+
+        // Card name
+        ctx.font = `600 ${isSingle ? 34 : 24}px "Georgia", serif`;
+        ctx.fillStyle = 'rgba(255,255,255,0.95)';
+        ctx.letterSpacing = '0.04em';
+        // Wrap if needed
+        const nameMaxW = cardW - 32;
+        wrapText(card.name, cx + cardW/2, cy + cardH*0.64, nameMaxW, isSingle ? 40 : 30, 2);
+
+        // Affirmation
+        ctx.font = `italic ${isSingle ? 20 : 14}px "Georgia", serif`;
+        ctx.fillStyle = 'rgba(220,200,255,0.6)';
+        ctx.letterSpacing = '0.02em';
+        const affirmMaxW = cardW - 40;
+        wrapText(`"${card.affirmation}"`, cx + cardW/2, cy + cardH*0.80, affirmMaxW, isSingle ? 26 : 20, 2);
+    });
+
+    // ── AI Reflection snippet ──
+    const guideEl = document.getElementById('guideMessage');
+    const reflection = guideEl ? (guideEl.innerText || guideEl.textContent || '').replace(/\s+/g, ' ').trim() : '';
+    if (reflection) {
+        const reflY = cardY + cardH + 52;
+        // Reflection box
+        roundRect(80, reflY - 32, W - 160, 160, 16);
+        ctx.fillStyle = 'rgba(255,255,255,0.04)';
+        ctx.fill();
+        roundRect(80, reflY - 32, W - 160, 160, 16);
+        ctx.strokeStyle = 'rgba(180,140,255,0.14)'; ctx.lineWidth = 1; ctx.stroke();
+
+        ctx.textAlign = 'center';
+        ctx.font = 'italic 400 22px "Georgia", serif';
+        ctx.fillStyle = 'rgba(210,190,255,0.72)';
+        ctx.letterSpacing = '0.01em';
+        const snippet = reflection.length > 160 ? reflection.slice(0, 157) + '…' : reflection;
+        wrapText(snippet, W/2, reflY, W - 240, 32, 4);
+    }
+
+    // ── Bottom branding ──
+    const brandY = H - 72;
+    ctx.strokeStyle = 'rgba(180,140,255,0.18)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(120, brandY - 28); ctx.lineTo(W-120, brandY - 28); ctx.stroke();
+
+    ctx.textAlign = 'center';
+    ctx.font = '400 22px "Arial", sans-serif';
+    ctx.fillStyle = 'rgba(180,140,255,0.55)';
+    ctx.letterSpacing = '0.06em';
+    ctx.fillText('✦  aura-me.square.site', W/2, brandY + 8);
+
+    return canvas;
+}
+
+async function shareReading() {
     if (!selectedCards || !selectedCards.length) {
         toast('No reading to share yet.');
         return;
@@ -7612,23 +7797,40 @@ function shareReading() {
 
     const isSingle = selectedCards.length === 1;
     const positions = isSingle ? ['Focus'] : ['Past', 'Present', 'Future'];
-    const dateStr = document.getElementById('readingDate')?.textContent || new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+    const dateStr = document.getElementById('readingDate')?.textContent
+        || new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
 
-    // Build card lines with position + name + meaning + affirmation
-    const cardLines = selectedCards.map((c, i) => {
-        const pos = positions[i];
-        return `${pos}: ${c.name}\n"${c.affirmation}"`;
-    }).join('\n\n');
+    const cardLines = selectedCards.map((c, i) =>
+        `${positions[i]}: ${c.name}\n"${c.affirmation}"`
+    ).join('\n\n');
 
-    // Pull any AI reflection text that was generated
     const guideEl = document.getElementById('guideMessage');
     const reflectionText = guideEl ? (guideEl.innerText || guideEl.textContent || '').replace(/\s+/g, ' ').trim() : '';
-    const reflectionSection = reflectionText ? `\n\n— ${reflectionText.slice(0, 280)}${reflectionText.length > 280 ? '…' : ''}` : '';
+    const reflectionSection = reflectionText
+        ? `\n\n— ${reflectionText.slice(0, 280)}${reflectionText.length > 280 ? '…' : ''}`
+        : '';
 
-    const title = isSingle ? `My Aura Reading — ${selectedCards[0].name}` : `My Aura Reading — ${selectedCards.map(c => c.name).join(' · ')}`;
+    const title = isSingle
+        ? `My Aura Reading — ${selectedCards[0].name}`
+        : `My Aura Reading — ${selectedCards.map(c => c.name).join(' · ')}`;
 
     const text = `✦ AURA Reading · ${dateStr}\n\n${cardLines}${reflectionSection}\n\n✨ aura-me.square.site`;
 
+    // Try to share with generated card image
+    try {
+        const canvas = buildReadingShareImage(selectedCards, dateStr);
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        const file = new File([blob], 'aura-reading.png', { type: 'image/png' });
+
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ title, text, files: [file] });
+            return;
+        }
+    } catch (imgErr) {
+        console.warn('Image share failed, falling back to text:', imgErr);
+    }
+
+    // Fallback: text-only share or clipboard
     if (navigator.share) {
         navigator.share({ title, text }).catch(() => {});
     } else {
