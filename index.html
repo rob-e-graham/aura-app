@@ -841,10 +841,17 @@
             opacity: 0.4;
             animation: orbRingDrift 16s linear infinite;
         }
+        .app[data-screen="entryScreen"] .aura-life-orb,
         .app[data-screen="welcomeScreen"] .aura-life-orb,
         .app[data-screen="dailyScreen"] .aura-life-orb,
         .app[data-screen="readingScreen"] .aura-life-orb {
-            opacity: 0;
+            opacity: 0 !important;
+            animation: none !important;
+        }
+        .app[data-screen="entryScreen"] .aura-life-orb::before,
+        .app[data-screen="welcomeScreen"] .aura-life-orb::before {
+            animation: none !important;
+            opacity: 0 !important;
         }
         @keyframes ambientBreath {
             0%, 100% { transform: scale(1); opacity: 0.46; filter: blur(0px); }
