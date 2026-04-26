@@ -7885,23 +7885,49 @@ function buildReadingShareImage(cards, dateStr) {
         wrapText(`"${card.affirmation}"`, midX, cy + cardH * 0.82, cardW - 48, isSingle ? 34 : 26, 2);
     });
 
-    // ── AI Reflection ──
+    // ── AI Reflection — full text, dynamic height ──
     const guideEl = document.getElementById('guideMessage');
     const reflection = guideEl ? (guideEl.innerText || guideEl.textContent || '').replace(/\s+/g, ' ').trim() : '';
     if (reflection) {
-        const reflBoxY = cardY + cardH + 40;
-        const reflBoxH = 170;
+        const reflBoxY = cardY + cardH + 36;
+        const brandingLineY = H - 110; // space reserved for branding at bottom
+        const maxReflH = brandingLineY - reflBoxY - 16;
+        const lineH = 30;
+        const pad = 44; // vertical padding inside box
+        const maxLines = Math.max(1, Math.floor((maxReflH - pad) / lineH));
+
+        // Count actual lines needed without drawing
+        ctx.font = 'italic 400 21px Georgia, serif';
+        ctx.letterSpacing = '0px';
+        const maxTW = W - 220;
+        let line = '', lineCount = 0;
+        for (const word of reflection.split(' ')) {
+            const test = line ? line + ' ' + word : word;
+            if (ctx.measureText(test).width > maxTW && line) { lineCount++; line = word; }
+            else line = test;
+        }
+        if (line) lineCount++;
+        const usedLines = Math.min(lineCount, maxLines);
+        const reflBoxH = usedLines * lineH + pad;
+
+        // Box
         roundRect(80, reflBoxY, W - 160, reflBoxH, 18);
         ctx.fillStyle = 'rgba(255,255,255,0.035)'; ctx.fill();
         roundRect(80, reflBoxY, W - 160, reflBoxH, 18);
         ctx.strokeStyle = 'rgba(180,140,255,0.13)'; ctx.lineWidth = 1; ctx.stroke();
 
+        // Label
         ctx.textAlign = 'center';
+        ctx.font = '500 19px Arial, sans-serif';
+        ctx.fillStyle = 'rgba(200,170,255,0.50)';
+        ctx.letterSpacing = '3px';
+        ctx.fillText('AURA REFLECTION', W/2, reflBoxY + 26);
+
+        // Full reflection text
         ctx.font = 'italic 400 21px Georgia, serif';
-        ctx.fillStyle = 'rgba(210,190,255,0.70)';
+        ctx.fillStyle = 'rgba(210,190,255,0.82)';
         ctx.letterSpacing = '0px';
-        const snippet = reflection.length > 180 ? reflection.slice(0, 177) + '…' : reflection;
-        wrapText(snippet, W/2, reflBoxY + 38, W - 220, 32, 4);
+        wrapText(reflection, W/2, reflBoxY + pad + 4, maxTW, lineH, maxLines);
     }
 
     // ── Branding ──
@@ -7935,7 +7961,7 @@ async function shareReading() {
     const guideEl = document.getElementById('guideMessage');
     const reflectionText = guideEl ? (guideEl.innerText || guideEl.textContent || '').replace(/\s+/g, ' ').trim() : '';
     const reflectionSection = reflectionText
-        ? `\n\n— ${reflectionText.slice(0, 280)}${reflectionText.length > 280 ? '…' : ''}`
+        ? `\n\n— ${reflectionText}`
         : '';
 
     const title = isSingle
