@@ -215,30 +215,48 @@
         body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow: hidden; overscroll-behavior-x: none; touch-action: pan-y pinch-zoom; font-size: 17px; }
 
         /* ── Global legibility bump ── */
-        /* ── Global text size boost ───────────────────────────── */
-        /* Small supporting text: 16px minimum */
-        .settings-hub-subtitle, .settings-hub-row span, .settings-usage-label,
-        .paywall-tier-features li, .disclaimer-content p, .disclaimer-content ul,
+        /* ── Global text size boost — comprehensive sweep ─────── */
+
+        /* Tiny UI chrome → 14px floor */
+        .token-indicator, #chatTokenText,
+        .token-indicator .token-icon,
+        .guide-name, .guide-role, .guide-badge,
+        .reading-date, .tap-hint,
+        .sparkle::before { font-size: 14px !important; }
+
+        /* Supporting / label text → 16px */
+        .settings-hub-subtitle, .settings-hub-row span,
+        .settings-usage-label, .paywall-tier-features li,
+        .disclaimer-content p, .disclaimer-content ul,
         .local-mode-hint p, .local-mode-notice,
         .topup-modal p, .topup-option .topup-price, .topup-reset-info,
-        .token-indicator, #chatTokenText,
-        .settings-chip-btn, .audio-chip,
-        .btn-small, .astro-action-btn,
-        .card-detail-meaning, .card-detail-affirmation,
-        .card-detail-position { font-size: 16px !important; line-height: 1.55 !important; }
+        .settings-chip-btn, .audio-chip, .btn-small, .astro-action-btn,
+        .card-detail-meaning, .card-detail-affirmation, .card-detail-position,
+        .personalize-prompt p, .reading-title,
+        .answer-option label, .answer-option span,
+        .chat-screen .chat-message p,
+        .daily-title,
+        .entry-tagline, .entry-divider,
+        .entry-email-btn { font-size: 16px !important; line-height: 1.6 !important; }
 
         /* Buttons */
-        .chat-top-btn { font-size: 15px !important; }
-        .btn-primary  { font-size: 17px !important; }
+        .chat-top-btn  { font-size: 15px !important; }
+        .btn-primary   { font-size: 17px !important; }
         .btn-secondary { font-size: 16px !important; }
 
-        /* Main body text */
+        /* Main reading / chat body text */
         .chat-message p, .guide-message p, .affirmation-text,
-        .aura-block p, .chat-input, .open-chat-input { font-size: 17px !important; line-height: 1.72 !important; }
+        .aura-block p, .chat-input, .open-chat-input,
+        .chat-screen .guide-message p { font-size: 17px !important; line-height: 1.72 !important; }
 
-        /* Headings / cards */
+        /* Card detail */
+        .card-detail-name  { font-size: 20px !important; }
+        .card-detail-meaning, .card-detail-affirmation { font-size: 16px !important; line-height: 1.6 !important; }
+
+        /* Headings */
         .settings-hub-card h4, .settings-tier-badge { font-size: 18px !important; }
-        .card-detail-name { font-size: 20px !important; }
+        .settings-hub-row strong, .settings-hub-row b  { font-size: 17px !important; }
+        .paywall-tier-name { font-size: 20px !important; }
 
         /* Spread card labels */
         .spread-card-title { font-size: 14px !important; }
@@ -248,11 +266,6 @@
 
         /* Onboarding */
         .question-text { font-size: 24px !important; }
-        .answer-option label, .answer-option span { font-size: 16px !important; }
-
-        /* Settings rows */
-        .settings-hub-row strong, .settings-hub-row b { font-size: 17px !important; }
-        .paywall-tier-name { font-size: 20px !important; }
         .app {
             max-width: 414px;
             margin: 12px auto;
@@ -852,6 +865,16 @@
         .app[data-screen="welcomeScreen"] .aura-life-orb::before {
             animation: none !important;
             opacity: 0 !important;
+        }
+        /* Chat screen — full 3-layer orb matching landing page */
+        .app[data-screen="chatScreen"] .aura-life-orb {
+            width: 340px; height: 340px;
+            opacity: 0.86 !important;
+            filter: blur(8px) !important;
+            background:
+                radial-gradient(circle at 50% 48%, rgba(232,176,255,1) 0%, rgba(232,176,255,1) 16%, rgba(210,150,255,0.66) 20%, transparent 22%),
+                radial-gradient(circle at 50% 48%, transparent 18%, rgba(160,80,230,0.93) 34%, rgba(136,60,210,1) 45%, rgba(110,50,190,0.53) 52%, transparent 55%),
+                radial-gradient(circle at 46% 54%, transparent 50%, rgba(80,30,150,0.87) 72%, rgba(60,20,130,1) 80%, rgba(50,15,110,0.53) 85%, transparent 88%) !important;
         }
         @keyframes ambientBreath {
             0%, 100% { transform: scale(1); opacity: 0.46; filter: blur(0px); }
@@ -1518,48 +1541,22 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 430px;
-            height: 430px;
+            width: 420px;
+            height: 420px;
             border-radius: 50%;
             pointer-events: none;
             z-index: 1;
-            background:
-              radial-gradient(circle at 50% 45%, var(--reading-orb-a, rgba(190, 140, 255, 0.34)) 0%, transparent 50%),
-              radial-gradient(circle at 38% 60%, var(--reading-orb-b, rgba(255, 185, 210, 0.24)) 0%, transparent 58%),
-              radial-gradient(circle at 65% 42%, var(--reading-orb-c, rgba(120, 220, 190, 0.22)) 0%, transparent 54%),
-              radial-gradient(circle at 56% 72%, var(--reading-orb-d, rgba(255, 210, 140, 0.20)) 0%, transparent 58%),
-              conic-gradient(
-                from 10deg,
-                rgba(118, 220, 196, var(--reading-orb-rainbow-alpha, 0.12)) 0deg,
-                rgba(120, 178, 255, var(--reading-orb-rainbow-alpha, 0.12)) 95deg,
-                rgba(196, 144, 255, var(--reading-orb-rainbow-alpha, 0.12)) 190deg,
-                rgba(255, 178, 148, var(--reading-orb-rainbow-alpha, 0.12)) 285deg,
-                rgba(118, 220, 196, var(--reading-orb-rainbow-alpha, 0.12)) 360deg
-              );
-            filter: blur(12px);
+            /* background set dynamically by applyReadingAtmosphere() */
+            filter: blur(10px);
             animation: orbBreathGlobal var(--aura-breath-cycle) ease-in-out infinite;
             display: block;
+            opacity: 0.82;
         }
+        /* No pseudo-element rings — single orb only */
         .reading-aura-ball::before,
-        .reading-aura-ball::after {
-            content: '';
-            position: absolute;
-            inset: 12%;
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0.35;
-        }
-        .reading-aura-ball::before {
-            border: 1px solid var(--reading-ring-a, rgba(220, 185, 255, 0.25));
-            box-shadow: 0 0 34px var(--reading-ring-a-glow, rgba(200,160,255,0.18)) inset;
-            animation: orbRingDrift 13s linear infinite;
-        }
-        .reading-aura-ball::after {
-            inset: 24%;
-            border: 1px solid var(--reading-ring-b, rgba(255, 215, 195, 0.22));
-            box-shadow: 0 0 22px var(--reading-ring-b-glow, rgba(255,185,210,0.14)) inset;
-            animation: orbRingDrift 17s linear infinite reverse;
-        }
+        .reading-aura-ball::after { display: none; }
+        /* Hide individual card orbs — one blended orb only */
+        .reading-screen .spread-card-orb { display: none; }
         @keyframes orbRingDrift {
             0% { transform: rotate(0deg) scale(0.98); }
             50% { transform: rotate(180deg) scale(1.03); }
@@ -7510,30 +7507,26 @@ function hexToRgba(hex, alpha = 0.16) {
 
 function applyReadingAtmosphere() {
     if (!selectedCards.length) return;
-    const fallbackPalette = ['#74d9c2', '#7aa9ff', '#c790ff', '#ffb18f'];
-    const cardPalette = selectedCards
-        .flatMap((c) => Array.isArray(c.colors) ? c.colors : [])
-        .filter(Boolean);
-    const uniquePalette = [...new Set(cardPalette.map((hex) => String(hex).toLowerCase()))];
-    const p1 = uniquePalette[0] || fallbackPalette[0];
-    const p2 = uniquePalette[1] || fallbackPalette[1];
-    const p3 = uniquePalette[2] || fallbackPalette[2];
-    const p4 = uniquePalette[3] || fallbackPalette[3];
+    // One 3-layer orb blending each card's primary colour
+    const card1 = selectedCards[0];
+    const card2 = selectedCards[1] || card1;
+    const card3 = selectedCards[2] || card2;
+    const layer1 = card1.colors?.[0] || '#8E24AA'; // inner — card 1 primary
+    const layer2 = card2.colors?.[0] || '#26A69A'; // mid   — card 2 primary
+    const layer3 = card3.colors?.[0] || '#1976D2'; // outer — card 3 primary
+    const orbEl = document.querySelector('.reading-aura-ball');
+    if (orbEl) {
+        orbEl.style.background = [
+            `radial-gradient(circle at 50% 48%, ${layer1} 0%, ${layer1} 16%, ${layer1}aa 20%, transparent 22%)`,
+            `radial-gradient(circle at 50% 48%, transparent 18%, ${layer2}ee 34%, ${layer2} 45%, ${layer2}88 52%, transparent 55%)`,
+            `radial-gradient(circle at 46% 54%, transparent 50%, ${layer3}dd 72%, ${layer3} 80%, ${layer3}88 85%, transparent 88%)`
+        ].join(',');
+    }
     const anchor = selectedCards.length > 1 ? selectedCards[1] : selectedCards[0];
-    const c1 = anchor.colors?.[1] || p1;
-    const c2 = anchor.colors?.[2] || p2;
-    // Bloom phase: stronger card-linked atmosphere for first moments after draw.
+    const c1 = anchor.colors?.[1] || layer2;
+    const c2 = anchor.colors?.[2] || layer3;
     document.documentElement.style.setProperty('--dynamic-glow-a', hexToRgba(c1, 0.13));
     document.documentElement.style.setProperty('--dynamic-glow-b', hexToRgba(c2, 0.10));
-    document.documentElement.style.setProperty('--reading-orb-a', hexToRgba(p1, 0.28));
-    document.documentElement.style.setProperty('--reading-orb-b', hexToRgba(p2, 0.22));
-    document.documentElement.style.setProperty('--reading-orb-c', hexToRgba(p3, 0.20));
-    document.documentElement.style.setProperty('--reading-orb-d', hexToRgba(p4, 0.19));
-    document.documentElement.style.setProperty('--reading-ring-a', hexToRgba(p2, 0.42));
-    document.documentElement.style.setProperty('--reading-ring-a-glow', hexToRgba(p3, 0.20));
-    document.documentElement.style.setProperty('--reading-ring-b', hexToRgba(p4, 0.38));
-    document.documentElement.style.setProperty('--reading-ring-b-glow', hexToRgba(p1, 0.16));
-    document.documentElement.style.setProperty('--reading-orb-rainbow-alpha', '0.14');
 
     if (atmosphereSettleTimer) clearTimeout(atmosphereSettleTimer);
     atmosphereSettleTimer = setTimeout(() => {
