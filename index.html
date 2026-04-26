@@ -212,29 +212,47 @@
             --entry-orb-shift: 0px;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow: hidden; overscroll-behavior-x: none; touch-action: pan-y pinch-zoom; font-size: 15px; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow: hidden; overscroll-behavior-x: none; touch-action: pan-y pinch-zoom; font-size: 17px; }
 
         /* ── Global legibility bump ── */
-        /* Promote all 11px → 13px, 12px → 14px, 13px → 15px throughout */
+        /* ── Global text size boost ───────────────────────────── */
+        /* Small supporting text: 16px minimum */
         .settings-hub-subtitle, .settings-hub-row span, .settings-usage-label,
-        .paywall-tier-features, .disclaimer-content p, .disclaimer-content ul,
-        .local-mode-hint, .local-mode-notice,
-        .topup-modal p, .topup-option .topup-price, .topup-reset-info { font-size: 14px !important; }
-
-        .chat-top-btn, .settings-chip-btn, .audio-chip,
-        .card-detail-meaning, .card-detail-affirmation,
+        .paywall-tier-features li, .disclaimer-content p, .disclaimer-content ul,
+        .local-mode-hint p, .local-mode-notice,
+        .topup-modal p, .topup-option .topup-price, .topup-reset-info,
+        .token-indicator, #chatTokenText,
+        .settings-chip-btn, .audio-chip,
         .btn-small, .astro-action-btn,
-        .token-indicator, #chatTokenText { font-size: 14px !important; }
+        .card-detail-meaning, .card-detail-affirmation,
+        .card-detail-position { font-size: 16px !important; line-height: 1.55 !important; }
 
+        /* Buttons */
+        .chat-top-btn { font-size: 15px !important; }
+        .btn-primary  { font-size: 17px !important; }
+        .btn-secondary { font-size: 16px !important; }
+
+        /* Main body text */
         .chat-message p, .guide-message p, .affirmation-text,
-        .aura-block p, .chat-input, .open-chat-input { font-size: 15px !important; }
+        .aura-block p, .chat-input, .open-chat-input { font-size: 17px !important; line-height: 1.72 !important; }
 
-        .settings-hub-card h4, .settings-tier-badge { font-size: 16px !important; }
+        /* Headings / cards */
+        .settings-hub-card h4, .settings-tier-badge { font-size: 18px !important; }
+        .card-detail-name { font-size: 20px !important; }
 
-        .spread-card-title { font-size: 12px !important; }
-        .cards-spread.single-card .spread-card-title { font-size: 16px !important; }
-        .spread-card-position { font-size: 11px !important; }
-        .cards-spread.single-card .spread-card-position { font-size: 13px !important; }
+        /* Spread card labels */
+        .spread-card-title { font-size: 14px !important; }
+        .cards-spread.single-card .spread-card-title { font-size: 18px !important; }
+        .spread-card-position { font-size: 13px !important; }
+        .cards-spread.single-card .spread-card-position { font-size: 15px !important; }
+
+        /* Onboarding */
+        .question-text { font-size: 24px !important; }
+        .answer-option label, .answer-option span { font-size: 16px !important; }
+
+        /* Settings rows */
+        .settings-hub-row strong, .settings-hub-row b { font-size: 17px !important; }
+        .paywall-tier-name { font-size: 20px !important; }
         .app {
             max-width: 414px;
             margin: 12px auto;
@@ -727,20 +745,18 @@
             position: absolute;
             left: 50%;
             top: 50%;
-            width: min(72vw, 380px);
+            width: min(58vw, 300px);
             aspect-ratio: 1 / 1;
             transform: translate(-50%, -50%);
             border-radius: 50%;
             pointer-events: none;
             z-index: 0;
-            opacity: 0.48;
-            filter: blur(14px);
+            opacity: 0.38;
+            filter: blur(32px) saturate(1.1);
             transition: opacity 480ms ease;
-            /* 3-layer orb — matches generator v4, soft=5% */
+            /* Soft ambient glow — not competing with screen-level orbs */
             background:
-                radial-gradient(circle at 50% 48%, rgba(232,176,255,1) 0%, rgba(232,176,255,1) 16%, rgba(210,150,255,0.66) 20%, transparent 22%),
-                radial-gradient(circle at 50% 48%, transparent 18%, rgba(160,80,230,0.93) 34%, rgba(136,60,210,1) 45%, rgba(110,50,190,0.53) 52%, transparent 55%),
-                radial-gradient(circle at 46% 54%, transparent 50%, rgba(80,30,150,0.87) 72%, rgba(60,20,130,1) 80%, rgba(50,15,110,0.53) 85%, transparent 88%);
+                radial-gradient(circle at 50% 46%, rgba(200,140,255,0.72) 0%, rgba(160,90,230,0.48) 42%, rgba(100,50,180,0.18) 72%, transparent 100%);
             animation: orbBreathGlobal var(--aura-breath-cycle) ease-in-out infinite;
         }
         .edge-fade {
@@ -4159,92 +4175,92 @@
 // ========== CARD DECK ==========
 const auraDeck = [
     // ── MAJOR ARCANA ──────────────────────────────────────────
-    {id:1, group:"major", name:"The Leap", affirmation:"Leap and become.", meaning:"A new adventure begins. Trust yourself and step into the unknown with open arms.", colors:["#F5F5F0","#4D4D89","#38442C"], bg:"#0e0e1a", keywords:["beginnings","trust","freedom","adventure"]},
-    {id:2, group:"major", name:"The Weaver", affirmation:"Will shapes the world.", meaning:"You have every tool you need. Focus your will and shape reality with intention.", colors:["#D4AF37","#6078C8","#D9E1C1"], bg:"#1a1500", keywords:["manifestation","skill","willpower","creation"]},
-    {id:3, group:"major", name:"The Oracle", affirmation:"Trust the hidden knowing.", meaning:"Wisdom flows below the surface. Be still and your deeper knowing will speak.", colors:["#3F51B5","#BBAF6D","#CDC5DD"], bg:"#0a0d1e", keywords:["intuition","mystery","wisdom","inner voice"]},
-    {id:4, group:"major", name:"The Bloom", affirmation:"Creation blooms through you.", meaning:"Life flourishes when given love and care. Nurture yourself and what you are growing.", colors:["#7CB342","#936FB9","#C6DDC5"], bg:"#0e1a06", keywords:["growth","nurture","abundance","creation"]},
-    {id:5, group:"major", name:"The Sovereign", affirmation:"Structure steadies power.", meaning:"Clear structures create freedom, not limits. Where do you need firmer ground?", colors:["#C62828","#5FC9C9","#E2D1C0"], bg:"#1a0505", keywords:["stability","authority","structure","boundaries"]},
-    {id:6, group:"major", name:"The Keeper", affirmation:"Wisdom lives in ritual.", meaning:"Ancient wisdom lives in practice and ritual. What traditions can guide you now?", colors:["#1565C0","#D49853","#BEBDE5"], bg:"#040f1e", keywords:["tradition","guidance","teaching","ritual"]},
-    {id:7, group:"major", name:"Union", affirmation:"Choose with an open heart.", meaning:"The deepest choices come from the heart. What does love ask of you right now?", colors:["#F48FB1","#29AD81","#51271F"], bg:"#1a0912", keywords:["love","choice","values","commitment"]},
+    {id:1, group:"major", name:"Leap", affirmation:"Leap and become.", meaning:"A new adventure begins. Trust yourself and step into the unknown with open arms.", colors:["#F5F5F0","#4D4D89","#38442C"], bg:"#0e0e1a", keywords:["beginnings","trust","freedom","adventure"]},
+    {id:2, group:"major", name:"Alchemy", affirmation:"Will shapes the world.", meaning:"You have every tool you need. Focus your will and shape reality with intention.", colors:["#D4AF37","#6078C8","#D9E1C1"], bg:"#1a1500", keywords:["manifestation","skill","willpower","creation"]},
+    {id:3, group:"major", name:"Oracle", affirmation:"Trust the hidden knowing.", meaning:"Wisdom flows below the surface. Be still and your deeper knowing will speak.", colors:["#3F51B5","#BBAF6D","#CDC5DD"], bg:"#0a0d1e", keywords:["intuition","mystery","wisdom","inner voice"]},
+    {id:4, group:"major", name:"Bloom", affirmation:"Creation blooms through you.", meaning:"Life flourishes when given love and care. Nurture yourself and what you are growing.", colors:["#7CB342","#936FB9","#C6DDC5"], bg:"#0e1a06", keywords:["growth","nurture","abundance","creation"]},
+    {id:5, group:"major", name:"Sovereign", affirmation:"Structure steadies power.", meaning:"Clear structures create freedom, not limits. Where do you need firmer ground?", colors:["#C62828","#5FC9C9","#E2D1C0"], bg:"#1a0505", keywords:["stability","authority","structure","boundaries"]},
+    {id:6, group:"major", name:"Ritual", affirmation:"Wisdom lives in ritual.", meaning:"Ancient wisdom lives in practice and ritual. What traditions can guide you now?", colors:["#1565C0","#D49853","#BEBDE5"], bg:"#040f1e", keywords:["tradition","guidance","teaching","ritual"]},
+    {id:7, group:"major", name:"Beloved", affirmation:"Choose with an open heart.", meaning:"The deepest choices come from the heart. What does love ask of you right now?", colors:["#F48FB1","#29AD81","#51271F"], bg:"#1a0912", keywords:["love","choice","values","commitment"]},
     {id:8, group:"major", name:"Momentum", affirmation:"Direction turns force into victory.", meaning:"Your will is strong. Channel it with discipline and let nothing break your focus.", colors:["#FBC02D","#4773E1","#49561A"], bg:"#1a1200", keywords:["drive","control","victory","determination"]},
     {id:9, group:"major", name:"Courage", affirmation:"Soft power endures.", meaning:"Strength flows from gentleness, not force. Meet life's challenges with calm power.", colors:["#FB8C00","#448BE4","#E7EAB8"], bg:"#1a0d00", keywords:["patience","compassion","inner strength","resilience"]},
     {id:10, group:"major", name:"Stillness", affirmation:"Light the way within.", meaning:"Step back from the noise of the world and let the quiet guide you forward.", colors:["#8E24AA","#75C860","#E2C1D8"], bg:"#0f041a", keywords:["solitude","reflection","inner wisdom","retreat"]},
-    {id:11, group:"major", name:"The Turning", affirmation:"Change is always turning.", meaning:"Life moves in great cycles. What feels like chance is part of a larger pattern.", colors:["#26A69A","#C6626B","#C1D4E1"], bg:"#03130f", keywords:["cycles","change","opportunity","fate"]},
+    {id:11, group:"major", name:"Turning", affirmation:"Change is always turning.", meaning:"Life moves in great cycles. What feels like chance is part of a larger pattern.", colors:["#26A69A","#C6626B","#C1D4E1"], bg:"#03130f", keywords:["cycles","change","opportunity","fate"]},
     {id:12, group:"major", name:"Balance", affirmation:"Truth restores balance.", meaning:"Truth and fairness are the bedrock of peace. See things clearly before acting.", colors:["#1E88E5","#D49054","#BDBEE5"], bg:"#040f1b", keywords:["justice","clarity","fairness","honesty"]},
     {id:13, group:"major", name:"Surrender", affirmation:"Stillness reveals another view.", meaning:"Stop pushing. A completely new view waits in the pause between effort and outcome.", colors:["#00ACC1","#E45544","#B8CCEA"], bg:"#00131a", keywords:["perspective","surrender","patience","acceptance"]},
-    {id:14, group:"major", name:"Release", affirmation:"Release opens the next door.", meaning:"Something must end so something new can breathe. Let go with grace and trust.", colors:["#5E35B1","#A3BF69","#DAC3DF"], bg:"#0b0419", keywords:["endings","transformation","rebirth","acceptance"]},
+    {id:14, group:"major", name:"Renewal", affirmation:"Release opens the next door.", meaning:"Something must end so something new can breathe. Let go with grace and trust.", colors:["#5E35B1","#A3BF69","#DAC3DF"], bg:"#0b0419", keywords:["endings","transformation","rebirth","acceptance"]},
     {id:15, group:"major", name:"Harmony", affirmation:"Blend gently, become whole.", meaning:"The middle path holds wisdom. Small adjustments bring everything into balance.", colors:["#4DD0E1","#CD685B","#22334E"], bg:"#051619", keywords:["moderation","flow","balance","alchemy"]},
     {id:16, group:"major", name:"Shadow", affirmation:"Name the chain, reclaim yourself.", meaning:"What binds you most may be invisible to you. Name the pattern and step free.", colors:["#B71C1C","#59CFCF","#E4D1BF"], bg:"#170303", keywords:["awareness","liberation","shadow","attachment"]},
-    {id:17, group:"major", name:"Rupture", affirmation:"What falls clears the truth.", meaning:"What seemed solid needed to fall. The disruption is clearing space for truth.", colors:["#F4511E","#4BBADD","#E8DCBA"], bg:"#1a0800", keywords:["upheaval","breakthrough","revelation","change"]},
-    {id:18, group:"major", name:"Guidance", affirmation:"Hope is a healing light.", meaning:"Hope is not naive — it is necessary. Hold your vision of what is possible.", colors:["#81D4FA","#B55021","#1C2655"], bg:"#0b1419", keywords:["hope","healing","inspiration","future"]},
-    {id:19, group:"major", name:"Dreaming", affirmation:"Feel what hides beneath.", meaning:"Not everything is as it appears. Trust your feelings more than what seems obvious.", colors:["#7986CB","#8F8348","#342A46"], bg:"#0c0e1a", keywords:["intuition","illusion","cycles","subconscious"]},
+    {id:17, group:"major", name:"Breakthrough", affirmation:"What falls clears the truth.", meaning:"What seemed solid needed to fall. The disruption is clearing space for truth.", colors:["#F4511E","#4BBADD","#E8DCBA"], bg:"#1a0800", keywords:["upheaval","breakthrough","revelation","change"]},
+    {id:18, group:"major", name:"Hope", affirmation:"Hope is a healing light.", meaning:"Hope is not naive — it is necessary. Hold your vision of what is possible.", colors:["#81D4FA","#B55021","#1C2655"], bg:"#0b1419", keywords:["hope","healing","inspiration","future"]},
+    {id:19, group:"major", name:"Dream", affirmation:"Feel what hides beneath.", meaning:"Not everything is as it appears. Trust your feelings more than what seems obvious.", colors:["#7986CB","#8F8348","#342A46"], bg:"#0c0e1a", keywords:["intuition","illusion","cycles","subconscious"]},
     {id:20, group:"major", name:"Radiance", affirmation:"Radiance is your nature.", meaning:"Joy is your birthright. Let yourself shine without apology or reservation.", colors:["#FDD835","#4562E3","#43561A"], bg:"#1a1500", keywords:["joy","vitality","clarity","warmth"]},
     {id:21, group:"major", name:"Calling", affirmation:"Rise to your true call.", meaning:"Something deep is summoning your full self. Answer with everything you have.", colors:["#FFF8E1","#1B40BB","#465719"], bg:"#1a1900", keywords:["awakening","purpose","renewal","transformation"]},
     {id:22, group:"major", name:"Wholeness", affirmation:"You belong to the whole.", meaning:"You have arrived. Everything has led here. You are part of something complete.", colors:["#2E7D32","#B96FB5","#C5DDD2"], bg:"#03100a", keywords:["completion","integration","fulfillment","belonging"]},
 
     // ── ENERGY (WANDS) ────────────────────────────────────────
-    {id:23, group:"energy", name:"Spark of Energy", affirmation:"Spark the beginning.", meaning:"A new creative force is alive in you. The moment to begin is right now.", colors:["#FFB300","#4473E4","#E0EAB8"], bg:"#1a1000", keywords:["inspiration","potential","start","fire"]},
-    {id:24, group:"energy", name:"Horizon of Energy", affirmation:"Choose your horizon.", meaning:"You stand at a choice point. Where will you direct your vision and will?", colors:["#FFA000","#447FE4","#E4EAB8"], bg:"#1a0f00", keywords:["vision","planning","ambition","direction"]},
-    {id:25, group:"energy", name:"Expansion of Energy", affirmation:"Expansion follows courage.", meaning:"Your first steps are beginning to bloom. Keep your eyes on the horizon and grow.", colors:["#FB8C00","#448BE4","#E7EAB8"], bg:"#1a0d00", keywords:["growth","foresight","expansion","courage"]},
-    {id:26, group:"energy", name:"Celebration of Energy", affirmation:"Celebrate what has taken root.", meaning:"Pause and honour what you've built. Joy shared with others multiplies.", colors:["#FDD835","#4562E3","#43561A"], bg:"#1a1500", keywords:["celebration","community","joy","achievement"]},
-    {id:27, group:"energy", name:"Friction of Energy", affirmation:"Friction shapes strength.", meaning:"Resistance is information. Use the tension to refine your direction and strength.", colors:["#E53935","#56CFD2","#E5D2BE"], bg:"#180404", keywords:["challenge","competition","growth","tension"]},
-    {id:28, group:"energy", name:"Recognition of Energy", affirmation:"Let victory be visible.", meaning:"You've done the work — now let yourself be seen and celebrated.", colors:["#FBC02D","#4773E1","#49561A"], bg:"#1a1200", keywords:["success","recognition","confidence","achievement"]},
-    {id:29, group:"energy", name:"Resolve of Energy", affirmation:"Stand for your fire.", meaning:"Hold your ground. What you've built is worth standing up for.", colors:["#F4511E","#4BBADD","#E8DCBA"], bg:"#1a0800", keywords:["perseverance","defence","conviction","boundaries"]},
-    {id:30, group:"energy", name:"Velocity of Energy", affirmation:"Energy moves fast.", meaning:"Things are accelerating. Stay present and let the momentum carry you forward.", colors:["#FF7043","#1B95BB","#574719"], bg:"#1a0800", keywords:["speed","action","movement","acceleration"]},
-    {id:31, group:"energy", name:"Endurance of Energy", affirmation:"Guard the flame.", meaning:"You've come so far. Stay alert but don't let exhaustion harden into fear.", colors:["#BF360C","#4DB9DB","#E7DCBB"], bg:"#160600", keywords:["resilience","persistence","caution","vigilance"]},
-    {id:32, group:"energy", name:"Burden of Energy", affirmation:"Lay down what burns you.", meaning:"You're carrying more than you need to. What can be released or put down?", colors:["#8E2424","#64C4C4","#E0D1C2"], bg:"#0f0404", keywords:["overwhelm","responsibility","release","delegation"]},
-    {id:33, group:"energy", name:"Curiosity of Energy", affirmation:"Curiosity carries the spark.", meaning:"Let wonder be your guide. Follow what lights you up without needing all the answers.", colors:["#FF9800","#4484E4","#E5EAB8"], bg:"#1a0e00", keywords:["curiosity","enthusiasm","learning","spark"]},
-    {id:34, group:"energy", name:"Wildfire of Energy", affirmation:"Move like a living flame.", meaning:"Act boldly and with full passion. The right moment is always now.", colors:["#F44336","#4CD2DC","#543C1C"], bg:"#190403", keywords:["boldness","passion","action","impulse"]},
-    {id:35, group:"energy", name:"Magnetism of Energy", affirmation:"Warmth leads with confidence.", meaning:"Your presence lights the room. Lead from the heart and others will follow naturally.", colors:["#C77800","#4483E4","#E5EAB8"], bg:"#150c00", keywords:["confidence","leadership","charisma","warmth"]},
-    {id:36, group:"energy", name:"Mastery of Energy", affirmation:"Master the fire.", meaning:"You have learned to channel your fire wisely. Your vision is a gift to the world.", colors:["#C9A227","#5E78CA","#D9E2C0"], bg:"#141000", keywords:["mastery","vision","leadership","legacy"]},
+    {id:23, group:"energy", name:"Spark", affirmation:"Spark the beginning.", meaning:"A new creative force is alive in you. The moment to begin is right now.", colors:["#FFB300","#4473E4","#E0EAB8"], bg:"#1a1000", keywords:["inspiration","potential","start","fire"]},
+    {id:24, group:"energy", name:"Horizon", affirmation:"Choose your horizon.", meaning:"You stand at a choice point. Where will you direct your vision and will?", colors:["#FFA000","#447FE4","#E4EAB8"], bg:"#1a0f00", keywords:["vision","planning","ambition","direction"]},
+    {id:25, group:"energy", name:"Venture", affirmation:"Expansion follows courage.", meaning:"Your first steps are beginning to bloom. Keep your eyes on the horizon and grow.", colors:["#FB8C00","#448BE4","#E7EAB8"], bg:"#1a0d00", keywords:["growth","foresight","expansion","courage"]},
+    {id:26, group:"energy", name:"Homecoming", affirmation:"Celebrate what has taken root.", meaning:"Pause and honour what you've built. Joy shared with others multiplies.", colors:["#FDD835","#4562E3","#43561A"], bg:"#1a1500", keywords:["celebration","community","joy","achievement"]},
+    {id:27, group:"energy", name:"Tension", affirmation:"Friction shapes strength.", meaning:"Resistance is information. Use the tension to refine your direction and strength.", colors:["#E53935","#56CFD2","#E5D2BE"], bg:"#180404", keywords:["challenge","competition","growth","tension"]},
+    {id:28, group:"energy", name:"Triumph", affirmation:"Let victory be visible.", meaning:"You've done the work — now let yourself be seen and celebrated.", colors:["#FBC02D","#4773E1","#49561A"], bg:"#1a1200", keywords:["success","recognition","confidence","achievement"]},
+    {id:29, group:"energy", name:"Defiance", affirmation:"Stand for your fire.", meaning:"Hold your ground. What you've built is worth standing up for.", colors:["#F4511E","#4BBADD","#E8DCBA"], bg:"#1a0800", keywords:["perseverance","defence","conviction","boundaries"]},
+    {id:30, group:"energy", name:"Surge", affirmation:"Energy moves fast.", meaning:"Things are accelerating. Stay present and let the momentum carry you forward.", colors:["#FF7043","#1B95BB","#574719"], bg:"#1a0800", keywords:["speed","action","movement","acceleration"]},
+    {id:31, group:"energy", name:"Grit", affirmation:"Guard the flame.", meaning:"You've come so far. Stay alert but don't let exhaustion harden into fear.", colors:["#BF360C","#4DB9DB","#E7DCBB"], bg:"#160600", keywords:["resilience","persistence","caution","vigilance"]},
+    {id:32, group:"energy", name:"Overload", affirmation:"Lay down what burns you.", meaning:"You're carrying more than you need to. What can be released or put down?", colors:["#8E2424","#64C4C4","#E0D1C2"], bg:"#0f0404", keywords:["overwhelm","responsibility","release","delegation"]},
+    {id:33, group:"energy", name:"Ember", affirmation:"Curiosity carries the spark.", meaning:"Let wonder be your guide. Follow what lights you up without needing all the answers.", colors:["#FF9800","#4484E4","#E5EAB8"], bg:"#1a0e00", keywords:["curiosity","enthusiasm","learning","spark"]},
+    {id:34, group:"energy", name:"Wildfire", affirmation:"Move like a living flame.", meaning:"Act boldly and with full passion. The right moment is always now.", colors:["#F44336","#4CD2DC","#543C1C"], bg:"#190403", keywords:["boldness","passion","action","impulse"]},
+    {id:35, group:"energy", name:"Magnetism", affirmation:"Warmth leads with confidence.", meaning:"Your presence lights the room. Lead from the heart and others will follow naturally.", colors:["#C77800","#4483E4","#E5EAB8"], bg:"#150c00", keywords:["confidence","leadership","charisma","warmth"]},
+    {id:36, group:"energy", name:"Mastery", affirmation:"Master the fire.", meaning:"You have learned to channel your fire wisely. Your vision is a gift to the world.", colors:["#C9A227","#5E78CA","#D9E2C0"], bg:"#141000", keywords:["mastery","vision","leadership","legacy"]},
 
     // ── HEART (CUPS) ──────────────────────────────────────────
-    {id:37, group:"heart", name:"Opening of Heart", affirmation:"Open to what flows.", meaning:"A new feeling is beginning to stir. Make space for it without forcing it.", colors:["#26C6DA","#CD685B","#BFCDE3"], bg:"#021619", keywords:["love","openness","potential","new emotion"]},
-    {id:38, group:"heart", name:"Union of Heart", affirmation:"Connection is sacred.", meaning:"A sacred bond is forming. Meet it with full presence and honesty.", colors:["#F48FB1","#29AD81","#51271F"], bg:"#1a0912", keywords:["partnership","love","attraction","union"]},
-    {id:39, group:"heart", name:"Communion of Heart", affirmation:"Joy multiplies when shared.", meaning:"Celebrate with those you love. Happiness lives most fully in community.", colors:["#4DB6AC","#B67279","#C7D3DC"], bg:"#05120f", keywords:["friendship","celebration","joy","gratitude"]},
-    {id:40, group:"heart", name:"Reflection of Heart", affirmation:"Listen to what feeling wants.", meaning:"Quiet the noise. Your heart has been trying to tell you something important.", colors:["#80CBC4","#8D4950","#2B3B45"], bg:"#0d1917", keywords:["introspection","contemplation","listening","longing"]},
-    {id:41, group:"heart", name:"Grief of Heart", affirmation:"Grieve, then turn toward love.", meaning:"Loss is real and your pain is valid. Feel it fully, then notice what still remains.", colors:["#1E88E5","#D49054","#BDBEE5"], bg:"#040f1b", keywords:["grief","loss","perspective","healing"]},
-    {id:42, group:"heart", name:"Memory of Heart", affirmation:"Memory can be medicine.", meaning:"The past holds gifts for the present. Revisit what once brought you genuine joy.", colors:["#90CAF9","#B36423","#1C1F54"], bg:"#0e1519", keywords:["nostalgia","kindness","healing","innocence"]},
-    {id:43, group:"heart", name:"Vision of Heart", affirmation:"Discern the dream from the haze.", meaning:"Many paths shimmer before you. Look with clear eyes before you reach for any.", colors:["#B39DDB","#769046","#422A46"], bg:"#110d19", keywords:["choices","imagination","discernment","illusion"]},
-    {id:44, group:"heart", name:"Departure of Heart", affirmation:"Walk toward deeper truth.", meaning:"What once satisfied no longer does. Trust the pull toward something more meaningful.", colors:["#00897B","#E44454","#B8D6EA"], bg:"#00100e", keywords:["transition","courage","seeking","depth"]},
-    {id:45, group:"heart", name:"Fulfilment of Heart", affirmation:"Receive the fullness.", meaning:"Let yourself have what you've longed for. You deserve to receive as well as give.", colors:["#29B6F6","#DE784A","#BAC3E8"], bg:"#031219", keywords:["satisfaction","gratitude","fulfilment","receiving"]},
-    {id:46, group:"heart", name:"Belonging of Heart", affirmation:"Love becomes a world.", meaning:"Emotional harmony surrounds you. This is what you've been quietly working toward.", colors:["#26A69A","#C6626B","#C1D4E1"], bg:"#03130f", keywords:["love","harmony","family","blessings"]},
-    {id:47, group:"heart", name:"Tenderness of Heart", affirmation:"Let the heart speak.", meaning:"Something new is rising from your depths. Listen with gentleness and without judgment.", colors:["#4FC3F7","#B44F22","#1C2754"], bg:"#051319", keywords:["sensitivity","creativity","messages","intuition"]},
-    {id:48, group:"heart", name:"Devotion of Heart", affirmation:"Follow the call of feeling.", meaning:"Follow what moves you at the deepest level. Your heart knows the direction.", colors:["#1976D2","#D39455","#BDBDE5"], bg:"#040d1a", keywords:["romance","pursuit","idealism","emotion"]},
-    {id:49, group:"heart", name:"Compassion of Heart", affirmation:"Compassion is a quiet power.", meaning:"Your empathy is your greatest strength. Hold space for others without losing yourself.", colors:["#5C6BC0","#B7AD70","#CEC6DC"], bg:"#080a19", keywords:["empathy","nurturing","intuition","depth"]},
-    {id:50, group:"heart", name:"Equanimity of Heart", affirmation:"Steady the waters.", meaning:"Feel deeply without being swept away. True emotional wisdom lives in the balance.", colors:["#00695C","#E44457","#B8D7EA"], bg:"#000e0c", keywords:["emotional mastery","calm","wisdom","balance"]},
+    {id:37, group:"heart", name:"Opening", affirmation:"Open to what flows.", meaning:"A new feeling is beginning to stir. Make space for it without forcing it.", colors:["#26C6DA","#CD685B","#BFCDE3"], bg:"#021619", keywords:["love","openness","potential","new emotion"]},
+    {id:38, group:"heart", name:"Bond", affirmation:"Connection is sacred.", meaning:"A sacred bond is forming. Meet it with full presence and honesty.", colors:["#F48FB1","#29AD81","#51271F"], bg:"#1a0912", keywords:["partnership","love","attraction","union"]},
+    {id:39, group:"heart", name:"Joy", affirmation:"Joy multiplies when shared.", meaning:"Celebrate with those you love. Happiness lives most fully in community.", colors:["#4DB6AC","#B67279","#C7D3DC"], bg:"#05120f", keywords:["friendship","celebration","joy","gratitude"]},
+    {id:40, group:"heart", name:"Reflection", affirmation:"Listen to what feeling wants.", meaning:"Quiet the noise. Your heart has been trying to tell you something important.", colors:["#80CBC4","#8D4950","#2B3B45"], bg:"#0d1917", keywords:["introspection","contemplation","listening","longing"]},
+    {id:41, group:"heart", name:"Grief", affirmation:"Grieve, then turn toward love.", meaning:"Loss is real and your pain is valid. Feel it fully, then notice what still remains.", colors:["#1E88E5","#D49054","#BDBEE5"], bg:"#040f1b", keywords:["grief","loss","perspective","healing"]},
+    {id:42, group:"heart", name:"Memory", affirmation:"Memory can be medicine.", meaning:"The past holds gifts for the present. Revisit what once brought you genuine joy.", colors:["#90CAF9","#B36423","#1C1F54"], bg:"#0e1519", keywords:["nostalgia","kindness","healing","innocence"]},
+    {id:43, group:"heart", name:"Reverie", affirmation:"Discern the dream from the haze.", meaning:"Many paths shimmer before you. Look with clear eyes before you reach for any.", colors:["#B39DDB","#769046","#422A46"], bg:"#110d19", keywords:["choices","imagination","discernment","illusion"]},
+    {id:44, group:"heart", name:"Departure", affirmation:"Walk toward deeper truth.", meaning:"What once satisfied no longer does. Trust the pull toward something more meaningful.", colors:["#00897B","#E44454","#B8D6EA"], bg:"#00100e", keywords:["transition","courage","seeking","depth"]},
+    {id:45, group:"heart", name:"Wish", affirmation:"Receive the fullness.", meaning:"Let yourself have what you've longed for. You deserve to receive as well as give.", colors:["#29B6F6","#DE784A","#BAC3E8"], bg:"#031219", keywords:["satisfaction","gratitude","fulfilment","receiving"]},
+    {id:46, group:"heart", name:"Belonging", affirmation:"Love becomes a world.", meaning:"Emotional harmony surrounds you. This is what you've been quietly working toward.", colors:["#26A69A","#C6626B","#C1D4E1"], bg:"#03130f", keywords:["love","harmony","family","blessings"]},
+    {id:47, group:"heart", name:"Tenderness", affirmation:"Let the heart speak.", meaning:"Something new is rising from your depths. Listen with gentleness and without judgment.", colors:["#4FC3F7","#B44F22","#1C2754"], bg:"#051319", keywords:["sensitivity","creativity","messages","intuition"]},
+    {id:48, group:"heart", name:"Devotion", affirmation:"Follow the call of feeling.", meaning:"Follow what moves you at the deepest level. Your heart knows the direction.", colors:["#1976D2","#D39455","#BDBDE5"], bg:"#040d1a", keywords:["romance","pursuit","idealism","emotion"]},
+    {id:49, group:"heart", name:"Compassion", affirmation:"Compassion is a quiet power.", meaning:"Your empathy is your greatest strength. Hold space for others without losing yourself.", colors:["#5C6BC0","#B7AD70","#CEC6DC"], bg:"#080a19", keywords:["empathy","nurturing","intuition","depth"]},
+    {id:50, group:"heart", name:"Poise", affirmation:"Steady the waters.", meaning:"Feel deeply without being swept away. True emotional wisdom lives in the balance.", colors:["#00695C","#E44457","#B8D7EA"], bg:"#000e0c", keywords:["emotional mastery","calm","wisdom","balance"]},
 
     // ── MIND (SWORDS) ─────────────────────────────────────────
-    {id:51, group:"mind", name:"Clarity of Mind", affirmation:"Clear thought cuts through.", meaning:"Truth breaks through confusion. Speak with precision and think with honesty.", colors:["#ECEFF1","#89654D","#2C2E44"], bg:"#191a1b", keywords:["clarity","truth","breakthrough","intellect"]},
-    {id:52, group:"mind", name:"Pause of Mind", affirmation:"Pause before the choice.", meaning:"A decision waits. There is no need to rush — sit with both options before choosing.", colors:["#B0BEC5","#89614D","#2C3044"], bg:"#121618", keywords:["decision","balance","choice","stillness"]},
-    {id:53, group:"mind", name:"Ache of Mind", affirmation:"Truth can ache before it heals.", meaning:"Grief is the price of love. Let the heartache move through without hardening you.", colors:["#7986CB","#8F8348","#342A46"], bg:"#0c0e1a", keywords:["heartbreak","grief","pain","healing"]},
-    {id:54, group:"mind", name:"Rest of Mind", affirmation:"Rest restores the mind.", meaning:"Your mind needs space. Step back from the noise and let stillness restore you fully.", colors:["#CFD8DC","#89604D","#2C3144"], bg:"#161a1b", keywords:["rest","recovery","contemplation","renewal"]},
-    {id:55, group:"mind", name:"Conflict of Mind", affirmation:"Win less, understand more.", meaning:"Winning at all costs leaves everyone poorer. What lesson is this situation offering?", colors:["#607D8B","#B28976","#C7CBDB"], bg:"#090e10", keywords:["conflict","learning","perspective","defeat"]},
-    {id:56, group:"mind", name:"Passage of Mind", affirmation:"Cross toward calmer air.", meaning:"Moving through difficulty leads to smoother shores ahead. The journey is healing you.", colors:["#90A4AE","#89614D","#2C3044"], bg:"#0e1214", keywords:["transition","healing","movement","peace"]},
-    {id:57, group:"mind", name:"Strategy of Mind", affirmation:"Strategy walks in shadow.", meaning:"Use your intelligence wisely. Not every plan needs to be announced or explained.", colors:["#3949AB","#BCB16C","#CEC4DE"], bg:"#060819", keywords:["strategy","planning","cunning","discernment"]},
-    {id:58, group:"mind", name:"Unbinding of Mind", affirmation:"The mind can unbind itself.", meaning:"The restriction you feel is largely a story. Question what is actually keeping you stuck.", colors:["#9FA8DA","#8F8447","#342A46"], bg:"#0f1119", keywords:["restriction","overthinking","release","freedom"]},
-    {id:59, group:"mind", name:"Nightmind", affirmation:"Name the fear, loosen its grip.", meaning:"The anxiety feels larger in the dark. Name it, sit with it, and watch it loosen its grip.", colors:["#283593","#C2B766","#CEC3E0"], bg:"#040619", keywords:["anxiety","fear","worry","night"]},
-    {id:60, group:"mind", name:"Ending of Mind", affirmation:"An ending clears the field.", meaning:"Something has come to its absolute end. This painful clarity opens a new dawn.", colors:["#455A64","#B28976","#C7CBDB"], bg:"#070b0d", keywords:["endings","pain","clarity","new beginning"]},
-    {id:61, group:"mind", name:"Inquiry of Mind", affirmation:"Question sharply, learn deeply.", meaning:"Ask the hard questions with genuine curiosity. Honest inquiry is the door to understanding.", colors:["#81D4FA","#B55021","#1C2655"], bg:"#0b1419", keywords:["curiosity","communication","learning","questioning"]},
-    {id:62, group:"mind", name:"Precision of Mind", affirmation:"Move with precision.", meaning:"Act decisively. When clarity arrives in full, move without hesitation or delay.", colors:["#42A5F5","#DC8C4C","#1C1F54"], bg:"#060f19", keywords:["decisiveness","speed","ambition","boldness"]},
-    {id:63, group:"mind", name:"Discernment of Mind", affirmation:"Discernment protects peace.", meaning:"See clearly, speak truthfully, and cut through what no longer serves your highest good.", colors:["#5E35B1","#A3BF69","#DAC3DF"], bg:"#0b0419", keywords:["clarity","discernment","truth","boundaries"]},
-    {id:64, group:"mind", name:"Reason of Mind", affirmation:"Reason with integrity.", meaning:"Lead with a calm and ethical mind. Your clarity is a genuine gift to those around you.", colors:["#1A237E","#C9BF5F","#CEC0E2"], bg:"#030419", keywords:["wisdom","authority","ethics","integrity"]},
+    {id:51, group:"mind", name:"Clarity", affirmation:"Clear thought cuts through.", meaning:"Truth breaks through confusion. Speak with precision and think with honesty.", colors:["#ECEFF1","#89654D","#2C2E44"], bg:"#191a1b", keywords:["clarity","truth","breakthrough","intellect"]},
+    {id:52, group:"mind", name:"Pause", affirmation:"Pause before the choice.", meaning:"A decision waits. There is no need to rush — sit with both options before choosing.", colors:["#B0BEC5","#89614D","#2C3044"], bg:"#121618", keywords:["decision","balance","choice","stillness"]},
+    {id:53, group:"mind", name:"Ache", affirmation:"Truth can ache before it heals.", meaning:"Grief is the price of love. Let the heartache move through without hardening you.", colors:["#7986CB","#8F8348","#342A46"], bg:"#0c0e1a", keywords:["heartbreak","grief","pain","healing"]},
+    {id:54, group:"mind", name:"Rest", affirmation:"Rest restores the mind.", meaning:"Your mind needs space. Step back from the noise and let stillness restore you fully.", colors:["#CFD8DC","#89604D","#2C3144"], bg:"#161a1b", keywords:["rest","recovery","contemplation","renewal"]},
+    {id:55, group:"mind", name:"Discord", affirmation:"Win less, understand more.", meaning:"Winning at all costs leaves everyone poorer. What lesson is this situation offering?", colors:["#607D8B","#B28976","#C7CBDB"], bg:"#090e10", keywords:["conflict","learning","perspective","defeat"]},
+    {id:56, group:"mind", name:"Passage", affirmation:"Cross toward calmer air.", meaning:"Moving through difficulty leads to smoother shores ahead. The journey is healing you.", colors:["#90A4AE","#89614D","#2C3044"], bg:"#0e1214", keywords:["transition","healing","movement","peace"]},
+    {id:57, group:"mind", name:"Strategy", affirmation:"Strategy walks in shadow.", meaning:"Use your intelligence wisely. Not every plan needs to be announced or explained.", colors:["#3949AB","#BCB16C","#CEC4DE"], bg:"#060819", keywords:["strategy","planning","cunning","discernment"]},
+    {id:58, group:"mind", name:"Unbinding", affirmation:"The mind can unbind itself.", meaning:"The restriction you feel is largely a story. Question what is actually keeping you stuck.", colors:["#9FA8DA","#8F8447","#342A46"], bg:"#0f1119", keywords:["restriction","overthinking","release","freedom"]},
+    {id:59, group:"mind", name:"Dread", affirmation:"Name the fear, loosen its grip.", meaning:"The anxiety feels larger in the dark. Name it, sit with it, and watch it loosen its grip.", colors:["#283593","#C2B766","#CEC3E0"], bg:"#040619", keywords:["anxiety","fear","worry","night"]},
+    {id:60, group:"mind", name:"Aftermath", affirmation:"An ending clears the field.", meaning:"Something has come to its absolute end. This painful clarity opens a new dawn.", colors:["#455A64","#B28976","#C7CBDB"], bg:"#070b0d", keywords:["endings","pain","clarity","new beginning"]},
+    {id:61, group:"mind", name:"Inquiry", affirmation:"Question sharply, learn deeply.", meaning:"Ask the hard questions with genuine curiosity. Honest inquiry is the door to understanding.", colors:["#81D4FA","#B55021","#1C2655"], bg:"#0b1419", keywords:["curiosity","communication","learning","questioning"]},
+    {id:62, group:"mind", name:"Precision", affirmation:"Move with precision.", meaning:"Act decisively. When clarity arrives in full, move without hesitation or delay.", colors:["#42A5F5","#DC8C4C","#1C1F54"], bg:"#060f19", keywords:["decisiveness","speed","ambition","boldness"]},
+    {id:63, group:"mind", name:"Discernment", affirmation:"Discernment protects peace.", meaning:"See clearly, speak truthfully, and cut through what no longer serves your highest good.", colors:["#5E35B1","#A3BF69","#DAC3DF"], bg:"#0b0419", keywords:["clarity","discernment","truth","boundaries"]},
+    {id:64, group:"mind", name:"Reason", affirmation:"Reason with integrity.", meaning:"Lead with a calm and ethical mind. Your clarity is a genuine gift to those around you.", colors:["#1A237E","#C9BF5F","#CEC0E2"], bg:"#030419", keywords:["wisdom","authority","ethics","integrity"]},
 
     // ── FOUNDATION (PENTACLES) ────────────────────────────────
-    {id:65, group:"foundation", name:"Seed of Foundation", affirmation:"Plant what you want to grow.", meaning:"A real opportunity is here for you. Invest in it with care and it will flourish.", colors:["#43A047","#B573B2","#C7DBD2"], bg:"#061007", keywords:["opportunity","abundance","beginnings","prosperity"]},
-    {id:66, group:"foundation", name:"Balance of Foundation", affirmation:"Balance is a living practice.", meaning:"Keep all the important things in motion at once. Life is a practice of balance.", colors:["#7CB342","#936FB9","#C6DDC5"], bg:"#0e1a06", keywords:["balance","adaptability","priorities","flexibility"]},
-    {id:67, group:"foundation", name:"Craft of Foundation", affirmation:"Build with care and skill.", meaning:"Skilled collaboration creates something truly lasting. Take genuine pride in the work.", colors:["#689F38","#976DBA","#C5DDC6"], bg:"#0b1306", keywords:["teamwork","skill","craftsmanship","mastery"]},
-    {id:68, group:"foundation", name:"Holding of Foundation", affirmation:"Hold gently, not too hard.", meaning:"Security comes from within, not from clinging to what you fear losing.", colors:["#827717","#5C67CC","#D5E3BF"], bg:"#100f03", keywords:["security","control","attachment","generosity"]},
-    {id:69, group:"foundation", name:"Lack of Foundation", affirmation:"Support exists, even now.", meaning:"Help is closer than it seems right now. Allow yourself to receive what is being offered.", colors:["#8D6E63","#76A2B2","#DBD6C7"], bg:"#110d0b", keywords:["hardship","support","community","hope"]},
-    {id:70, group:"foundation", name:"Exchange of Foundation", affirmation:"Give and receive in balance.", meaning:"True generosity flows in both directions. Give freely and receive with gratitude.", colors:["#66BB6A","#B375B0","#C7DBD2"], bg:"#0a170b", keywords:["generosity","sharing","balance","gratitude"]},
-    {id:71, group:"foundation", name:"Patience of Foundation", affirmation:"Patience ripens the harvest.", meaning:"You have planted and tended well. Now wait. The harvest comes in its own perfect time.", colors:["#9CCC65","#916CBC","#2A4829"], bg:"#111800", keywords:["patience","growth","assessment","investment"]},
-    {id:72, group:"foundation", name:"Practice of Foundation", affirmation:"Devotion becomes mastery.", meaning:"Devotion shown through daily effort is the path to real mastery. Show up and trust.", colors:["#2E7D32","#B96FB5","#C5DDD2"], bg:"#03100a", keywords:["dedication","focus","craftsmanship","discipline"]},
-    {id:73, group:"foundation", name:"Abundance of Foundation", affirmation:"Let abundance feel natural.", meaning:"You have built something beautiful. Allow yourself to enjoy and inhabit what you've created.", colors:["#388E3C","#B771B4","#C6DCD2"], bg:"#051207", keywords:["abundance","independence","beauty","self-sufficiency"]},
-    {id:74, group:"foundation", name:"Legacy of Foundation", affirmation:"Legacy lives in the roots.", meaning:"What you build now echoes far into the future. Create something worthy of passing on.", colors:["#1B5E20","#C067BA","#C3DFD3"], bg:"#030c04", keywords:["legacy","family","prosperity","tradition"]},
-    {id:75, group:"foundation", name:"Learning of Foundation", affirmation:"Learn the language of the earth.", meaning:"Approach the physical world with full curiosity. There is much still left to learn here.", colors:["#8BC34A","#916CBC","#C5DEC4"], bg:"#0f1706", keywords:["learning","practicality","potential","study"]},
-    {id:76, group:"foundation", name:"Commitment of Foundation", affirmation:"Commit to the long road.", meaning:"Slow and methodical will carry you further than any rush. Stay committed to the long road.", colors:["#33691E","#A867C1","#C3DFC9"], bg:"#060e04", keywords:["patience","reliability","determination","progress"]},
-    {id:77, group:"foundation", name:"Nourishment of Foundation", affirmation:"Nourish what nourishes you.", meaning:"Your care sustains everything and everyone around you. Remember also to nourish yourself.", colors:["#A5D6A7","#894D87","#2C4439"], bg:"#121917", keywords:["nurturing","abundance","home","self-care"]},
-    {id:78, group:"foundation", name:"Stewardship of Foundation", affirmation:"Steward the realm well.", meaning:"You have built something lasting and true. Lead now with generosity, wisdom, and abundance.", colors:["#558B2F","#9B6CBC","#C5DEC7"], bg:"#0a1106", keywords:["prosperity","leadership","abundance","legacy"]}
+    {id:65, group:"foundation", name:"Seed", affirmation:"Plant what you want to grow.", meaning:"A real opportunity is here for you. Invest in it with care and it will flourish.", colors:["#43A047","#B573B2","#C7DBD2"], bg:"#061007", keywords:["opportunity","abundance","beginnings","prosperity"]},
+    {id:66, group:"foundation", name:"Rhythm", affirmation:"Balance is a living practice.", meaning:"Keep all the important things in motion at once. Life is a practice of balance.", colors:["#7CB342","#936FB9","#C6DDC5"], bg:"#0e1a06", keywords:["balance","adaptability","priorities","flexibility"]},
+    {id:67, group:"foundation", name:"Craft", affirmation:"Build with care and skill.", meaning:"Skilled collaboration creates something truly lasting. Take genuine pride in the work.", colors:["#689F38","#976DBA","#C5DDC6"], bg:"#0b1306", keywords:["teamwork","skill","craftsmanship","mastery"]},
+    {id:68, group:"foundation", name:"Holding", affirmation:"Hold gently, not too hard.", meaning:"Security comes from within, not from clinging to what you fear losing.", colors:["#827717","#5C67CC","#D5E3BF"], bg:"#100f03", keywords:["security","control","attachment","generosity"]},
+    {id:69, group:"foundation", name:"Scarcity", affirmation:"Support exists, even now.", meaning:"Help is closer than it seems right now. Allow yourself to receive what is being offered.", colors:["#8D6E63","#76A2B2","#DBD6C7"], bg:"#110d0b", keywords:["hardship","support","community","hope"]},
+    {id:70, group:"foundation", name:"Exchange", affirmation:"Give and receive in balance.", meaning:"True generosity flows in both directions. Give freely and receive with gratitude.", colors:["#66BB6A","#B375B0","#C7DBD2"], bg:"#0a170b", keywords:["generosity","sharing","balance","gratitude"]},
+    {id:71, group:"foundation", name:"Patience", affirmation:"Patience ripens the harvest.", meaning:"You have planted and tended well. Now wait. The harvest comes in its own perfect time.", colors:["#9CCC65","#916CBC","#2A4829"], bg:"#111800", keywords:["patience","growth","assessment","investment"]},
+    {id:72, group:"foundation", name:"Practice", affirmation:"Devotion becomes mastery.", meaning:"Devotion shown through daily effort is the path to real mastery. Show up and trust.", colors:["#2E7D32","#B96FB5","#C5DDD2"], bg:"#03100a", keywords:["dedication","focus","craftsmanship","discipline"]},
+    {id:73, group:"foundation", name:"Abundance", affirmation:"Let abundance feel natural.", meaning:"You have built something beautiful. Allow yourself to enjoy and inhabit what you've created.", colors:["#388E3C","#B771B4","#C6DCD2"], bg:"#051207", keywords:["abundance","independence","beauty","self-sufficiency"]},
+    {id:74, group:"foundation", name:"Legacy", affirmation:"Legacy lives in the roots.", meaning:"What you build now echoes far into the future. Create something worthy of passing on.", colors:["#1B5E20","#C067BA","#C3DFD3"], bg:"#030c04", keywords:["legacy","family","prosperity","tradition"]},
+    {id:75, group:"foundation", name:"Learning", affirmation:"Learn the language of the earth.", meaning:"Approach the physical world with full curiosity. There is much still left to learn here.", colors:["#8BC34A","#916CBC","#C5DEC4"], bg:"#0f1706", keywords:["learning","practicality","potential","study"]},
+    {id:76, group:"foundation", name:"Commitment", affirmation:"Commit to the long road.", meaning:"Slow and methodical will carry you further than any rush. Stay committed to the long road.", colors:["#33691E","#A867C1","#C3DFC9"], bg:"#060e04", keywords:["patience","reliability","determination","progress"]},
+    {id:77, group:"foundation", name:"Nurture", affirmation:"Nourish what nourishes you.", meaning:"Your care sustains everything and everyone around you. Remember also to nourish yourself.", colors:["#A5D6A7","#894D87","#2C4439"], bg:"#121917", keywords:["nurturing","abundance","home","self-care"]},
+    {id:78, group:"foundation", name:"Steward", affirmation:"Steward the realm well.", meaning:"You have built something lasting and true. Lead now with generosity, wisdom, and abundance.", colors:["#558B2F","#9B6CBC","#C5DEC7"], bg:"#0a1106", keywords:["prosperity","leadership","abundance","legacy"]}
 ];
 
 // ========== QUESTIONNAIRE ==========
