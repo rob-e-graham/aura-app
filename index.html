@@ -1139,19 +1139,17 @@
         }
         .welcome-orb {
             position: absolute;
-            left: 50%;
-            top: 50%;
-            width: 280px;
-            height: 280px;
+            left: 50%; top: 50%;
+            width: 340px; height: 340px;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.9;
-            filter: blur(24px);
+            pointer-events: none; z-index: 0;
+            /* 3-layer orb matching Aura Orb Generator: core 22% · mid 55% · outer 88% */
             background:
-                radial-gradient(circle at 50% 48%, rgba(196, 134, 255, 0.74) 0%, rgba(168, 108, 236, 0.42) 36%, transparent 72%),
-                radial-gradient(circle at 42% 62%, rgba(148, 122, 255, 0.3) 10%, transparent 60%);
+                radial-gradient(circle at 50% 48%, rgba(232,176,255,0.92) 0%, rgba(232,176,255,0.72) 9%, rgba(196,134,255,0.28) 18%, transparent 22%),
+                radial-gradient(circle at 50% 48%, transparent 16%, rgba(136,68,204,0.50) 28%, rgba(120,60,200,0.22) 42%, transparent 55%),
+                radial-gradient(circle at 46% 54%, transparent 32%, rgba(74,32,128,0.26) 54%, rgba(60,20,110,0.10) 72%, transparent 88%);
+            filter: blur(18px);
             animation: orbBreathGlobal var(--aura-breath-cycle) ease-in-out infinite;
         }
         @keyframes orbBreathGlobal {
@@ -1557,8 +1555,8 @@
         .cards-spread.single-card .spread-card { width: 150px; height: 210px; padding: 16px 12px 14px; }
         .spread-card-title { font-family: 'Cormorant Garamond', serif; font-size: 11px; font-weight: 500; text-align: center; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.03em; line-height: 1.2; }
         .cards-spread.single-card .spread-card-title { font-size: 14px; }
-        .spread-card-orb { width: 50px; height: 50px; border-radius: 50%; filter: blur(8px); animation: orbSoftPulse 5.6s ease-in-out infinite; }
-        .cards-spread.single-card .spread-card-orb { width: 70px; height: 70px; filter: blur(10px); }
+        .spread-card-orb { width: 72px; height: 72px; border-radius: 50%; filter: blur(6px); animation: orbSoftPulse 5.6s ease-in-out infinite; }
+        .cards-spread.single-card .spread-card-orb { width: 100px; height: 100px; filter: blur(8px); }
         .spread-card-position { font-size: 8px; font-weight: 500; color: rgba(0,0,0,0.5); letter-spacing: 0.1em; text-transform: uppercase; }
         .cards-spread.single-card .spread-card-position { font-size: 10px; }
         .cards-spread .spread-card:nth-child(2) .spread-card-orb { animation-delay: 0.9s; }
@@ -2544,19 +2542,18 @@
         }
         .entry-orb {
             position: absolute;
-            left: 50%;
-            top: 50%;
-            width: 280px;
-            height: 280px;
+            left: 50%; top: 50%;
+            width: 340px; height: 340px;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 0;
+            pointer-events: none; z-index: 0;
             opacity: 0.86;
-            filter: blur(24px);
+            /* Same 3-layer engine as welcome orb */
             background:
-                radial-gradient(circle at 50% 48%, rgba(196, 134, 255, 0.74) 0%, rgba(168, 108, 236, 0.42) 36%, transparent 72%),
-                radial-gradient(circle at 42% 62%, rgba(148, 122, 255, 0.3) 10%, transparent 60%);
+                radial-gradient(circle at 50% 48%, rgba(232,176,255,0.92) 0%, rgba(232,176,255,0.72) 9%, rgba(196,134,255,0.28) 18%, transparent 22%),
+                radial-gradient(circle at 50% 48%, transparent 16%, rgba(136,68,204,0.50) 28%, rgba(120,60,200,0.22) 42%, transparent 55%),
+                radial-gradient(circle at 46% 54%, transparent 32%, rgba(74,32,128,0.26) 54%, rgba(60,20,110,0.10) 72%, transparent 88%);
+            filter: blur(18px);
             animation: orbBreathGlobal var(--aura-breath-cycle) ease-in-out infinite;
         }
         .entry-card {
@@ -3598,11 +3595,11 @@
         
         .fade-in { animation: fadeIn 0.6s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .card-reveal { animation: cardReveal 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        @keyframes cardReveal { 
-            0% { opacity: 0; transform: translateY(60px) rotateX(30deg) scale(0.8); } 
-            50% { opacity: 1; transform: translateY(-10px) rotateX(-5deg) scale(1.02); }
-            100% { opacity: 1; transform: translateY(0) rotateX(0) scale(1); } 
+        .card-reveal { animation: cardReveal 0.55s cubic-bezier(0.34, 1.4, 0.64, 1) both; }
+        @keyframes cardReveal {
+            0% { opacity: 0; transform: translateY(32px) scale(0.88); }
+            60% { opacity: 1; }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }/* ===== Aura Structured Output ===== */
 
 .aura-block {
@@ -5929,7 +5926,11 @@ function showReading() {
     spreadEl.innerHTML = selectedCards.map((c,i) => `
         <div class="spread-card card-reveal" onclick="highlightCard(${i})" style="background:linear-gradient(180deg,${c.bg},${darken(c.bg,15)});animation-delay:${i*0.15}s">
             <p class="spread-card-title">${c.name}</p>
-            <div class="spread-card-orb" style="background:radial-gradient(circle,${c.colors[0]} 0%,transparent 30%),radial-gradient(circle,${c.colors[1]} 25%,transparent 50%),radial-gradient(circle,${c.colors[2]} 40%,transparent 65%),radial-gradient(circle,${c.colors[3]} 55%,transparent 80%)"></div>
+            <div class="spread-card-orb" style="background:
+                radial-gradient(circle at 50% 48%, ${c.colors[0]} 0%, ${c.colors[0]}bb 9%, ${c.colors[0]}44 18%, transparent 22%),
+                radial-gradient(circle at 50% 48%, transparent 16%, ${c.colors[1]}88 28%, ${c.colors[1]}38 42%, transparent 55%),
+                radial-gradient(circle at 46% 54%, transparent 32%, ${c.colors[2] || c.colors[1]}44 54%, ${c.colors[2] || c.colors[1]}18 72%, transparent 88%)">
+            </div>
             <p class="spread-card-position">${positions[i]}</p>
         </div>`).join('');
     
