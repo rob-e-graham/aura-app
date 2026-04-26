@@ -212,7 +212,29 @@
             --entry-orb-shift: 0px;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow: hidden; overscroll-behavior-x: none; touch-action: pan-y pinch-zoom; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow: hidden; overscroll-behavior-x: none; touch-action: pan-y pinch-zoom; font-size: 15px; }
+
+        /* ── Global legibility bump ── */
+        /* Promote all 11px → 13px, 12px → 14px, 13px → 15px throughout */
+        .settings-hub-subtitle, .settings-hub-row span, .settings-usage-label,
+        .paywall-tier-features, .disclaimer-content p, .disclaimer-content ul,
+        .local-mode-hint, .local-mode-notice,
+        .topup-modal p, .topup-option .topup-price, .topup-reset-info { font-size: 14px !important; }
+
+        .chat-top-btn, .settings-chip-btn, .audio-chip,
+        .card-detail-meaning, .card-detail-affirmation,
+        .btn-small, .astro-action-btn,
+        .token-indicator, #chatTokenText { font-size: 14px !important; }
+
+        .chat-message p, .guide-message p, .affirmation-text,
+        .aura-block p, .chat-input, .open-chat-input { font-size: 15px !important; }
+
+        .settings-hub-card h4, .settings-tier-badge { font-size: 16px !important; }
+
+        .spread-card-title { font-size: 12px !important; }
+        .cards-spread.single-card .spread-card-title { font-size: 16px !important; }
+        .spread-card-position { font-size: 11px !important; }
+        .cards-spread.single-card .spread-card-position { font-size: 13px !important; }
         .app {
             max-width: 414px;
             margin: 12px auto;
@@ -1144,12 +1166,12 @@
             border-radius: 50%;
             transform: translate(-50%, -50%);
             pointer-events: none; z-index: 0;
-            /* 3-layer orb matching Aura Orb Generator: core 22% · mid 55% · outer 88% */
+            /* 3-layer orb — soft=5% matching generator: crisp core, solid rings, minimal blur */
             background:
-                radial-gradient(circle at 50% 48%, rgba(232,176,255,0.92) 0%, rgba(232,176,255,0.72) 9%, rgba(196,134,255,0.28) 18%, transparent 22%),
-                radial-gradient(circle at 50% 48%, transparent 16%, rgba(136,68,204,0.50) 28%, rgba(120,60,200,0.22) 42%, transparent 55%),
-                radial-gradient(circle at 46% 54%, transparent 32%, rgba(74,32,128,0.26) 54%, rgba(60,20,110,0.10) 72%, transparent 88%);
-            filter: blur(18px);
+                radial-gradient(circle at 50% 48%, rgba(232,176,255,1) 0%, rgba(232,176,255,1) 16%, rgba(210,150,255,0.66) 20%, transparent 22%),
+                radial-gradient(circle at 50% 48%, transparent 18%, rgba(160,80,230,0.93) 34%, rgba(136,60,210,1) 45%, rgba(110,50,190,0.53) 52%, transparent 55%),
+                radial-gradient(circle at 46% 54%, transparent 50%, rgba(80,30,150,0.87) 72%, rgba(60,20,130,1) 80%, rgba(50,15,110,0.53) 85%, transparent 88%);
+            filter: blur(8px);
             animation: orbBreathGlobal var(--aura-breath-cycle) ease-in-out infinite;
         }
         @keyframes orbBreathGlobal {
@@ -1555,8 +1577,8 @@
         .cards-spread.single-card .spread-card { width: 150px; height: 210px; padding: 16px 12px 14px; }
         .spread-card-title { font-family: 'Cormorant Garamond', serif; font-size: 11px; font-weight: 500; text-align: center; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.03em; line-height: 1.2; }
         .cards-spread.single-card .spread-card-title { font-size: 14px; }
-        .spread-card-orb { width: 72px; height: 72px; border-radius: 50%; filter: blur(6px); animation: orbSoftPulse 5.6s ease-in-out infinite; }
-        .cards-spread.single-card .spread-card-orb { width: 100px; height: 100px; filter: blur(8px); }
+        .spread-card-orb { width: 80px; height: 80px; border-radius: 50%; filter: blur(3px); animation: orbSoftPulse 5.6s ease-in-out infinite; }
+        .cards-spread.single-card .spread-card-orb { width: 110px; height: 110px; filter: blur(4px); }
         .spread-card-position { font-size: 8px; font-weight: 500; color: rgba(0,0,0,0.5); letter-spacing: 0.1em; text-transform: uppercase; }
         .cards-spread.single-card .spread-card-position { font-size: 10px; }
         .cards-spread .spread-card:nth-child(2) .spread-card-orb { animation-delay: 0.9s; }
@@ -2550,10 +2572,10 @@
             opacity: 0.86;
             /* Same 3-layer engine as welcome orb */
             background:
-                radial-gradient(circle at 50% 48%, rgba(232,176,255,0.92) 0%, rgba(232,176,255,0.72) 9%, rgba(196,134,255,0.28) 18%, transparent 22%),
-                radial-gradient(circle at 50% 48%, transparent 16%, rgba(136,68,204,0.50) 28%, rgba(120,60,200,0.22) 42%, transparent 55%),
-                radial-gradient(circle at 46% 54%, transparent 32%, rgba(74,32,128,0.26) 54%, rgba(60,20,110,0.10) 72%, transparent 88%);
-            filter: blur(18px);
+                radial-gradient(circle at 50% 48%, rgba(232,176,255,1) 0%, rgba(232,176,255,1) 16%, rgba(210,150,255,0.66) 20%, transparent 22%),
+                radial-gradient(circle at 50% 48%, transparent 18%, rgba(160,80,230,0.93) 34%, rgba(136,60,210,1) 45%, rgba(110,50,190,0.53) 52%, transparent 55%),
+                radial-gradient(circle at 46% 54%, transparent 50%, rgba(80,30,150,0.87) 72%, rgba(60,20,130,1) 80%, rgba(50,15,110,0.53) 85%, transparent 88%);
+            filter: blur(8px);
             animation: orbBreathGlobal var(--aura-breath-cycle) ease-in-out infinite;
         }
         .entry-card {
@@ -5927,9 +5949,9 @@ function showReading() {
         <div class="spread-card card-reveal" onclick="highlightCard(${i})" style="background:linear-gradient(180deg,${c.bg},${darken(c.bg,15)});animation-delay:${i*0.15}s">
             <p class="spread-card-title">${c.name}</p>
             <div class="spread-card-orb" style="background:
-                radial-gradient(circle at 50% 48%, ${c.colors[0]} 0%, ${c.colors[0]}bb 9%, ${c.colors[0]}44 18%, transparent 22%),
-                radial-gradient(circle at 50% 48%, transparent 16%, ${c.colors[1]}88 28%, ${c.colors[1]}38 42%, transparent 55%),
-                radial-gradient(circle at 46% 54%, transparent 32%, ${c.colors[2] || c.colors[1]}44 54%, ${c.colors[2] || c.colors[1]}18 72%, transparent 88%)">
+                radial-gradient(circle at 50% 48%, ${c.colors[0]} 0%, ${c.colors[0]} 16%, ${c.colors[0]}aa 20%, transparent 22%),
+                radial-gradient(circle at 50% 48%, transparent 18%, ${c.colors[1]}ee 34%, ${c.colors[1]} 45%, ${c.colors[1]}88 52%, transparent 55%),
+                radial-gradient(circle at 46% 54%, transparent 50%, ${c.colors[2]||c.colors[1]}dd 72%, ${c.colors[2]||c.colors[1]} 80%, ${c.colors[2]||c.colors[1]}88 85%, transparent 88%)">
             </div>
             <p class="spread-card-position">${positions[i]}</p>
         </div>`).join('');
@@ -7687,29 +7709,29 @@ function buildReadingShareImage(cards, dateStr) {
 
     // ── AURA wordmark ──
     ctx.textAlign = 'center';
-    ctx.fillStyle = 'rgba(255,255,255,0.92)';
-    ctx.font = '700 72px Georgia, serif';
-    ctx.letterSpacing = '12px';
-    ctx.fillText('AURA', W/2, 118);
-    ctx.font = '400 24px Georgia, serif';
-    ctx.fillStyle = 'rgba(200,170,255,0.55)';
-    ctx.letterSpacing = '8px';
-    ctx.fillText('KNOW YOURSELF', W/2, 158);
-    ctx.font = '400 21px Arial, sans-serif';
-    ctx.fillStyle = 'rgba(255,255,255,0.28)';
-    ctx.letterSpacing = '2px';
-    ctx.fillText(dateStr, W/2, 196);
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    ctx.font = '700 96px Georgia, serif';
+    ctx.letterSpacing = '16px';
+    ctx.fillText('AURA', W/2, 128);
+    ctx.font = '400 32px Georgia, serif';
+    ctx.fillStyle = 'rgba(200,170,255,0.65)';
+    ctx.letterSpacing = '10px';
+    ctx.fillText('KNOW YOURSELF', W/2, 178);
+    ctx.font = '400 26px Arial, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.38)';
+    ctx.letterSpacing = '3px';
+    ctx.fillText(dateStr, W/2, 220);
 
     ctx.strokeStyle = 'rgba(180,140,255,0.2)'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(100, 218); ctx.lineTo(W-100, 218); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(100, 246); ctx.lineTo(W-100, 246); ctx.stroke();
 
     // ── Cards ──
     const isSingle = cards.length === 1;
     const positions = isSingle ? ['Focus'] : ['Past', 'Present', 'Future'];
-    const cardW = isSingle ? 540 : 296;
-    const cardH = isSingle ? 500 : 460;
-    const cardY = 250;
-    const gap = 20;
+    const cardW = isSingle ? 560 : 310;
+    const cardH = isSingle ? 520 : 480;
+    const cardY = 276;
+    const gap = 18;
     const totalW = isSingle ? cardW : cards.length * cardW + (cards.length-1) * gap;
     const startX = (W - totalW) / 2;
 
@@ -7719,54 +7741,54 @@ function buildReadingShareImage(cards, dateStr) {
         const midX = cx + cardW / 2;
 
         // Drop shadow
-        ctx.shadowColor = 'rgba(0,0,0,0.55)';
-        ctx.shadowBlur = 32; ctx.shadowOffsetY = 10;
-        roundRect(cx, cy, cardW, cardH, 24);
+        ctx.shadowColor = 'rgba(0,0,0,0.6)';
+        ctx.shadowBlur = 36; ctx.shadowOffsetY = 12;
+        roundRect(cx, cy, cardW, cardH, 28);
         ctx.fillStyle = card.bg || '#12101e'; ctx.fill();
         ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
 
-        // Card dark overlay to deepen bg for contrast
+        // Darken card bg for text contrast
         ctx.save();
-        roundRect(cx, cy, cardW, cardH, 24);
+        roundRect(cx, cy, cardW, cardH, 28);
         ctx.clip();
         const darkenGrad = ctx.createLinearGradient(cx, cy, cx, cy + cardH);
-        darkenGrad.addColorStop(0, 'rgba(0,0,0,0.25)');
-        darkenGrad.addColorStop(1, 'rgba(0,0,0,0.55)');
+        darkenGrad.addColorStop(0, 'rgba(0,0,0,0.30)');
+        darkenGrad.addColorStop(1, 'rgba(0,0,0,0.65)');
         ctx.fillStyle = darkenGrad; ctx.fillRect(cx, cy, cardW, cardH);
 
-        // ── Orb (generator quality) ──
+        // ── Orb — crisp generator quality (soft=0.05) ──
         const orbY = cy + cardH * 0.40;
-        const orbR = isSingle ? 130 : 90;
-        drawOrb(midX, orbY, orbR, cardToOrbLayers(card), 0.52);
+        const orbR = isSingle ? 150 : 100;
+        drawOrb(midX, orbY, orbR, cardToOrbLayers(card), 0.05);
 
         ctx.restore();
 
-        // Card glass border
-        roundRect(cx, cy, cardW, cardH, 24);
+        // Card border
+        roundRect(cx, cy, cardW, cardH, 28);
         const border = ctx.createLinearGradient(cx, cy, cx, cy + cardH);
-        border.addColorStop(0, 'rgba(255,255,255,0.22)');
-        border.addColorStop(0.5, 'rgba(255,255,255,0.06)');
+        border.addColorStop(0, 'rgba(255,255,255,0.24)');
+        border.addColorStop(0.5, 'rgba(255,255,255,0.07)');
         border.addColorStop(1, 'rgba(255,255,255,0.03)');
         ctx.strokeStyle = border; ctx.lineWidth = 1.5; ctx.stroke();
 
         // Position label
         ctx.textAlign = 'center';
-        ctx.font = `500 ${isSingle ? 19 : 15}px Arial, sans-serif`;
-        ctx.fillStyle = 'rgba(200,170,255,0.65)';
-        ctx.letterSpacing = '4px';
-        ctx.fillText(positions[i].toUpperCase(), midX, cy + 34);
+        ctx.font = `500 ${isSingle ? 26 : 22}px Arial, sans-serif`;
+        ctx.fillStyle = 'rgba(200,170,255,0.75)';
+        ctx.letterSpacing = '5px';
+        ctx.fillText(positions[i].toUpperCase(), midX, cy + 42);
 
         // Card name
-        ctx.font = `600 ${isSingle ? 36 : 25}px Georgia, serif`;
-        ctx.fillStyle = 'rgba(255,255,255,0.95)';
+        ctx.font = `600 ${isSingle ? 48 : 34}px Georgia, serif`;
+        ctx.fillStyle = 'rgba(255,255,255,0.97)';
         ctx.letterSpacing = '1px';
-        wrapText(card.name, midX, cy + cardH * 0.645, cardW - 40, isSingle ? 42 : 31, 2);
+        wrapText(card.name, midX, cy + cardH * 0.645, cardW - 40, isSingle ? 56 : 40, 2);
 
         // Affirmation
-        ctx.font = `italic ${isSingle ? 20 : 14}px Georgia, serif`;
-        ctx.fillStyle = 'rgba(220,200,255,0.58)';
+        ctx.font = `italic ${isSingle ? 26 : 19}px Georgia, serif`;
+        ctx.fillStyle = 'rgba(220,200,255,0.72)';
         ctx.letterSpacing = '0px';
-        wrapText(`"${card.affirmation}"`, midX, cy + cardH * 0.80, cardW - 48, isSingle ? 27 : 20, 2);
+        wrapText(`"${card.affirmation}"`, midX, cy + cardH * 0.82, cardW - 48, isSingle ? 34 : 26, 2);
     });
 
     // ── AI Reflection ──
