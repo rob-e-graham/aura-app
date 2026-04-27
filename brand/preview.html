@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AURA — Sparkle Logo Preview</title>
+<style>
+  :root {
+    --paper: #FBF7F4;
+    --night: #0D0D0F;
+    --ink:   #1A1422;
+    --gold:  #D4A93A;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, 'Inter', system-ui, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    padding: 48px 32px 96px;
+    line-height: 1.5;
+  }
+  h1 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 300;
+    font-size: 44px;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    color: rgba(26,20,34,0.55);
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .card {
+    border-radius: 18px;
+    padding: 32px 24px 22px;
+    text-align: center;
+    border: 1px solid rgba(26,20,34,0.08);
+  }
+  .card.paper { background: #fff; }
+  .card.night { background: var(--night); color: #fafafa; border-color: rgba(255,255,255,0.06); }
+  .card.cream { background: #F6E6C8; }
+  .card.blush { background: #F4DCE4; }
+  .card img, .card object { width: 180px; height: 180px; display: block; margin: 0 auto 18px; }
+  .label {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+  .file {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 11px;
+    opacity: 0.55;
+  }
+  .download-row {
+    margin-top: 14px;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .download-row a {
+    font-size: 12px;
+    text-decoration: none;
+    padding: 6px 12px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    opacity: 0.7;
+    color: inherit;
+  }
+  .download-row a:hover { opacity: 1; }
+
+  .wordmark-row {
+    max-width: 1100px;
+    margin: 64px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    background: #fff;
+    border: 1px solid rgba(26,20,34,0.08);
+    border-radius: 18px;
+    padding: 36px;
+  }
+  .wordmark-row .word {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 400;
+    font-size: 64px;
+    letter-spacing: 0.18em;
+    color: var(--ink);
+  }
+  .wordmark-row img { width: 64px; height: 64px; }
+
+  footer {
+    max-width: 1100px;
+    margin: 64px auto 0;
+    font-size: 13px;
+    color: rgba(26,20,34,0.55);
+  }
+  footer ul { padding-left: 18px; }
+  footer li { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+  <h1>AURA — Sparkle Mark</h1>
+  <p class="subtitle">4-point sparkle · subtly cross-tipped · brand mark</p>
+
+  <div class="grid">
+    <div class="card paper">
+      <p class="label">Gold on paper</p>
+      <object data="aura-sparkle-gold.svg" type="image/svg+xml" aria-label="AURA gold sparkle"></object>
+      <p class="file">aura-sparkle-gold.svg</p>
+      <div class="download-row">
+        <a href="aura-sparkle-gold.svg" download>SVG</a>
+      </div>
+    </div>
+
+    <div class="card night">
+      <p class="label">White on night</p>
+      <object data="aura-sparkle-mono-white.svg" type="image/svg+xml" aria-label="AURA white sparkle"></object>
+      <p class="file">aura-sparkle-mono-white.svg</p>
+      <div class="download-row">
+        <a href="aura-sparkle-mono-white.svg" download>SVG</a>
+      </div>
+    </div>
+
+    <div class="card paper">
+      <p class="label">Black on paper</p>
+      <object data="aura-sparkle-mono-black.svg" type="image/svg+xml" aria-label="AURA black sparkle"></object>
+      <p class="file">aura-sparkle-mono-black.svg</p>
+      <div class="download-row">
+        <a href="aura-sparkle-mono-black.svg" download>SVG</a>
+      </div>
+    </div>
+
+    <div class="card cream">
+      <p class="label">Mark only · no ring</p>
+      <object data="aura-sparkle-mark-only.svg" type="image/svg+xml" aria-label="AURA sparkle mark only" style="color:#1A1422;"></object>
+      <p class="file">aura-sparkle-mark-only.svg</p>
+      <div class="download-row">
+        <a href="aura-sparkle-mark-only.svg" download>SVG</a>
+      </div>
+    </div>
+
+    <div class="card blush">
+      <p class="label">On blush (mark)</p>
+      <object data="aura-sparkle-mark-only.svg" type="image/svg+xml" style="color:#7a2541;"></object>
+      <p class="file">tinted via CSS currentColor</p>
+    </div>
+
+    <div class="card night">
+      <p class="label">On night (gold)</p>
+      <object data="aura-sparkle-gold.svg" type="image/svg+xml"></object>
+      <p class="file">aura-sparkle-gold.svg</p>
+    </div>
+  </div>
+
+  <div class="wordmark-row">
+    <span class="word">AURA</span>
+    <img src="aura-sparkle-gold.svg" alt="AURA mark">
+  </div>
+
+  <footer>
+    <p><strong>Files in this folder:</strong></p>
+    <ul>
+      <li><code>aura-sparkle-gold.svg</code> — primary brand mark, gold gradient with halo</li>
+      <li><code>aura-sparkle-mono-white.svg</code> — for dark backgrounds</li>
+      <li><code>aura-sparkle-mono-black.svg</code> — for light backgrounds & print</li>
+      <li><code>aura-sparkle-mark-only.svg</code> — sparkle without ring; inherits CSS <code>currentColor</code> so you can re-tint anywhere</li>
+    </ul>
+    <p style="margin-top:14px;">All files are vector SVG — scale infinitely without quality loss. To export PNG/JPG at any size: open the SVG in a browser, right-click → "Save Image As", or open in Figma / Sketch / Adobe Illustrator and export.</p>
+  </footer>
+</body>
+</html>
