@@ -4191,11 +4191,13 @@
     <div class="aura-sparkle-logo large" aria-hidden="true" style="margin: 0 auto 6px;">
         <span class="ring"></span>
         <svg viewBox="0 0 64 64" fill="currentColor">
-            <!-- 4-point sparkle, visual centre shifted up to (32, 30).
-                 Top/left/right arms = 28 units; bottom arm = 32 units (~14%
-                 longer). Reads as a sparkle first, with a subtle cross
-                 silhouette underneath. -->
-            <path d="M32 2 C 33 20, 34 21, 60 30 C 34 39, 33 41, 32 62 C 31 41, 30 39, 4 30 C 30 21, 31 20, 32 2 Z"/>
+            <!-- 4-point sparkle. Each cubic curve has BOTH control points
+                 at the visual centre (32, 30), forcing the body to cinch
+                 deeply toward the middle — sharp needle tips, dramatic
+                 concave arms (matches the reference sparkle character).
+                 Top arm = 28 units, bottom arm = 32 (~14% longer) — gives
+                 a subtle Christian-cross silhouette under the sparkle. -->
+            <path d="M32,2 C32,30 32,30 62,30 C32,30 32,30 32,62 C32,30 32,30 2,30 C32,30 32,30 32,2 Z"/>
         </svg>
     </div>
     <h1 class="entry-title">AURA</h1>
