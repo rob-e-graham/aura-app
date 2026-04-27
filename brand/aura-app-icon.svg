@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  AURA — iOS App Icon (1024×1024)
+  Self-contained SVG: gold sparkle on the brand night atmosphere with
+  a soft purple aura glow behind. No external font dependency. iOS
+  rounds the corners automatically — leave the canvas square.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Brand night background: deep purple-black radial -->
+    <radialGradient id="bgNight" cx="50%" cy="46%" r="62%">
+      <stop offset="0%"  stop-color="#241834"/>
+      <stop offset="48%" stop-color="#120D1C"/>
+      <stop offset="100%" stop-color="#06040A"/>
+    </radialGradient>
+    <!-- Soft purple aura glow behind the sparkle -->
+    <radialGradient id="auraGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"  stop-color="#C8A0FF" stop-opacity="0.42"/>
+      <stop offset="35%" stop-color="#9560D6" stop-opacity="0.22"/>
+      <stop offset="70%" stop-color="#5E35B1" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#5E35B1" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Gold gradient for the sparkle itself -->
+    <linearGradient id="sparkleGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#FFE38A"/>
+      <stop offset="35%"  stop-color="#F5D77A"/>
+      <stop offset="75%"  stop-color="#D4A93A"/>
+      <stop offset="100%" stop-color="#A77E20"/>
+    </linearGradient>
+    <!-- Tiny stars sprinkled into the night -->
+    <radialGradient id="starWhite" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="url(#bgNight)"/>
+
+  <!-- Faint stars -->
+  <g fill="url(#starWhite)" opacity="0.75">
+    <circle cx="148"  cy="220"  r="4.5"/>
+    <circle cx="884"  cy="180"  r="3.5"/>
+    <circle cx="240"  cy="780"  r="3"/>
+    <circle cx="828"  cy="820"  r="4"/>
+    <circle cx="92"   cy="540"  r="2.5"/>
+    <circle cx="940"  cy="520"  r="2.8"/>
+    <circle cx="408"  cy="120"  r="2.5"/>
+    <circle cx="640"  cy="908"  r="3.2"/>
+  </g>
+
+  <!-- Soft purple aura glow behind the sparkle -->
+  <circle cx="512" cy="512" r="380" fill="url(#auraGlow)"/>
+
+  <!--
+    Gold sparkle, scaled and centred.
+    Path is the canonical 84-unit AURA sparkle (visual centre 42,40
+    for the cross hint; cubic controls at 75%). Scaled ×6 and
+    translated so the visual centre lands at (512, 512).
+    visual centre offset within 84-box: (42, 40)
+    target visual centre: (512, 512)
+    scale 6 → sparkle bounding box becomes 84×6 = 504 wide × 504 tall
+    visual centre after scale: (252, 240)
+    translation needed: (512 - 252, 512 - 240) = (260, 272)
+  -->
+  <g transform="translate(260, 272) scale(6)">
+    <path d="M42,3.5
+             C42,30.9 51.6,40 80.5,40
+             C51.6,40 42,50.1 42,80.5
+             C42,50.1 32.4,40 3.5,40
+             C32.4,40 42,30.9 42,3.5 Z"
+          fill="url(#sparkleGold)"/>
+  </g>
+</svg>
