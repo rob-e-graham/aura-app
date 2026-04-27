@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   AURA — Sparkle Mark Only (no ring)
-  For use as a watermark, favicon detail, embroidery motif, or
-  anywhere the ring isn't needed. Inherits currentColor.
+  Inherits CSS currentColor. Tips reach the bounding box edges.
 -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="512" height="512" fill="currentColor">
-  <path d="M32,2 C32,30 32,30 62,30 C32,30 32,30 32,62 C32,30 32,30 2,30 C32,30 32,30 32,2 Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84 84" width="512" height="512" fill="currentColor">
+  <path d="M42,3.5
+           C42,27.2 55.5,40 80.5,40
+           C55.5,40 42,54.2 42,80.5
+           C42,54.2 28.5,40 3.5,40
+           C28.5,40 42,27.2 42,3.5 Z"/>
 </svg>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  AURA — Sparkle-in-Circle Logo (Gold)
-  4-point sparkle with subtly elongated bottom point (cross silhouette).
-  Visual centre at (32, 30); top arm 28u, bottom arm 32u.
-  Vector: scales to any size without quality loss.
+  AURA — Sparkle-in-Circle Logo (Gold, solid)
+  Solid gold star inside a ring. No glow, no blur, sharp edges.
+  All four tips touch the ring. Visual centre at (42, 40) for the
+  subtle cross silhouette: bottom arm 40.5u, top arm 36.5u (~11% longer).
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84 84" width="512" height="512">
   <defs>
@@ -13,27 +13,17 @@
       <stop offset="75%" stop-color="#D4A93A"/>
       <stop offset="100%" stop-color="#A77E20"/>
     </linearGradient>
-    <radialGradient id="sparkleGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%"  stop-color="#FFE38A" stop-opacity="0.35"/>
-      <stop offset="60%" stop-color="#F5D77A" stop-opacity="0.10"/>
-      <stop offset="100%" stop-color="#F5D77A" stop-opacity="0"/>
-    </radialGradient>
-    <filter id="sparkleSoftGlow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="0.8"/>
-    </filter>
   </defs>
-
-  <!-- Soft gold halo behind everything -->
-  <circle cx="42" cy="42" r="40" fill="url(#sparkleGlow)"/>
 
   <!-- Outer ring -->
   <circle cx="42" cy="42" r="38.5" fill="none"
-          stroke="#D4A93A" stroke-width="1.6" stroke-opacity="0.78"/>
+          stroke="#D4A93A" stroke-width="1.6"/>
 
-  <!-- Sparkle (centre at 42,40 inside 84-viewBox; subtly extended bottom arm) -->
-  <g transform="translate(10, 10)">
-    <path d="M32,2 C32,30 32,30 62,30 C32,30 32,30 32,62 C32,30 32,30 2,30 C32,30 32,30 32,2 Z"
-          fill="url(#sparkleGold)"
-          filter="url(#sparkleSoftGlow)"/>
-  </g>
+  <!-- Solid sparkle star — fatter arms (controls at ~65% of tip→centre) -->
+  <path d="M42,3.5
+           C42,27.2 55.5,40 80.5,40
+           C55.5,40 42,54.2 42,80.5
+           C42,54.2 28.5,40 3.5,40
+           C28.5,40 42,27.2 42,3.5 Z"
+        fill="url(#sparkleGold)"/>
 </svg>

@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  AURA — Sparkle-in-Circle Logo (Mono Black)
-  Use on light backgrounds (warm paper, cream, white).
-  Print-safe single-colour version.
+  AURA — Sparkle-in-Circle Logo (Mono Black, solid)
+  Use on light backgrounds (warm paper, cream, white). Print-safe.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 84 84" width="512" height="512">
-  <!-- Outer ring -->
   <circle cx="42" cy="42" r="38.5" fill="none"
           stroke="#1A1422" stroke-width="1.8"/>
 
-  <!-- Sparkle -->
-  <g transform="translate(10, 10)">
-    <path d="M32,2 C32,30 32,30 62,30 C32,30 32,30 32,62 C32,30 32,30 2,30 C32,30 32,30 32,2 Z"
-          fill="#1A1422"/>
-  </g>
+  <path d="M42,3.5
+           C42,27.2 55.5,40 80.5,40
+           C55.5,40 42,54.2 42,80.5
+           C42,54.2 28.5,40 3.5,40
+           C28.5,40 42,27.2 42,3.5 Z"
+        fill="#1A1422"/>
 </svg>

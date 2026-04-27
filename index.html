@@ -293,11 +293,10 @@
                 inset 0 0 10px rgba(245, 215, 122, 0.10);
         }
         .aura-sparkle-logo svg {
-            width: 60%; height: 60%;
-            filter: drop-shadow(0 0 6px rgba(245, 215, 122, 0.55));
+            width: 92%; height: 92%;
         }
         .aura-sparkle-logo.large { width: 84px; height: 84px; }
-        .aura-sparkle-logo.large svg { width: 64%; height: 64%; }
+        .aura-sparkle-logo.large svg { width: 94%; height: 94%; }
         @keyframes sparkleBreath {
             0%, 100% { transform: scale(1); opacity: 1; }
             50%      { transform: scale(1.04); opacity: 0.86; }
@@ -4070,16 +4069,23 @@
             backdrop-filter: blur(18px) saturate(1.05) !important;
             -webkit-backdrop-filter: blur(18px) saturate(1.05) !important;
         }
-        /* Buttons share the same blur recipe at slightly lower alpha →
-           visual flow between text-boxes and chips. */
+        /* Buttons share the same blur recipe but at higher alpha so
+           they read as solid tappable surfaces (not ghosted) on the
+           reading page. */
         .settings-chip-btn,
         .toggle-btn,
         .audio-chip,
         .btn-secondary {
-            background: rgba(14, 14, 20, 0.66) !important;
-            border: 1px solid rgba(255,255,255,0.12) !important;
+            background: rgba(14, 14, 20, 0.84) !important;
+            border: 1px solid rgba(255,255,255,0.14) !important;
             backdrop-filter: blur(18px) saturate(1.05) !important;
             -webkit-backdrop-filter: blur(18px) saturate(1.05) !important;
+        }
+        /* Position-label pills inside card-detail panels — also bumped
+           up so they look like real chips, not ghosts on the panel. */
+        .card-detail .card-detail-position {
+            background: rgba(255, 255, 255, 0.16) !important;
+            border: 1px solid rgba(255,255,255,0.10) !important;
         }
         /* Reading atmospheric orb — softer so it stops washing out cards */
         .reading-aura-ball {
@@ -4190,14 +4196,13 @@
 <div class="screen entry-screen" id="entryScreen">
     <div class="aura-sparkle-logo large" aria-hidden="true" style="margin: 0 auto 6px;">
         <span class="ring"></span>
-        <svg viewBox="0 0 64 64" fill="currentColor">
-            <!-- 4-point sparkle. Each cubic curve has BOTH control points
-                 at the visual centre (32, 30), forcing the body to cinch
-                 deeply toward the middle — sharp needle tips, dramatic
-                 concave arms (matches the reference sparkle character).
-                 Top arm = 28 units, bottom arm = 32 (~14% longer) — gives
-                 a subtle Christian-cross silhouette under the sparkle. -->
-            <path d="M32,2 C32,30 32,30 62,30 C32,30 32,30 32,62 C32,30 32,30 2,30 C32,30 32,30 32,2 Z"/>
+        <svg viewBox="0 0 84 84" fill="currentColor">
+            <!-- 4-point sparkle, solid. Tips reach the SVG edges so they
+                 kiss the ring. Visual centre at (42, 40); arms 36.5 / 38.5 /
+                 40.5 / 38.5 (top / R / bottom / L) → bottom 11% longer for
+                 the subtle cross silhouette. Cubic controls at ~65% from
+                 each tip toward the visual centre — fatter star body. -->
+            <path d="M42,3.5 C42,27.2 55.5,40 80.5,40 C55.5,40 42,54.2 42,80.5 C42,54.2 28.5,40 3.5,40 C28.5,40 42,27.2 42,3.5 Z"/>
         </svg>
     </div>
     <h1 class="entry-title">AURA</h1>
