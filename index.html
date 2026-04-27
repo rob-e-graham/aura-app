@@ -4191,8 +4191,11 @@
     <div class="aura-sparkle-logo large" aria-hidden="true" style="margin: 0 auto 6px;">
         <span class="ring"></span>
         <svg viewBox="0 0 64 64" fill="currentColor">
-            <!-- 4-point sparkle: vertical + horizontal bows that cinch in the middle -->
-            <path d="M32 4 C 33 22, 34 23, 60 32 C 34 41, 33 42, 32 60 C 31 42, 30 41, 4 32 C 30 23, 31 22, 32 4 Z"/>
+            <!-- 4-point sparkle, visual centre shifted up to (32, 30).
+                 Top/left/right arms = 28 units; bottom arm = 32 units (~14%
+                 longer). Reads as a sparkle first, with a subtle cross
+                 silhouette underneath. -->
+            <path d="M32 2 C 33 20, 34 21, 60 30 C 34 39, 33 41, 32 62 C 31 41, 30 39, 4 30 C 30 21, 31 20, 32 2 Z"/>
         </svg>
     </div>
     <h1 class="entry-title">AURA</h1>
