@@ -4033,18 +4033,20 @@
            Always applies (dark is default — only the cards change in
            "light cards" mode; everything else stays dark and elegant).
            ═══════════════════════════════════════════════════════ */
-        /* Body-text panels — slightly less opaque so they breathe with the
-           atmosphere; buttons get the SAME blur recipe at slightly lower
-           alpha so chips and panels feel like one family. */
+        /* Atmospheric balance:
+           - text-boxes / panels:  ~0.74 alpha → softer, atmosphere shows through
+           - buttons / chips:      ~0.94 alpha → solid, clearly tappable
+           Same blur recipe across both keeps them as one family.
+        */
         .card-detail {
-            background: var(--detail-panel-bg, rgba(14, 14, 20, 0.84)) !important;
+            background: var(--detail-panel-bg, rgba(14, 14, 20, 0.74)) !important;
             border: 1px solid var(--detail-border, rgba(255,255,255,0.10)) !important;
-            backdrop-filter: blur(18px) saturate(1.05) !important;
-            -webkit-backdrop-filter: blur(18px) saturate(1.05) !important;
+            backdrop-filter: blur(20px) saturate(1.05) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(1.05) !important;
             box-shadow: 0 8px 22px rgba(0,0,0,0.30) !important;
         }
         .card-detail.highlighted {
-            background: var(--detail-highlight-bg, rgba(30, 24, 44, 0.86)) !important;
+            background: var(--detail-highlight-bg, rgba(30, 24, 44, 0.78)) !important;
             border-color: var(--detail-highlight-border, rgba(200, 160, 255, 0.34)) !important;
             box-shadow: 0 10px 28px rgba(0,0,0,0.30) !important;
         }
@@ -4052,11 +4054,11 @@
             color: var(--detail-title-color, #F6F6FB) !important;
         }
         .card-detail .card-detail-position {
-            background: var(--detail-chip-bg, rgba(255,255,255,0.08)) !important;
-            color: var(--detail-chip-color, rgba(245,245,250,0.72)) !important;
+            background: var(--detail-chip-bg, rgba(255,255,255,0.16)) !important;
+            color: var(--detail-chip-color, rgba(245,245,250,0.85)) !important;
             backdrop-filter: blur(14px) !important;
             -webkit-backdrop-filter: blur(14px) !important;
-            border: 1px solid rgba(255,255,255,0.06) !important;
+            border: 1px solid rgba(255,255,255,0.10) !important;
         }
         .card-detail .card-detail-affirmation {
             color: var(--detail-quote-color, #D7B8FF) !important;
@@ -4065,27 +4067,27 @@
         .guide-summary,
         .daily-section,
         .settings-hub-card {
-            background: rgba(14, 14, 20, 0.82) !important;
-            backdrop-filter: blur(18px) saturate(1.05) !important;
-            -webkit-backdrop-filter: blur(18px) saturate(1.05) !important;
+            background: rgba(14, 14, 20, 0.72) !important;
+            backdrop-filter: blur(20px) saturate(1.05) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(1.05) !important;
         }
-        /* Buttons share the same blur recipe but at higher alpha so
-           they read as solid tappable surfaces (not ghosted) on the
-           reading page. */
+        /* Buttons — solid tappable feel everywhere in the app */
         .settings-chip-btn,
         .toggle-btn,
         .audio-chip,
-        .btn-secondary {
-            background: rgba(14, 14, 20, 0.84) !important;
+        .btn-secondary,
+        .chat-action-btn,
+        .chat-actions-toggle,
+        .chat-memory-toggle,
+        .chat-memory-chip,
+        .suggested-q,
+        .global-tab-btn,
+        .reading-type-toggle .toggle-btn,
+        .entry-back-btn {
+            background: rgba(18, 18, 26, 0.94) !important;
             border: 1px solid rgba(255,255,255,0.14) !important;
             backdrop-filter: blur(18px) saturate(1.05) !important;
             -webkit-backdrop-filter: blur(18px) saturate(1.05) !important;
-        }
-        /* Position-label pills inside card-detail panels — also bumped
-           up so they look like real chips, not ghosts on the panel. */
-        .card-detail .card-detail-position {
-            background: rgba(255, 255, 255, 0.16) !important;
-            border: 1px solid rgba(255,255,255,0.10) !important;
         }
         /* Reading atmospheric orb — softer so it stops washing out cards */
         .reading-aura-ball {
@@ -4819,20 +4821,71 @@ const READING_CARD_FAMILIES = {
         orb: 'radial-gradient(circle at 50% 50%, rgba(232,250,236,0.96) 0%, rgba(214,242,224,0.74) 6%, #9fd0b4 14%, #b9dfc9 24%, #cbaef0 36%, #dcccf6 48%, #e2f1e7 58%, rgba(226,241,231,0.72) 66%, rgba(226,241,231,0.18) 74%, transparent 82%), radial-gradient(circle at 50% 50%, transparent 56%, #e2f1e7 60%, #e2f1e7 65%, transparent 69%)'
     }
 };
-function getReadingCardVisuals(index, isSingle = false) {
+// ─── Hex color helpers (no library, fast, 5 SLOC each) ───
+function _hexRGB(hex) {
+    const h = String(hex || '').replace('#','').padEnd(6,'0').slice(0,6);
+    return { r: parseInt(h.slice(0,2),16), g: parseInt(h.slice(2,4),16), b: parseInt(h.slice(4,6),16) };
+}
+function _rgbHex(r,g,b) {
+    const c = v => Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0');
+    return '#' + c(r) + c(g) + c(b);
+}
+function _blendHex(a, b, t) {
+    const A = _hexRGB(a), B = _hexRGB(b);
+    return _rgbHex(A.r + (B.r-A.r)*t, A.g + (B.g-A.g)*t, A.b + (B.b-A.b)*t);
+}
+function _darkenHex(hex, amt) { const {r,g,b} = _hexRGB(hex); return _rgbHex(r*(1-amt), g*(1-amt), b*(1-amt)); }
+function _lightenHex(hex, amt) { const {r,g,b} = _hexRGB(hex); return _rgbHex(r+(255-r)*amt, g+(255-g)*amt, b+(255-b)*amt); }
+
+/**
+ * Build an orb gradient from a card's 3-colour chromotherapy palette.
+ * No white centre — full saturation from the middle outward.
+ * One primary colour, two supporting colours, hard rim accent.
+ * Same palette reads beautifully on both dark and light cards.
+ */
+function buildCardOrbGradient(colors) {
+    const c1 = colors?.[0] || '#9560D6';   // primary (the personality)
+    const c2 = colors?.[1] || '#26A69A';   // supporting vibe
+    const c3 = colors?.[2] || '#1976D2';   // grounding / outer vibe
+
+    // Inner highlight — same primary, just slightly lifted (NOT white).
+    // Keeps the orb feeling alive without that flat-disc look.
+    const innerLift = _lightenHex(c1, 0.22);
+    const mid12     = _blendHex(c1, c2, 0.55);
+    const mid23     = _blendHex(c2, c3, 0.55);
+    const rim       = _darkenHex(c3, 0.34);
+    const rimSoft   = _darkenHex(c3, 0.18);
+
+    // Two layered radials: the body, then the hard outer rim.
+    return [
+        `radial-gradient(circle at 50% 48%, ${innerLift} 0%, ${c1} 12%, ${mid12} 26%, ${c2} 40%, ${mid23} 52%, ${c3} 62%, ${rimSoft} 70%, ${rimSoft}66 76%, transparent 84%)`,
+        `radial-gradient(circle at 50% 50%, transparent 58%, ${rim} 62%, ${rim} 66%, transparent 70%)`
+    ].join(',');
+}
+
+function getReadingCardVisuals(card, index, isSingle = false) {
     const slot = isSingle ? 'focus' : (['past', 'present', 'future'][index] || 'focus');
     const family = READING_CARD_FAMILIES[slot] || READING_CARD_FAMILIES.focus;
+    const cardColors = (card && Array.isArray(card.colors)) ? card.colors : ['#9560D6','#26A69A','#1976D2'];
+    const orbBg = buildCardOrbGradient(cardColors);
+
+    // Light-card surface picks up a faint tint of the primary card colour →
+    // each light card has a subtle personality wash, instead of all-the-same warm paper.
+    const lightStart = _lightenHex(cardColors[0], 0.92);   // almost white, hint of card hue
+    const lightEnd   = _lightenHex(cardColors[0], 0.74);   // a touch more saturation at the bottom
+    const lightBorder = _lightenHex(_darkenHex(cardColors[0], 0.18), 0.36);
+
     return {
         slot,
         cardStyle: [
             `--card-dark-start:${family.dark.start}`,
             `--card-dark-end:${family.dark.end}`,
             `--card-dark-border:${family.dark.border}`,
-            `--card-light-start:${family.light.start}`,
-            `--card-light-end:${family.light.end}`,
-            `--card-light-border:${family.light.border}`,
-            `--card-light-title:${family.light.title}`,
-            `--card-light-position:${family.light.position}`
+            `--card-light-start:${lightStart}`,
+            `--card-light-end:${lightEnd}`,
+            `--card-light-border:${lightBorder}`,
+            `--card-light-title:${_darkenHex(cardColors[0], 0.62)}`,
+            `--card-light-position:${_darkenHex(cardColors[0], 0.42)}`
         ].join(';'),
         detailStyle: [
             `--detail-panel-bg:${family.detail.panel}`,
@@ -4844,7 +4897,7 @@ function getReadingCardVisuals(index, isSingle = false) {
             `--detail-chip-color:${family.detail.chipColor}`,
             `--detail-quote-color:${family.detail.quote}`
         ].join(';'),
-        orbStyle: `background:${family.orb}`
+        orbStyle: `background:${orbBg}`
     };
 }
 const getGuideAnswers = () => (guideConfig?.answers || answers || {});
@@ -6494,7 +6547,7 @@ function showReading() {
     const isSingle = selectedCards.length === 1;
     const positions = isSingle ? ['Focus'] : ['Past','Present','Future'];
     const posLabels = isSingle ? [''] : ['What you\'re coming from','Where you are now','Where this leads'];
-    const visuals = selectedCards.map((_, i) => getReadingCardVisuals(i, isSingle));
+    const visuals = selectedCards.map((card, i) => getReadingCardVisuals(card, i, isSingle));
     
     // Render cards
     const spreadEl = document.getElementById('cardsSpread');

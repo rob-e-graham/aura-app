@@ -13,10 +13,10 @@
       <stop offset="100%" stop-color="#A77E20"/>
     </linearGradient>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&amp;display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300&amp;display=swap');
       .aura-word {
         font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-        font-weight: 400;
+        font-weight: 300;
         font-size: 92px;
         letter-spacing: 0.20em;
         fill: #D4A93A;

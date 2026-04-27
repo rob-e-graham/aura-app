@@ -6,10 +6,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 140" width="1080" height="280">
   <defs>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&amp;display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300&amp;display=swap');
       .aura-word {
         font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-        font-weight: 400;
+        font-weight: 300;
         font-size: 120px;
         letter-spacing: 0.18em;
         fill: #1A1422;
