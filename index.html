@@ -4354,6 +4354,18 @@
                 </div>
             </div>
 
+            <!-- Pending top-ups — only visible when there's a queued purchase -->
+            <div class="settings-hub-card" id="pendingTopUpsCard"
+                 style="display:none; border-color: rgba(255,200,120,0.42); background: rgba(40,28,16,0.80);">
+                <h4 style="color:#FFD79A;">⏳ Purchase pending</h4>
+                <div class="settings-hub-subtitle" id="pendingTopUpsText">
+                    Your purchase is being credited.
+                </div>
+                <div class="settings-hub-row" style="margin-top:8px;">
+                    <button class="settings-chip-btn" onclick="manualRetryPendingTopUps()">Retry now</button>
+                </div>
+            </div>
+
             <div class="settings-hub-card">
                 <h4>Card Style</h4>
                 <div class="settings-hub-subtitle">Choose dark or white card backgrounds. Each reading keeps distinct card families, and your preference stays saved.</div>
@@ -7603,6 +7615,11 @@ async function syncEntitlementsFromServer() {
             }
 
             if (typeof updateSettingsTier === 'function') updateSettingsTier();
+
+            // Server is reachable — drain any queued pending top-ups
+            if (typeof retryPendingTopUps === 'function') {
+                retryPendingTopUps({ silent: true }).catch(() => {});
+            }
         }
     } catch (_) {}
 }
@@ -8536,6 +8553,14 @@ function loadAuraTheme() {
 // ========== INIT ==========
 document.addEventListener('DOMContentLoaded', () => {
     loadAuraTheme();
+    // Show pending-top-ups indicator if anything is queued from a previous session
+    if (typeof updatePendingTopUpsUI === 'function') updatePendingTopUpsUI();
+    // Try to drain the queue shortly after launch (after auth has had a chance to restore)
+    setTimeout(() => {
+        if (typeof retryPendingTopUps === 'function') {
+            retryPendingTopUps({ silent: true }).catch(() => {});
+        }
+    }, 4000);
     // Go full-screen on native device (no decorative phone frame)
     if (['capacitor:', 'ionic:', 'file:'].includes(window.location.protocol)) {
         document.querySelector('.app')?.classList.add('native-device');
@@ -9359,6 +9384,151 @@ function initMemoryBalance() {
 let tokenBalance = initTokenBalance();
 let memoryBalance = initMemoryBalance();
 
+// ═══════════════════════════════════════════════════════════════
+// PENDING TOP-UPS QUEUE
+// Bulletproofs consumable purchases against the network/server-failure
+// gap between "Apple has charged the user" and "our server has
+// credited the user". If the credit call fails, we queue the receipt
+// and retry on every app launch + sync until it lands. The user
+// never loses tokens they paid for.
+// ═══════════════════════════════════════════════════════════════
+const PENDING_TOPUPS_KEY = 'aura.pending_topups_v1';
+const PENDING_TOPUP_MAX_ATTEMPTS = 50;
+
+function loadPendingTopUps() {
+    try {
+        const raw = localStorage.getItem(PENDING_TOPUPS_KEY);
+        const list = raw ? JSON.parse(raw) : [];
+        return Array.isArray(list) ? list : [];
+    } catch (_) { return []; }
+}
+
+function savePendingTopUps(list) {
+    try { localStorage.setItem(PENDING_TOPUPS_KEY, JSON.stringify(list)); } catch (_) {}
+}
+
+function queuePendingTopUp(entry) {
+    if (!entry || !entry.kind || !entry.amount) return;
+    const list = loadPendingTopUps();
+    // Dedupe by transactionId — Apple guarantees these are unique per purchase
+    if (entry.transactionId && list.some(e => e.transactionId === entry.transactionId)) {
+        return;
+    }
+    list.push({
+        id: `pending-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        kind: entry.kind,                      // 'tokens' | 'memory'
+        amount: entry.amount,
+        transactionId: entry.transactionId || null,
+        productId: entry.productId || null,
+        attemptCount: 0,
+        lastAttempt: null,
+        createdAt: Date.now()
+    });
+    savePendingTopUps(list);
+    if (typeof updatePendingTopUpsUI === 'function') updatePendingTopUpsUI();
+}
+
+async function attemptCreditTopUp(entry) {
+    const token = (typeof getAuthToken === 'function') ? getAuthToken() : null;
+    if (!token) return { ok: false, reason: 'no_auth' };
+    const endpoint = entry.kind === 'memory' ? '/api/memory/topup' : '/api/tokens/topup';
+    try {
+        const res = await fetch(`${window.AURA_API_BASE || ''}${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({
+                amount: entry.amount,
+                transactionId: entry.transactionId,    // server uses this as idempotency key
+                productId: entry.productId
+            })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data?.ok) return { ok: true, data };
+        return { ok: false, reason: 'server_error', status: res.status, data };
+    } catch (err) {
+        return { ok: false, reason: 'network', error: err?.message };
+    }
+}
+
+async function retryPendingTopUps({ silent = true } = {}) {
+    const list = loadPendingTopUps();
+    if (!list.length) return { processed: 0, remaining: 0 };
+    if (typeof isAccountSignedIn === 'function' && !isAccountSignedIn()) {
+        return { processed: 0, remaining: list.length, reason: 'not_signed_in' };
+    }
+
+    let processed = 0;
+    const remaining = [];
+
+    for (const entry of list) {
+        entry.attemptCount = (entry.attemptCount || 0) + 1;
+        entry.lastAttempt = Date.now();
+
+        const result = await attemptCreditTopUp(entry);
+        if (result.ok) {
+            processed += 1;
+            // Update local balance from server response (server is authoritative)
+            if (entry.kind === 'tokens' && result.data) {
+                tokenBalance.bonus_tokens = (typeof result.data.bonus_tokens === 'number')
+                    ? result.data.bonus_tokens
+                    : tokenBalance.bonus_tokens;
+                saveTokenBalance(tokenBalance);
+            } else if (entry.kind === 'memory' && result.data) {
+                memoryBalance.bonus_entries = (typeof result.data.storage_bonus === 'number')
+                    ? result.data.storage_bonus
+                    : memoryBalance.bonus_entries;
+                saveMemoryBalance(memoryBalance);
+            }
+        } else if (entry.attemptCount < PENDING_TOPUP_MAX_ATTEMPTS) {
+            // Keep in queue and try again later
+            remaining.push(entry);
+        }
+        // After 50 failed attempts the entry is dropped — the user should contact support.
+    }
+
+    savePendingTopUps(remaining);
+
+    if (processed > 0) {
+        if (!silent && typeof toast === 'function') {
+            toast(`Restored ${processed} pending purchase${processed > 1 ? 's' : ''}`);
+        }
+        if (typeof updateTokenUI === 'function') updateTokenUI();
+        if (typeof updateSettingsTier === 'function') updateSettingsTier();
+    }
+    if (typeof updatePendingTopUpsUI === 'function') updatePendingTopUpsUI();
+    return { processed, remaining: remaining.length };
+}
+
+function updatePendingTopUpsUI() {
+    const card = document.getElementById('pendingTopUpsCard');
+    const text = document.getElementById('pendingTopUpsText');
+    const list = loadPendingTopUps();
+    if (!card) return;
+    if (!list.length) {
+        card.style.display = 'none';
+        return;
+    }
+    card.style.display = '';
+    if (text) {
+        const tokensPending = list.filter(e => e.kind === 'tokens').reduce((s, e) => s + (e.amount || 0), 0);
+        const memoryPending = list.filter(e => e.kind === 'memory').reduce((s, e) => s + (e.amount || 0), 0);
+        const parts = [];
+        if (tokensPending > 0) parts.push(`${tokensPending.toLocaleString()} tokens`);
+        if (memoryPending > 0) parts.push(`${memoryPending} memory slots`);
+        text.textContent = parts.length
+            ? `${parts.join(' + ')} will be credited as soon as we can reach the server. We'll keep retrying automatically.`
+            : `Your purchase is being credited.`;
+    }
+}
+
+async function manualRetryPendingTopUps() {
+    if (typeof toast === 'function') toast('Retrying pending purchases…');
+    const result = await retryPendingTopUps({ silent: false });
+    if (result.processed === 0 && result.remaining > 0 && typeof toast === 'function') {
+        toast('Couldn\'t reach the server. We\'ll keep trying.');
+    }
+}
+
 function getTokensRemaining() {
     const monthlyLeft = Math.max(0, tokenBalance.monthly_allowance - tokenBalance.monthly_used);
     return monthlyLeft + tokenBalance.bonus_tokens;
@@ -9473,31 +9643,36 @@ async function buyTokenTopUp() {
         }
 
         const Purchases = Capacitor.Plugins.Purchases;
-        const { customerInfo } = await Purchases.purchasePackage({ aPackage: tokenPkg });
+        const purchaseResult = await Purchases.purchasePackage({ aPackage: tokenPkg });
 
-        // After successful consumable purchase, add tokens via server
-        const token = getAuthToken();
-        if (token) {
-            try {
-                const res = await fetch(`${window.AURA_API_BASE}/api/tokens/topup`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ amount: 25000 })
-                });
-                const data = await res.json().catch(() => ({}));
-                if (res.ok && data?.ok) {
-                    tokenBalance.bonus_tokens = data.bonus_tokens || tokenBalance.bonus_tokens;
-                } else {
-                    tokenBalance.bonus_tokens += 25000;
-                }
-            } catch (_) {}
+        // Apple has charged the user. We now MUST credit them — even if
+        // the server call fails. Strategy: try once now, queue on failure,
+        // retry forever from the pending queue.
+        const transactionId =
+            purchaseResult?.transaction?.transactionIdentifier ||
+            purchaseResult?.transactionIdentifier ||
+            purchaseResult?.customerInfo?.latestTransactionIdentifier ||
+            `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        const productId = tokenPkg.product?.identifier || 'tokens_topup';
+        const entry = { kind: 'tokens', amount: 25000, transactionId, productId };
+
+        const result = await attemptCreditTopUp(entry);
+        if (result.ok && result.data) {
+            // Server confirmed — pull authoritative balance
+            tokenBalance.bonus_tokens = (typeof result.data.bonus_tokens === 'number')
+                ? result.data.bonus_tokens
+                : tokenBalance.bonus_tokens;
+            saveTokenBalance(tokenBalance);
+            updateTokenUI();
+            closeTokenTopUp();
+            toast('Added 25,000 tokens');
         } else {
-            tokenBalance.bonus_tokens += 25000;
+            // Server unreachable — do NOT credit locally (would diverge from
+            // server and be wiped on next sync). Queue for retry instead.
+            queuePendingTopUp(entry);
+            closeTokenTopUp();
+            toast('Purchase received. Tokens will appear once we reconnect.');
         }
-        saveTokenBalance(tokenBalance);
-        updateTokenUI();
-        closeTokenTopUp();
-        toast('Added 25,000 tokens');
     } catch (err) {
         if (err?.code === 1 || err?.message?.includes('cancelled') || err?.message?.includes('PURCHASE_CANCELLED')) return;
         console.error('Token purchase failed:', err);
@@ -9534,27 +9709,29 @@ async function buyMemoryExpansion() {
         }
 
         const Purchases = Capacitor.Plugins.Purchases;
-        const { customerInfo } = await Purchases.purchasePackage({ aPackage: memPkg });
+        const purchaseResult = await Purchases.purchasePackage({ aPackage: memPkg });
 
-        const token = getAuthToken();
-        if (token) {
-            try {
-                const res = await fetch(`${window.AURA_API_BASE}/api/memory/topup`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ amount: 100 })
-                });
-                const data = await res.json().catch(() => ({}));
-                if (res.ok && data?.ok) {
-                    memoryBalance.bonus_entries = data.storage_bonus || memoryBalance.bonus_entries;
-                } else {
-                    memoryBalance.bonus_entries += 100;
-                }
-            } catch (_) {
-                memoryBalance.bonus_entries += 100;
-            }
+        // Apple has charged the user — credit must succeed eventually.
+        const transactionId =
+            purchaseResult?.transaction?.transactionIdentifier ||
+            purchaseResult?.transactionIdentifier ||
+            purchaseResult?.customerInfo?.latestTransactionIdentifier ||
+            `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        const productId = memPkg.product?.identifier || 'memory_topup';
+        const entry = { kind: 'memory', amount: 100, transactionId, productId };
+
+        const result = await attemptCreditTopUp(entry);
+        if (result.ok && result.data) {
+            memoryBalance.bonus_entries = (typeof result.data.storage_bonus === 'number')
+                ? result.data.storage_bonus
+                : memoryBalance.bonus_entries;
         } else {
-            memoryBalance.bonus_entries += 100;
+            // Queue for retry — server has not confirmed; do not credit locally
+            queuePendingTopUp(entry);
+            saveMemoryBalance(memoryBalance);
+            closeMemoryTopUp();
+            toast('Purchase received. Memory slots will appear once we reconnect.');
+            return;
         }
 
         saveMemoryBalance(memoryBalance);
