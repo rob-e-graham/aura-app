@@ -10,6 +10,7 @@ AURA is a spiritual/self-discovery card app. Fresh user feedback says:
 - the colourful orb treatment is beautiful but can make text harder to read
 - some pages feel too opaque / heavy
 - the chemotherapy colourways should also feel fashionable, wearable, soft, and appealing to mostly feminine buyers
+- the orbs should feel lux and iconic enough that people would want to wear them on tee shirts
 - we want more pastel fashion energy, less intense neon / mystical overload
 
 A first pass has already been made in the app to:
@@ -39,11 +40,15 @@ Please act like a senior product + brand designer and help refine this direction
    - wearable
    - feminine
    - comforting, not clinical
-6. Give me:
+6. Propose a **lux orb system** for UI + merch.
+   - each orb should feel distinct, not like the same orb recoloured
+   - it should work on-screen and as a tee / print / sticker motif
+   - note what makes it feel premium rather than generic mystical
+7. Give me:
    - 8 core colours with hex codes
    - 4 accent pairings suitable for apparel / merch
    - guidance on which colours should be used for app UI vs merch vs print
-7. Suggest **specific CSS/token adjustments** to improve legibility while keeping atmosphere.
+8. Suggest **specific CSS/token adjustments** to improve legibility while keeping atmosphere.
 
 ## Design constraints
 - readability first
@@ -52,6 +57,7 @@ Please act like a senior product + brand designer and help refine this direction
 - avoid strong saturated orb effects directly behind reading text
 - translucent layers should feel airy, not muddy or opaque
 - overall tone should feel premium, soft, mystical, feminine, modern
+- the orb language should be collectible and fashion-worthy, not just decorative
 - think fashion/editorial/spa/wellness, not gamer/cosmic/neon
 
 ## Current target aesthetic
@@ -74,8 +80,9 @@ Please reply in this exact structure:
 2. **Three visual directions**
 3. **Recommended direction**
 4. **Pastel chemo / fashion palette**
-5. **UI readability improvements**
-6. **Concrete CSS/token suggestions**
-7. **Anything risky to avoid**
+5. **Lux orb system for UI + merch**
+6. **UI readability improvements**
+7. **Concrete CSS/token suggestions**
+8. **Anything risky to avoid**
 
 Be concrete, visual, and opinionated. Don’t stay generic.

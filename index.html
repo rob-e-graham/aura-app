@@ -100,7 +100,10 @@
         async function initRevenueCat() {
             if (rcInitialized) return;
             if (typeof Capacitor === 'undefined' || !Capacitor.isNativePlatform?.()) return;
-            if (!REVENUECAT_APPLE_KEY || REVENUECAT_APPLE_KEY.startsWith('PASTE_')) return;
+            if (!REVENUECAT_APPLE_KEY || REVENUECAT_APPLE_KEY.startsWith('PASTE_') || REVENUECAT_APPLE_KEY.startsWith('test_')) {
+                console.warn('RevenueCat disabled on native build until live Apple key is installed.');
+                return;
+            }
 
             try {
                 const Purchases = Capacitor.Plugins.Purchases;
@@ -316,23 +319,126 @@
         .option-desc { font-size: 14px !important; line-height: 1.5 !important; }
         .trait-tag { font-size: 13px !important; }
 
-        /* ── Golden-ratio layout  (φ ≈ 1.618) ───────────────────── */
-        /* Three-card spread  105 × 170 ≈ 1:1.619 */
-        .spread-card { width: 105px !important; height: 170px !important; }
-        /* Single-card spread  150 × 243 ≈ 1:1.620 */
-        .cards-spread.single-card .spread-card { width: 150px !important; height: 243px !important; }
-        /* Orb inside three-card cards — clear accent, not card-fill */
+        /* ── Reading screen tightening: stronger symmetry + less weakness ── */
+        .reading-header {
+            margin-top: 16px !important;
+            margin-bottom: 18px !important;
+        }
+        .reading-title {
+            font-size: 29px !important;
+            letter-spacing: 0.01em !important;
+            color: rgba(248, 245, 238, 0.94) !important;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.28) !important;
+        }
+        .reading-date {
+            font-size: 14px !important;
+            letter-spacing: 0.16em !important;
+            color: rgba(226, 233, 229, 0.64) !important;
+        }
+        .cards-spread {
+            display: grid !important;
+            grid-template-columns: repeat(3, 108px) !important;
+            justify-content: center !important;
+            align-items: start !important;
+            gap: 12px !important;
+            max-width: 348px !important;
+            margin: 0 auto 22px !important;
+            padding: 4px 0 6px !important;
+        }
+        .cards-spread.single-card {
+            grid-template-columns: 1fr !important;
+            max-width: 170px !important;
+            gap: 0 !important;
+        }
+        .spread-card {
+            width: 108px !important;
+            height: 176px !important;
+            padding: 14px 10px 12px !important;
+            border-radius: 18px !important;
+            box-shadow: 0 14px 34px rgba(0,0,0,0.34) !important;
+        }
+        .cards-spread.single-card .spread-card {
+            width: 156px !important;
+            height: 252px !important;
+            border-radius: 22px !important;
+        }
+        .spread-card-title {
+            font-size: 14px !important;
+            letter-spacing: 0.08em !important;
+            line-height: 1.05 !important;
+        }
+        .cards-spread.single-card .spread-card-title {
+            font-size: 18px !important;
+        }
+        .spread-card-position {
+            font-size: 12px !important;
+            letter-spacing: 0.18em !important;
+        }
+        .cards-spread.single-card .spread-card-position {
+            font-size: 14px !important;
+        }
         .spread-card-orb {
-            width: 70px !important;
-            height: 70px !important;
+            position: relative !important;
+            width: 72px !important;
+            height: 72px !important;
             display: block !important;
-            opacity: 0.98 !important;
-            filter: blur(2px) !important;
+            opacity: 1 !important;
+            filter: none !important;
+            animation: none !important;
+            border-radius: 50% !important;
+            overflow: hidden !important;
+        }
+        .spread-card-orb::before,
+        .spread-card-orb::after {
+            content: none !important;
         }
         .cards-spread.single-card .spread-card-orb {
-            width: 108px !important;
-            height: 108px !important;
-            filter: blur(3px) !important;
+            width: 112px !important;
+            height: 112px !important;
+            filter: none !important;
+        }
+        .card-details {
+            display: grid !important;
+            gap: 12px !important;
+            margin-bottom: 14px !important;
+        }
+        .card-detail {
+            border-radius: 18px !important;
+            padding: 18px 16px 16px !important;
+            box-shadow: 0 16px 34px rgba(0,0,0,0.26) !important;
+        }
+        .card-detail-header {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+            align-items: start !important;
+            margin-bottom: 12px !important;
+        }
+        .card-detail-name {
+            font-size: 22px !important;
+            line-height: 1 !important;
+        }
+        .card-detail-position {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-height: 42px !important;
+            min-width: 210px !important;
+            max-width: 100% !important;
+            padding: 0 16px !important;
+            border-radius: 16px !important;
+            font-size: 12px !important;
+            letter-spacing: 0.14em !important;
+            text-align: center !important;
+        }
+        .card-detail-meaning {
+            font-size: 15px !important;
+            line-height: 1.62 !important;
+            margin-bottom: 12px !important;
+        }
+        .card-detail-affirmation {
+            font-size: 15px !important;
+            line-height: 1.45 !important;
         }
 
         .app {
@@ -827,18 +933,18 @@
             position: absolute;
             left: 50%;
             top: 50%;
-            width: min(58vw, 300px);
+            width: min(50vw, 248px);
             aspect-ratio: 1 / 1;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -46%);
             border-radius: 50%;
             pointer-events: none;
             z-index: 0;
-            opacity: 0.38;
-            filter: blur(32px) saturate(1.1);
-            transition: opacity 480ms ease;
-            /* Soft ambient glow — not competing with screen-level orbs */
+            opacity: 0.28;
+            filter: blur(26px) saturate(1.04);
+            transition: opacity 480ms ease, transform 480ms ease, width 480ms ease;
+            /* Soft ambient glow — more restrained and centred */
             background:
-                radial-gradient(circle at 50% 46%, rgba(200,140,255,0.72) 0%, rgba(160,90,230,0.48) 42%, rgba(100,50,180,0.18) 72%, transparent 100%);
+                radial-gradient(circle at 50% 46%, rgba(206,154,255,0.62) 0%, rgba(167,104,236,0.38) 40%, rgba(102,58,176,0.12) 68%, transparent 100%);
             animation: orbBreathGlobal var(--aura-breath-cycle) ease-in-out infinite;
         }
         .edge-fade {
@@ -937,13 +1043,14 @@
         }
         /* Chat screen — full 3-layer orb matching landing page */
         .app[data-screen="chatScreen"] .aura-life-orb {
-            width: 340px; height: 340px;
-            opacity: 0.86 !important;
-            filter: blur(8px) !important;
+            width: 268px; height: 268px;
+            opacity: 0.56 !important;
+            filter: blur(10px) !important;
+            transform: translate(-50%, -42%);
             background:
-                radial-gradient(circle at 50% 48%, rgba(232,176,255,1) 0%, rgba(232,176,255,1) 16%, rgba(210,150,255,0.66) 20%, transparent 22%),
-                radial-gradient(circle at 50% 48%, transparent 18%, rgba(160,80,230,0.93) 34%, rgba(136,60,210,1) 45%, rgba(110,50,190,0.53) 52%, transparent 55%),
-                radial-gradient(circle at 46% 54%, transparent 50%, rgba(80,30,150,0.87) 72%, rgba(60,20,130,1) 80%, rgba(50,15,110,0.53) 85%, transparent 88%) !important;
+                radial-gradient(circle at 50% 48%, rgba(232,176,255,0.96) 0%, rgba(232,176,255,0.96) 15%, rgba(210,150,255,0.46) 19%, transparent 23%),
+                radial-gradient(circle at 50% 48%, transparent 18%, rgba(160,80,230,0.82) 33%, rgba(136,60,210,0.9) 44%, rgba(110,50,190,0.34) 51%, transparent 56%),
+                radial-gradient(circle at 46% 54%, transparent 50%, rgba(80,30,150,0.70) 71%, rgba(60,20,130,0.84) 79%, rgba(50,15,110,0.32) 84%, transparent 89%) !important;
         }
         @keyframes ambientBreath {
             0%, 100% { transform: scale(1); opacity: 0.46; filter: blur(0px); }
@@ -1521,9 +1628,9 @@
             height: 42px;
             min-height: 42px;
             padding: 8px 12px;
-            border: 1px solid transparent;
-            background: rgba(255,255,255,0.01);
-            color: var(--text-secondary);
+            border: 1px solid rgba(255,255,255,0.08);
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 42%, rgba(0,0,0,0.08) 100%);
+            color: rgba(245,245,250,0.74);
             font-size: 12px;
             line-height: 1.2;
             border-radius: 10px;
@@ -1533,6 +1640,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
         }
         .toggle-btn.active {
             background:
@@ -1665,14 +1773,14 @@
                 mistDrift 15s ease-in-out infinite;
         }
         .cards-spread.single-card { gap: 0; }
-        .spread-card { width: 105px; height: 150px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 12px 8px 10px; cursor: pointer; transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease; box-shadow: 0 4px 20px rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.15); transform: translateZ(0); }
+        .spread-card { width: 105px; height: 150px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 12px 8px 10px; cursor: pointer; transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease; box-shadow: 0 4px 20px rgba(0,0,0,0.45); border: 1px solid var(--card-dark-border, rgba(255,255,255,0.15)); background: linear-gradient(160deg, var(--card-dark-start, #24131c), var(--card-dark-end, #120d14)); transform: translateZ(0); }
         .spread-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
         .spread-card.active { transform: translateY(0) scale(1.01); border-color: rgba(137,214,184,0.72); box-shadow: 0 0 0 1px rgba(137,214,184,0.24), 0 10px 28px rgba(0,0,0,0.34); }
         .cards-spread.single-card .spread-card { width: 150px; height: 210px; padding: 16px 12px 14px; }
         .spread-card-title { font-family: 'Cormorant Garamond', serif; font-size: 11px; font-weight: 500; text-align: center; color: rgba(255,255,255,0.92); text-transform: uppercase; letter-spacing: 0.03em; line-height: 1.2; }
         .cards-spread.single-card .spread-card-title { font-size: 14px; }
-        .spread-card-orb { width: 80px; height: 80px; border-radius: 50%; filter: blur(3px); animation: orbSoftPulse 5.6s ease-in-out infinite; }
-        .cards-spread.single-card .spread-card-orb { width: 110px; height: 110px; filter: blur(4px); }
+        .spread-card-orb { width: 80px; height: 80px; border-radius: 50%; filter: none; animation: none; }
+        .cards-spread.single-card .spread-card-orb { width: 110px; height: 110px; filter: none; }
         .spread-card-position { font-size: 8px; font-weight: 500; color: rgba(255,255,255,0.50); letter-spacing: 0.1em; text-transform: uppercase; }
         .cards-spread.single-card .spread-card-position { font-size: 10px; }
         .cards-spread .spread-card:nth-child(2) .spread-card-orb { animation-delay: 0.9s; }
@@ -1897,11 +2005,12 @@
             align-self: start;
         }
         .chat-actions-toggle {
-            border: 1px solid rgba(170, 236, 205, 0.18);
+            border: 1px solid rgba(190, 224, 210, 0.24);
             background:
-                linear-gradient(180deg, rgba(34, 40, 48, 0.26) 0%, rgba(18, 22, 28, 0.20) 100%),
-                radial-gradient(120% 140% at 14% 12%, rgba(118, 230, 190, 0.08) 0%, transparent 58%);
-            color: rgba(236, 238, 247, 0.9);
+                linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.06) 38%, rgba(0,0,0,0.10) 100%),
+                linear-gradient(180deg, rgba(34, 40, 48, 0.40) 0%, rgba(18, 22, 28, 0.30) 100%),
+                radial-gradient(120% 140% at 14% 12%, rgba(118, 230, 190, 0.10) 0%, transparent 58%);
+            color: rgba(242, 244, 250, 0.96);
             border-radius: 999px;
             font-size: 12px;
             padding: 8px 14px;
@@ -1909,16 +2018,17 @@
             line-height: 1;
             cursor: pointer;
             transition: all 180ms ease;
-            backdrop-filter: blur(8px) saturate(1.03);
-            -webkit-backdrop-filter: blur(8px) saturate(1.03);
+            backdrop-filter: blur(14px) saturate(1.12);
+            -webkit-backdrop-filter: blur(14px) saturate(1.12);
             width: 100%;
             text-align: center;
             height: 38px;
             min-height: 38px;
             box-shadow:
-                inset 0 0 0 1px rgba(255,255,255,0.02),
-                inset 0 10px 16px -14px rgba(164,242,210,0.10),
-                0 6px 12px rgba(8, 10, 14, 0.16);
+                inset 0 1px 0 rgba(255,255,255,0.16),
+                inset 0 -1px 0 rgba(0,0,0,0.10),
+                inset 0 0 0 1px rgba(255,255,255,0.03),
+                0 8px 14px rgba(8, 10, 14, 0.18);
         }
         .chat-screen .chat-actions-toggle,
         .chat-screen .chat-memory-toggle,
@@ -2115,11 +2225,12 @@
             max-width: 100%;
         }
         .chat-memory-toggle {
-            border: 1px solid rgba(170,236,205,0.16);
+            border: 1px solid rgba(190,224,210,0.22);
             background:
-                linear-gradient(180deg, rgba(34, 40, 48, 0.24) 0%, rgba(18, 22, 28, 0.18) 100%),
-                radial-gradient(120% 140% at 14% 12%, rgba(118, 230, 190, 0.06) 0%, transparent 60%);
-            color: rgba(232,236,246,0.9);
+                linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.06) 38%, rgba(0,0,0,0.10) 100%),
+                linear-gradient(180deg, rgba(34, 40, 48, 0.38) 0%, rgba(18, 22, 28, 0.28) 100%),
+                radial-gradient(120% 140% at 14% 12%, rgba(118, 230, 190, 0.08) 0%, transparent 60%);
+            color: rgba(240,244,250,0.96);
             border-radius: 999px;
             font-size: 12px;
             min-height: 34px;
@@ -2127,13 +2238,17 @@
             line-height: 1;
             cursor: pointer;
             transition: all 180ms ease;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(14px) saturate(1.1);
+            -webkit-backdrop-filter: blur(14px) saturate(1.1);
             width: 100%;
             text-align: center;
             height: 38px;
             min-height: 38px;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 6px 12px rgba(8,10,14,0.14);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.14),
+                inset 0 -1px 0 rgba(0,0,0,0.10),
+                inset 0 0 0 1px rgba(255,255,255,0.03),
+                0 8px 14px rgba(8,10,14,0.16);
         }
         .chat-memory-toggle:hover {
             background:
@@ -2419,23 +2534,24 @@
             min-height: 42px;
             padding: 8px 10px;
             border-radius: 100px;
-            border: 1px solid rgba(255, 200, 160, 0.22);
+            border: 1px solid rgba(255, 215, 186, 0.30);
             background:
-                linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 40%, rgba(0,0,0,0.08) 100%),
-                rgba(255, 140, 80, 0.09);
-            color: rgba(255, 233, 216, 0.96);
+                linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 42%, rgba(0,0,0,0.10) 100%),
+                linear-gradient(135deg, rgba(113, 74, 48, 0.34) 0%, rgba(176, 120, 82, 0.24) 52%, rgba(92, 58, 34, 0.22) 100%);
+            color: rgba(255, 240, 229, 0.98);
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.02em;
             cursor: pointer;
             transition: all 220ms ease;
-            backdrop-filter: blur(22px) saturate(1.9);
-            -webkit-backdrop-filter: blur(22px) saturate(1.9);
+            backdrop-filter: blur(24px) saturate(1.95);
+            -webkit-backdrop-filter: blur(24px) saturate(1.95);
             box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.22),
-                inset 0 -1px 0 rgba(0,0,0,0.10),
-                0 6px 16px rgba(8, 10, 14, 0.24),
-                0 0 12px rgba(202, 110, 50, 0.08);
+                inset 0 1px 0 rgba(255,255,255,0.28),
+                inset 0 -1px 0 rgba(0,0,0,0.12),
+                inset 0 0 0 1px rgba(255,255,255,0.05),
+                0 8px 18px rgba(12, 10, 14, 0.28),
+                0 0 16px rgba(190, 124, 74, 0.10);
         }
         .chat-top-btn:hover {
             border-color: rgba(255, 210, 175, 0.36);
@@ -3328,11 +3444,19 @@
         .settings-chip-btn {
             padding: 8px 12px;
             border-radius: 999px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.05);
-            color: #fff;
+            border: 1px solid rgba(255,255,255,0.22);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.07) 40%, rgba(0,0,0,0.10) 100%),
+                linear-gradient(135deg, rgba(44, 46, 60, 0.44) 0%, rgba(28, 30, 40, 0.36) 100%);
+            color: rgba(250,250,255,0.98);
             font-size: 12px;
             cursor: pointer;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.20),
+                inset 0 -1px 0 rgba(0,0,0,0.12),
+                0 8px 18px rgba(8,10,14,0.18);
+            backdrop-filter: blur(16px) saturate(1.35);
+            -webkit-backdrop-filter: blur(16px) saturate(1.35);
         }
         .settings-delete-btn {
             border-color: rgba(255,80,80,0.3);
@@ -3678,11 +3802,12 @@
             justify-content: center;
         }
         .audio-chip {
-            border: 1px solid rgba(170, 236, 205, 0.18);
+            border: 1px solid rgba(184, 242, 214, 0.24);
             background:
-                linear-gradient(180deg, rgba(34, 40, 48, 0.28) 0%, rgba(18, 22, 28, 0.22) 100%),
-                radial-gradient(120% 140% at 14% 12%, rgba(118, 230, 190, 0.08) 0%, transparent 58%);
-            color: rgba(245,245,252,0.95);
+                linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.06) 38%, rgba(0,0,0,0.10) 100%),
+                linear-gradient(180deg, rgba(36, 44, 52, 0.42) 0%, rgba(20, 24, 31, 0.34) 100%),
+                radial-gradient(120% 140% at 14% 12%, rgba(118, 230, 190, 0.10) 0%, transparent 58%);
+            color: rgba(248,248,252,0.98);
             border-radius: 999px;
             padding: 8px 12px;
             font-size: 12px;
@@ -3690,12 +3815,13 @@
             cursor: pointer;
             min-width: 132px;
             text-align: center;
-            backdrop-filter: blur(9px) saturate(1.03);
-            -webkit-backdrop-filter: blur(9px) saturate(1.03);
+            backdrop-filter: blur(16px) saturate(1.18);
+            -webkit-backdrop-filter: blur(16px) saturate(1.18);
             box-shadow:
-                inset 0 0 0 1px rgba(255,255,255,0.02),
-                inset 0 10px 16px -14px rgba(164,242,210,0.10),
-                0 6px 12px rgba(8, 10, 14, 0.16);
+                inset 0 1px 0 rgba(255,255,255,0.16),
+                inset 0 -1px 0 rgba(0,0,0,0.10),
+                inset 0 0 0 1px rgba(255,255,255,0.03),
+                0 8px 16px rgba(8, 10, 14, 0.18);
             transition: all 200ms ease;
         }
         .audio-chip:hover {
@@ -3821,232 +3947,66 @@
         /* ═══════════════════════════════════════════════════════
            DARK-MODE READABILITY FIX
            Stops the atmospheric orb bleeding through body-text panels.
-           Applies in default (dark) theme only.
+           Always applies (dark is default — only the cards change in
+           "light cards" mode; everything else stays dark and elegant).
            ═══════════════════════════════════════════════════════ */
-        body:not([data-theme="light"]) .card-detail {
-            background: rgba(14, 14, 20, 0.82) !important;
-            border: 1px solid rgba(255,255,255,0.10) !important;
-            backdrop-filter: blur(14px) saturate(1.05) !important;
-            -webkit-backdrop-filter: blur(14px) saturate(1.05) !important;
-            box-shadow: 0 8px 22px rgba(0,0,0,0.32) !important;
+        .card-detail {
+            background: var(--detail-panel-bg, rgba(14, 14, 20, 0.92)) !important;
+            border: 1px solid var(--detail-border, rgba(255,255,255,0.10)) !important;
+            backdrop-filter: blur(16px) saturate(1.05) !important;
+            -webkit-backdrop-filter: blur(16px) saturate(1.05) !important;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.34) !important;
         }
-        body:not([data-theme="light"]) .card-detail.highlighted {
-            background: rgba(28, 22, 40, 0.84) !important;
-            border-color: rgba(200, 160, 255, 0.34) !important;
+        .card-detail.highlighted {
+            background: var(--detail-highlight-bg, rgba(30, 24, 44, 0.94)) !important;
+            border-color: var(--detail-highlight-border, rgba(200, 160, 255, 0.34)) !important;
+            box-shadow: 0 10px 28px rgba(0,0,0,0.34) !important;
         }
-        body:not([data-theme="light"]) .guide-section,
-        body:not([data-theme="light"]) .guide-summary,
-        body:not([data-theme="light"]) .daily-section,
-        body:not([data-theme="light"]) .settings-hub-card {
-            background: rgba(14, 14, 20, 0.80) !important;
-            backdrop-filter: blur(14px) saturate(1.05) !important;
-            -webkit-backdrop-filter: blur(14px) saturate(1.05) !important;
+        .card-detail .card-detail-name {
+            color: var(--detail-title-color, #F6F6FB) !important;
         }
-        /* Reading atmospheric orb — softer in dark mode so it stops washing out cards */
-        body:not([data-theme="light"]) .reading-aura-ball {
-            opacity: 0.55 !important;
+        .card-detail .card-detail-position {
+            background: var(--detail-chip-bg, rgba(255,255,255,0.05)) !important;
+            color: var(--detail-chip-color, rgba(245,245,250,0.62)) !important;
+        }
+        .card-detail .card-detail-affirmation {
+            color: var(--detail-quote-color, #D7B8FF) !important;
+        }
+        .guide-section,
+        .guide-summary,
+        .daily-section,
+        .settings-hub-card {
+            background: rgba(14, 14, 20, 0.90) !important;
+            backdrop-filter: blur(16px) saturate(1.05) !important;
+            -webkit-backdrop-filter: blur(16px) saturate(1.05) !important;
+        }
+        /* Reading atmospheric orb — softer so it stops washing out cards */
+        .reading-aura-ball {
+            opacity: 0.52 !important;
             filter: blur(28px) !important;
         }
 
         /* ═══════════════════════════════════════════════════════
-           LIGHT THEME — pastel fashion palette
-           Activated by body[data-theme="light"]
+           LIGHT CARDS toggle (body[data-theme="light"])
+           Affects ONLY the spread cards — everything else stays dark.
            ═══════════════════════════════════════════════════════ */
-        body[data-theme="light"] {
-            --bg-primary: #f7f1ee;
-            --bg-secondary: #fffaf7;
-            --bg-card: #ffffff;
-            --bg-elevated: #f4ece7;
-            --text-primary: #302733;
-            --text-secondary: rgba(48, 39, 51, 0.68);
-            --text-tertiary: rgba(48, 39, 51, 0.46);
-            --accent-purple: rgba(187, 154, 218, 0.92);
-            --accent-mint: rgba(165, 205, 193, 0.9);
-            --accent-mint-soft: rgba(165, 205, 193, 0.18);
-            --accent-gradient: linear-gradient(135deg, rgba(231, 210, 245, 0.9) 0%, rgba(248, 220, 228, 0.92) 100%);
-            --affirmation-gradient: linear-gradient(135deg, rgba(211, 227, 235, 0.86) 0%, rgba(242, 221, 233, 0.88) 100%);
-            --dynamic-glow-a: rgba(214, 196, 235, 0.16);
-            --dynamic-glow-b: rgba(245, 210, 222, 0.12);
-            background: linear-gradient(180deg, #fbf7f4 0%, #f4ece7 100%) !important;
-            color: var(--text-primary) !important;
-        }
-
-        body[data-theme="light"] .app {
-            background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(250,244,239,0.98) 100%) !important;
-        }
-
-        body[data-theme="light"] .app::before {
-            border: 1.6px solid rgba(204, 186, 200, 0.56) !important;
-            box-shadow:
-                inset 0 0 0 1px rgba(255,255,255,0.42),
-                0 0 0 1px rgba(191, 177, 190, 0.18),
-                0 0 18px rgba(225, 204, 222, 0.18) !important;
-            opacity: 0.92 !important;
-        }
-
-        body[data-theme="light"] .app::after {
-            background: linear-gradient(135deg,
-                rgba(235, 216, 245, 0.76) 0%,
-                rgba(255, 228, 233, 0.76) 34%,
-                rgba(214, 231, 224, 0.74) 68%,
-                rgba(255, 238, 214, 0.72) 100%) !important;
-            opacity: 0.34 !important;
-            filter: blur(4.5px) saturate(1.02) !important;
-            box-shadow:
-                0 0 16px rgba(236, 208, 224, 0.22),
-                0 0 24px rgba(214, 204, 244, 0.18) !important;
-        }
-
-        body[data-theme="light"] .edge-fade,
-        body[data-theme="light"] .app.motion-focus .edge-fade,
-        body[data-theme="light"] .screen.active::after {
-            background:
-                linear-gradient(
-                    to bottom,
-                    rgba(250, 245, 241, 0.82) 0px,
-                    rgba(250, 245, 241, 0.48) 18px,
-                    rgba(250, 245, 241, 0) 48px,
-                    rgba(250, 245, 241, 0) calc(100% - 48px),
-                    rgba(250, 245, 241, 0.48) calc(100% - 18px),
-                    rgba(250, 245, 241, 0.82) 100%
-                ),
-                linear-gradient(
-                    to right,
-                    rgba(250, 245, 241, 0.72) 0px,
-                    rgba(250, 245, 241, 0.28) 12px,
-                    rgba(250, 245, 241, 0) 28px,
-                    rgba(250, 245, 241, 0) calc(100% - 28px),
-                    rgba(250, 245, 241, 0.28) calc(100% - 12px),
-                    rgba(250, 245, 241, 0.72) 100%
-                ) !important;
-            box-shadow:
-                inset 0 0 0 1px rgba(255,255,255,0.24),
-                inset 0 32px 48px -20px rgba(246, 238, 232, 0.78),
-                inset 0 -32px 48px -20px rgba(246, 238, 232, 0.78) !important;
-        }
-
-        body[data-theme="light"] .screen::before,
-        body[data-theme="light"] .screen.active::before,
-        body[data-theme="light"] .ambient-glow,
-        body[data-theme="light"] .aura-life-orb,
-        body[data-theme="light"] .reading-aura-ball,
-        body[data-theme="light"] .reading-screen::before,
-        body[data-theme="light"] .reading-screen::after,
-        body[data-theme="light"] .cards-spread::before {
-            opacity: 0.2 !important;
-        }
-
-        body[data-theme="light"] .screen::before,
-        body[data-theme="light"] .screen.active::before {
-            filter: blur(40px) !important;
-            background:
-                radial-gradient(circle at 50% 48%, rgba(223, 201, 243, 0.55) 0%, rgba(243, 221, 231, 0.28) 34%, transparent 70%),
-                radial-gradient(circle at 42% 62%, rgba(207, 229, 222, 0.22) 8%, transparent 56%) !important;
-        }
-
-        body[data-theme="light"] .aura-life-orb,
-        body[data-theme="light"] .app[data-screen="chatScreen"] .aura-life-orb,
-        body[data-theme="light"] .reading-aura-ball {
-            filter: blur(18px) !important;
-            background:
-                radial-gradient(circle at 50% 48%, rgba(233, 211, 246, 0.88) 0%, rgba(243, 223, 232, 0.56) 34%, rgba(215, 232, 225, 0.22) 64%, transparent 100%) !important;
-        }
-
         body[data-theme="light"] .spread-card {
-            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(250,244,239,0.96) 100%) !important;
-            border: 1px solid rgba(196, 179, 193, 0.56) !important;
-            box-shadow: 0 12px 30px rgba(99, 78, 102, 0.12) !important;
+            background: linear-gradient(180deg, var(--card-light-start, #ffffff) 0%, var(--card-light-end, #faf4ef) 100%) !important;
+            border: 1px solid var(--card-light-border, rgba(196, 179, 193, 0.56)) !important;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.36) !important;
         }
-
-        body[data-theme="light"] .spread-card-title,
-        body[data-theme="light"] .spread-card-position,
-        body[data-theme="light"] .card-detail-name,
-        body[data-theme="light"] .card-detail-meaning,
-        body[data-theme="light"] .guide-name,
-        body[data-theme="light"] .guide-role,
-        body[data-theme="light"] .guide-message,
-        body[data-theme="light"] .settings-hub-card h4,
-        body[data-theme="light"] .settings-hub-subtitle,
-        body[data-theme="light"] .settings-hub-status,
-        body[data-theme="light"] .daily-section p,
-        body[data-theme="light"] .daily-status,
-        body[data-theme="light"] .reading-date,
-        body[data-theme="light"] .tagline {
-            color: var(--text-primary) !important;
+        body[data-theme="light"] .spread-card-title {
+            color: var(--card-light-title, #302733) !important;
             text-shadow: none !important;
         }
-
-        body[data-theme="light"] .spread-card-position,
-        body[data-theme="light"] .reading-date,
-        body[data-theme="light"] .guide-role,
-        body[data-theme="light"] .settings-hub-subtitle,
-        body[data-theme="light"] .settings-hub-status,
-        body[data-theme="light"] .daily-status,
-        body[data-theme="light"] .card-detail-position {
-            color: var(--text-secondary) !important;
-        }
-
-        body[data-theme="light"] .spread-card-orb,
-        body[data-theme="light"] .cards-spread.single-card .spread-card-orb,
-        body[data-theme="light"] .reading-screen .spread-card-orb {
-            opacity: 0.38 !important;
-            filter: blur(10px) !important;
-        }
-
-        body[data-theme="light"] .card-detail,
-        body[data-theme="light"] .guide-section,
-        body[data-theme="light"] .settings-hub-card,
-        body[data-theme="light"] .daily-section,
-        body[data-theme="light"] .reading-type-toggle,
-        body[data-theme="light"] .option,
-        body[data-theme="light"] .text-input,
-        body[data-theme="light"] .guide-summary,
-        body[data-theme="light"] .toast,
-        body[data-theme="light"] .disclaimer-content,
-        body[data-theme="light"] .settings-email-input,
-        body[data-theme="light"] .daily-time-select select {
-            background: rgba(255,255,255,0.88) !important;
-            border: 1px solid rgba(202, 184, 196, 0.44) !important;
-            color: var(--text-primary) !important;
-            box-shadow: 0 10px 28px rgba(109, 89, 110, 0.08) !important;
-            backdrop-filter: blur(10px) saturate(1.02) !important;
-            -webkit-backdrop-filter: blur(10px) saturate(1.02) !important;
-        }
-
-        body[data-theme="light"] .card-detail.highlighted,
-        body[data-theme="light"] .guide-section.pulse,
-        body[data-theme="light"] .settings-tier-badge,
-        body[data-theme="light"] .settings-tier-badge.tier-premium {
-            background: linear-gradient(135deg, rgba(240, 225, 248, 0.82) 0%, rgba(255, 239, 228, 0.78) 100%) !important;
-            border-color: rgba(198, 171, 214, 0.52) !important;
-            color: #5a4369 !important;
-            box-shadow: 0 8px 24px rgba(188, 157, 210, 0.14) !important;
-        }
-
-        body[data-theme="light"] .guide-section::before {
-            opacity: 0.34 !important;
-            filter: blur(18px) !important;
-            background:
-                radial-gradient(circle at 22% 30%, rgba(226, 208, 241, 0.46) 0%, transparent 44%),
-                radial-gradient(circle at 78% 74%, rgba(213, 231, 223, 0.3) 0%, transparent 46%) !important;
-        }
-
-        body[data-theme="light"] .card-detail-affirmation,
-        body[data-theme="light"] .guide-badge,
-        body[data-theme="light"] .logo {
-            color: #7a5f8d !important;
+        body[data-theme="light"] .spread-card-position {
+            color: var(--card-light-position, rgba(48, 39, 51, 0.62)) !important;
             text-shadow: none !important;
         }
-
-        body[data-theme="light"] .logo {
-            text-shadow:
-                0 0 10px rgba(232, 213, 245, 0.32),
-                0 0 22px rgba(255, 226, 232, 0.24) !important;
-        }
-
-        body[data-theme="light"] .settings-email-input::placeholder,
-        body[data-theme="light"] .text-input::placeholder {
-            color: rgba(48, 39, 51, 0.42) !important;
+        /* Per-card orbs slightly softer on white so they don't shout */
+        body[data-theme="light"] .spread-card-orb {
+            opacity: 0.78 !important;
+            filter: blur(3px) !important;
         }
 </style>
 </head>
@@ -4277,11 +4237,11 @@
             </div>
 
             <div class="settings-hub-card">
-                <h4>Appearance</h4>
-                <div class="settings-hub-subtitle">Choose how Aura looks. Dark is the brand default; Light uses warm paper cards for easier reading.</div>
+                <h4>Card Style</h4>
+                <div class="settings-hub-subtitle">Choose dark or white card backgrounds. Each reading keeps distinct card families, and your preference stays saved.</div>
                 <div class="settings-hub-row" style="margin-top:8px;">
-                    <button class="settings-chip-btn" id="themeDarkBtn" onclick="setAuraTheme('dark')">◐ Dark</button>
-                    <button class="settings-chip-btn" id="themeLightBtn" onclick="setAuraTheme('light')">○ Light</button>
+                    <button class="settings-chip-btn" id="themeDarkBtn" onclick="setAuraTheme('dark')">◐ Dark Card Backgrounds</button>
+                    <button class="settings-chip-btn" id="themeLightBtn" onclick="setAuraTheme('light')">○ White Card Backgrounds</button>
                 </div>
             </div>
 
@@ -4703,6 +4663,60 @@ const chromoDeep = (hex, factor = 0.14) => {
     const dr = Math.round(r * factor), dg = Math.round(g * factor), db = Math.round(b * factor);
     return `#${dr.toString(16).padStart(2,'0')}${dg.toString(16).padStart(2,'0')}${db.toString(16).padStart(2,'0')}`;
 };
+const READING_CARD_FAMILIES = {
+    focus: {
+        dark: { start: '#271429', end: '#120c18', border: 'rgba(195, 151, 224, 0.36)' },
+        light: { start: '#fffaf8', end: '#f2e8f1', border: 'rgba(180, 145, 194, 0.42)', title: '#4e3757', position: 'rgba(78, 55, 87, 0.62)' },
+        detail: { panel: 'rgba(20, 14, 26, 0.94)', border: 'rgba(202, 170, 232, 0.18)', highlight: 'rgba(52, 34, 66, 0.96)', highlightBorder: 'rgba(202, 170, 232, 0.34)', title: '#fbf4ff', chipBg: 'rgba(202, 170, 232, 0.12)', chipColor: 'rgba(241, 226, 255, 0.8)', quote: '#e4c6f4' },
+        orb: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.14) 0%, #d7a2eb 10%, #e8b6ef 20%, #f2ccd6 34%, #f5dbe1 46%, #d8ede8 58%, rgba(143,211,199,0.72) 66%, rgba(143,211,199,0.18) 74%, transparent 82%), radial-gradient(circle at 50% 50%, transparent 56%, #8fd3c7 60%, #8fd3c7 65%, transparent 69%)'
+    },
+    past: {
+        dark: { start: '#34171d', end: '#160d12', border: 'rgba(210, 142, 149, 0.34)' },
+        light: { start: '#fff8f6', end: '#f5e2dd', border: 'rgba(196, 148, 150, 0.42)', title: '#5a373d', position: 'rgba(90, 55, 61, 0.62)' },
+        detail: { panel: 'rgba(24, 14, 18, 0.94)', border: 'rgba(214, 158, 165, 0.18)', highlight: 'rgba(60, 28, 34, 0.96)', highlightBorder: 'rgba(214, 158, 165, 0.34)', title: '#fff3f4', chipBg: 'rgba(214, 158, 165, 0.12)', chipColor: 'rgba(255, 226, 229, 0.8)', quote: '#efb7bf' },
+        orb: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.14) 0%, #d998a4 10%, #e9b0b7 20%, #efbf93 34%, #f4cfaf 46%, #d59b9f 58%, rgba(145,84,90,0.72) 66%, rgba(145,84,90,0.18) 74%, transparent 82%), radial-gradient(circle at 50% 50%, transparent 56%, #91545a 60%, #91545a 65%, transparent 69%)'
+    },
+    present: {
+        dark: { start: '#1d162a', end: '#0f1018', border: 'rgba(131, 196, 220, 0.34)' },
+        light: { start: '#fbfbff', end: '#ebe8f6', border: 'rgba(141, 156, 204, 0.42)', title: '#3d3558', position: 'rgba(61, 53, 88, 0.62)' },
+        detail: { panel: 'rgba(16, 16, 24, 0.94)', border: 'rgba(139, 196, 223, 0.18)', highlight: 'rgba(34, 32, 54, 0.96)', highlightBorder: 'rgba(139, 196, 223, 0.34)', title: '#f6f5ff', chipBg: 'rgba(139, 196, 223, 0.12)', chipColor: 'rgba(224, 244, 255, 0.8)', quote: '#9ed6ec' },
+        orb: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.14) 0%, #d96a84 10%, #e78ea4 20%, #79dde3 34%, #a6e7ea 46%, #b7c0ef 58%, rgba(128,96,183,0.72) 66%, rgba(128,96,183,0.18) 74%, transparent 82%), radial-gradient(circle at 50% 50%, transparent 56%, #8060b7 60%, #8060b7 65%, transparent 69%)'
+    },
+    future: {
+        dark: { start: '#15201a', end: '#0b1410', border: 'rgba(156, 201, 176, 0.34)' },
+        light: { start: '#fbfdf8', end: '#e6f0e8', border: 'rgba(150, 188, 167, 0.42)', title: '#355042', position: 'rgba(53, 80, 66, 0.62)' },
+        detail: { panel: 'rgba(14, 20, 17, 0.94)', border: 'rgba(163, 204, 184, 0.18)', highlight: 'rgba(24, 41, 34, 0.96)', highlightBorder: 'rgba(163, 204, 184, 0.34)', title: '#f3fff8', chipBg: 'rgba(163, 204, 184, 0.12)', chipColor: 'rgba(226, 247, 237, 0.8)', quote: '#bddbc8' },
+        orb: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.14) 0%, #9fd0b4 10%, #b9dfc9 20%, #cbaef0 34%, #dcccf6 46%, #e2f1e7 58%, rgba(226,241,231,0.72) 66%, rgba(226,241,231,0.18) 74%, transparent 82%), radial-gradient(circle at 50% 50%, transparent 56%, #e2f1e7 60%, #e2f1e7 65%, transparent 69%)'
+    }
+};
+function getReadingCardVisuals(index, isSingle = false) {
+    const slot = isSingle ? 'focus' : (['past', 'present', 'future'][index] || 'focus');
+    const family = READING_CARD_FAMILIES[slot] || READING_CARD_FAMILIES.focus;
+    return {
+        slot,
+        cardStyle: [
+            `--card-dark-start:${family.dark.start}`,
+            `--card-dark-end:${family.dark.end}`,
+            `--card-dark-border:${family.dark.border}`,
+            `--card-light-start:${family.light.start}`,
+            `--card-light-end:${family.light.end}`,
+            `--card-light-border:${family.light.border}`,
+            `--card-light-title:${family.light.title}`,
+            `--card-light-position:${family.light.position}`
+        ].join(';'),
+        detailStyle: [
+            `--detail-panel-bg:${family.detail.panel}`,
+            `--detail-border:${family.detail.border}`,
+            `--detail-highlight-bg:${family.detail.highlight}`,
+            `--detail-highlight-border:${family.detail.highlightBorder}`,
+            `--detail-title-color:${family.detail.title}`,
+            `--detail-chip-bg:${family.detail.chipBg}`,
+            `--detail-chip-color:${family.detail.chipColor}`,
+            `--detail-quote-color:${family.detail.quote}`
+        ].join(';'),
+        orbStyle: `background:${family.orb}`
+    };
+}
 const getGuideAnswers = () => (guideConfig?.answers || answers || {});
 const getUserBirthdate = () => String(getGuideAnswers().birthdate || '').trim();
 let horoscopeMoreInfoOpen = false;
@@ -6350,34 +6364,37 @@ function showReading() {
     const isSingle = selectedCards.length === 1;
     const positions = isSingle ? ['Focus'] : ['Past','Present','Future'];
     const posLabels = isSingle ? [''] : ['What you\'re coming from','Where you are now','Where this leads'];
+    const visuals = selectedCards.map((_, i) => getReadingCardVisuals(i, isSingle));
     
     // Render cards
     const spreadEl = document.getElementById('cardsSpread');
     spreadEl.className = 'cards-spread' + (isSingle ? ' single-card' : '');
-    spreadEl.innerHTML = selectedCards.map((c,i) => `
-        <div class="spread-card card-reveal" onclick="highlightCard(${i})" style="background:linear-gradient(160deg,${chromoDeep(c.colors[0],0.18)},${chromoDeep(c.colors[2]||c.colors[1],0.10)});animation-delay:${i*0.15}s">
+    spreadEl.innerHTML = selectedCards.map((c,i) => {
+        const visual = visuals[i];
+        return `
+        <div class="spread-card card-reveal" data-slot="${visual.slot}" onclick="highlightCard(${i})" style="${visual.cardStyle};animation-delay:${i*0.15}s">
             <p class="spread-card-title">${c.name}</p>
-            <div class="spread-card-orb" style="background:
-                radial-gradient(circle at 50% 48%, ${c.colors[0]} 0%, ${c.colors[0]} 16%, ${c.colors[0]}aa 20%, transparent 22%),
-                radial-gradient(circle at 50% 48%, transparent 18%, ${c.colors[1]}ee 34%, ${c.colors[1]} 45%, ${c.colors[1]}88 52%, transparent 55%),
-                radial-gradient(circle at 46% 54%, transparent 50%, ${c.colors[2]||c.colors[1]}dd 72%, ${c.colors[2]||c.colors[1]} 80%, ${c.colors[2]||c.colors[1]}88 85%, transparent 88%)">
-            </div>
+            <div class="spread-card-orb" style="${visual.orbStyle}"></div>
             <p class="spread-card-position">${positions[i]}</p>
-        </div>`).join('');
+        </div>`;
+    }).join('');
     
     // Position labels - remove since they're already on the cards
     document.getElementById('positionLabels').innerHTML = '';
     
     // Card details
-    document.getElementById('cardDetails').innerHTML = selectedCards.map((c,i) => `
-        <div class="card-detail fade-in" id="cardDetail${i}" style="animation-delay:${0.12+i*0.06}s">
+    document.getElementById('cardDetails').innerHTML = selectedCards.map((c,i) => {
+        const visual = visuals[i];
+        return `
+        <div class="card-detail fade-in" id="cardDetail${i}" data-slot="${visual.slot}" style="${visual.detailStyle};animation-delay:${0.12+i*0.06}s">
             <div class="card-detail-header">
                 <span class="card-detail-name">${c.name}</span>
                 ${posLabels[i] ? `<span class="card-detail-position">${posLabels[i]}</span>` : ''}
             </div>
             <p class="card-detail-meaning">${c.meaning}</p>
             <p class="card-detail-affirmation">"${c.affirmation}"</p>
-        </div>`).join('');
+        </div>`;
+    }).join('');
     
     // Guide section
     document.getElementById('guideRole').textContent = hasGuide ? 'Personalized AI Guide' : 'AI-Powered Reflection';
