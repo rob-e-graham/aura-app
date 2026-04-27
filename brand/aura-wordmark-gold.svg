@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  AURA — Horizontal Wordmark + Sparkle (Gold)
+  Cormorant Garamond serif wordmark with the sparkle-in-circle mark.
+  Typography note: SVG uses live <text>. To outline for print, open in
+  Illustrator/Inkscape and convert text to outlines.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 140" width="1080" height="280">
+  <defs>
+    <linearGradient id="sparkleGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"  stop-color="#FFE38A"/>
+      <stop offset="35%" stop-color="#F5D77A"/>
+      <stop offset="75%" stop-color="#D4A93A"/>
+      <stop offset="100%" stop-color="#A77E20"/>
+    </linearGradient>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&amp;display=swap');
+      .aura-word {
+        font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+        font-weight: 400;
+        font-size: 120px;
+        letter-spacing: 0.18em;
+        fill: #D4A93A;
+      }
+    </style>
+  </defs>
+
+  <text class="aura-word" x="20" y="104">AURA</text>
+
+  <!-- Sparkle mark, anchored to the right of the wordmark -->
+  <g transform="translate(440, 28)">
+    <circle cx="42" cy="42" r="38.5" fill="none"
+            stroke="#D4A93A" stroke-width="1.6"/>
+    <path d="M42,3.5
+             C42,30.9 51.6,40 80.5,40
+             C51.6,40 42,50.1 42,80.5
+             C42,50.1 32.4,40 3.5,40
+             C32.4,40 42,30.9 42,3.5 Z"
+          fill="url(#sparkleGold)"/>
+  </g>
+</svg>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  AURA — Stacked Wordmark + Sparkle (Mono White)
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 320" width="720" height="640">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&amp;display=swap');
+      .aura-word {
+        font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+        font-weight: 400;
+        font-size: 92px;
+        letter-spacing: 0.20em;
+        fill: #FAFAFA;
+        text-anchor: middle;
+      }
+    </style>
+  </defs>
+
+  <g transform="translate(138, 30)">
+    <circle cx="42" cy="42" r="38.5" fill="none"
+            stroke="#FAFAFA" stroke-width="1.8"/>
+    <path d="M42,3.5
+             C42,30.9 51.6,40 80.5,40
+             C51.6,40 42,50.1 42,80.5
+             C42,50.1 32.4,40 3.5,40
+             C32.4,40 42,30.9 42,3.5 Z"
+          fill="#FAFAFA"/>
+  </g>
+
+  <text class="aura-word" x="180" y="240">AURA</text>
+</svg>

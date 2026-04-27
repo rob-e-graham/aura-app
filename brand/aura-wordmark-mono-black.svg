@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  AURA — Horizontal Wordmark + Sparkle (Mono Black)
+  For light backgrounds and print.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 140" width="1080" height="280">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&amp;display=swap');
+      .aura-word {
+        font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+        font-weight: 400;
+        font-size: 120px;
+        letter-spacing: 0.18em;
+        fill: #1A1422;
+      }
+    </style>
+  </defs>
+
+  <text class="aura-word" x="20" y="104">AURA</text>
+
+  <g transform="translate(440, 28)">
+    <circle cx="42" cy="42" r="38.5" fill="none"
+            stroke="#1A1422" stroke-width="1.8"/>
+    <path d="M42,3.5
+             C42,30.9 51.6,40 80.5,40
+             C51.6,40 42,50.1 42,80.5
+             C42,50.1 32.4,40 3.5,40
+             C32.4,40 42,30.9 42,3.5 Z"
+          fill="#1A1422"/>
+  </g>
+</svg>
