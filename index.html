@@ -270,6 +270,42 @@
         /* Onboarding */
         .question-text { font-size: 24px !important; }
 
+        /* ── AURA SPARKLE LOGO ──
+           4-point sparkle inside a circle — used as the brand mark
+           on entry, splash, welcome, and any "AURA presence" moment. */
+        .aura-sparkle-logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            position: relative;
+            color: #F5D77A;
+        }
+        .aura-sparkle-logo .ring {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 1.4px solid currentColor;
+            opacity: 0.55;
+            box-shadow:
+                0 0 14px rgba(245, 215, 122, 0.18),
+                inset 0 0 10px rgba(245, 215, 122, 0.10);
+        }
+        .aura-sparkle-logo svg {
+            width: 60%; height: 60%;
+            filter: drop-shadow(0 0 6px rgba(245, 215, 122, 0.55));
+        }
+        .aura-sparkle-logo.large { width: 84px; height: 84px; }
+        .aura-sparkle-logo.large svg { width: 64%; height: 64%; }
+        @keyframes sparkleBreath {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50%      { transform: scale(1.04); opacity: 0.86; }
+        }
+        .aura-sparkle-logo svg {
+            animation: sparkleBreath 5.4s ease-in-out infinite;
+        }
+
         /* ── Font audit pass 2 — all remaining sub-14px elements ─── */
 
         /* Chat UI chips & action buttons → 14px */
@@ -1043,14 +1079,30 @@
         }
         /* Chat screen — full 3-layer orb matching landing page */
         .app[data-screen="chatScreen"] .aura-life-orb {
-            width: 268px; height: 268px;
+            width: 220px; height: 220px;
             opacity: 0.56 !important;
             filter: blur(10px) !important;
             transform: translate(-50%, -42%);
             background:
-                radial-gradient(circle at 50% 48%, rgba(232,176,255,0.96) 0%, rgba(232,176,255,0.96) 15%, rgba(210,150,255,0.46) 19%, transparent 23%),
-                radial-gradient(circle at 50% 48%, transparent 18%, rgba(160,80,230,0.82) 33%, rgba(136,60,210,0.9) 44%, rgba(110,50,190,0.34) 51%, transparent 56%),
-                radial-gradient(circle at 46% 54%, transparent 50%, rgba(80,30,150,0.70) 71%, rgba(60,20,130,0.84) 79%, rgba(50,15,110,0.32) 84%, transparent 89%) !important;
+                radial-gradient(circle at 50% 48%,
+                    rgba(232,176,255,0.96) 0%,
+                    rgba(232,176,255,0.85) 14%,
+                    rgba(210,150,255,0.55) 26%,
+                    rgba(186,128,242,0.28) 38%,
+                    transparent 48%),
+                radial-gradient(circle at 50% 48%,
+                    transparent 14%,
+                    rgba(160,80,230,0.50) 30%,
+                    rgba(136,60,210,0.85) 46%,
+                    rgba(122,52,196,0.55) 60%,
+                    rgba(108,46,178,0.24) 72%,
+                    transparent 82%),
+                radial-gradient(circle at 46% 54%,
+                    transparent 48%,
+                    rgba(80,30,150,0.42) 64%,
+                    rgba(60,20,130,0.78) 78%,
+                    rgba(50,15,110,0.40) 92%,
+                    transparent 100%) !important;
         }
         @keyframes ambientBreath {
             0%, 100% { transform: scale(1); opacity: 0.46; filter: blur(0px); }
@@ -1377,8 +1429,8 @@
         }
         .welcome-orb-wrap {
             position: relative;
-            width: 220px;
-            height: 220px;
+            width: 200px;
+            height: 200px;
             margin: 20px auto 16px;
             flex: 1 0 auto;
             z-index: 1;
@@ -1386,15 +1438,31 @@
         .welcome-orb {
             position: absolute;
             left: 50%; top: 50%;
-            width: 340px; height: 340px;
+            width: 240px; height: 240px;
             border-radius: 50%;
             transform: translate(-50%, -50%);
             pointer-events: none; z-index: 0;
-            /* 3-layer orb — soft=5% matching generator: crisp core, solid rings, minimal blur */
+            /* 3-layer orb — overlapping fade so rings blend, no transparent gap */
             background:
-                radial-gradient(circle at 50% 48%, rgba(232,176,255,1) 0%, rgba(232,176,255,1) 16%, rgba(210,150,255,0.66) 20%, transparent 22%),
-                radial-gradient(circle at 50% 48%, transparent 18%, rgba(160,80,230,0.93) 34%, rgba(136,60,210,1) 45%, rgba(110,50,190,0.53) 52%, transparent 55%),
-                radial-gradient(circle at 46% 54%, transparent 50%, rgba(80,30,150,0.87) 72%, rgba(60,20,130,1) 80%, rgba(50,15,110,0.53) 85%, transparent 88%);
+                radial-gradient(circle at 50% 48%,
+                    rgba(232,176,255,1) 0%,
+                    rgba(232,176,255,0.92) 14%,
+                    rgba(210,150,255,0.62) 26%,
+                    rgba(186,128,242,0.32) 38%,
+                    transparent 48%),
+                radial-gradient(circle at 50% 48%,
+                    transparent 14%,
+                    rgba(160,80,230,0.55) 30%,
+                    rgba(136,60,210,0.92) 46%,
+                    rgba(122,52,196,0.62) 60%,
+                    rgba(108,46,178,0.28) 72%,
+                    transparent 82%),
+                radial-gradient(circle at 46% 54%,
+                    transparent 48%,
+                    rgba(80,30,150,0.50) 64%,
+                    rgba(60,20,130,0.84) 78%,
+                    rgba(50,15,110,0.46) 92%,
+                    transparent 100%);
             filter: blur(8px);
             animation: orbBreathGlobal var(--aura-breath-cycle) ease-in-out infinite;
         }
@@ -2768,23 +2836,39 @@
         .entry-orb-area {
             position: relative;
             flex: 1 0 auto;
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             margin: 8px auto 0;
         }
         .entry-orb {
             position: absolute;
             left: 50%; top: 50%;
-            width: 340px; height: 340px;
+            width: 240px; height: 240px;
             border-radius: 50%;
             transform: translate(-50%, -50%);
             pointer-events: none; z-index: 0;
             opacity: 0.86;
-            /* Same 3-layer engine as welcome orb */
+            /* Smooth-blend 3-layer — same pattern as welcome orb */
             background:
-                radial-gradient(circle at 50% 48%, rgba(232,176,255,1) 0%, rgba(232,176,255,1) 16%, rgba(210,150,255,0.66) 20%, transparent 22%),
-                radial-gradient(circle at 50% 48%, transparent 18%, rgba(160,80,230,0.93) 34%, rgba(136,60,210,1) 45%, rgba(110,50,190,0.53) 52%, transparent 55%),
-                radial-gradient(circle at 46% 54%, transparent 50%, rgba(80,30,150,0.87) 72%, rgba(60,20,130,1) 80%, rgba(50,15,110,0.53) 85%, transparent 88%);
+                radial-gradient(circle at 50% 48%,
+                    rgba(232,176,255,1) 0%,
+                    rgba(232,176,255,0.92) 14%,
+                    rgba(210,150,255,0.62) 26%,
+                    rgba(186,128,242,0.32) 38%,
+                    transparent 48%),
+                radial-gradient(circle at 50% 48%,
+                    transparent 14%,
+                    rgba(160,80,230,0.55) 30%,
+                    rgba(136,60,210,0.92) 46%,
+                    rgba(122,52,196,0.62) 60%,
+                    rgba(108,46,178,0.28) 72%,
+                    transparent 82%),
+                radial-gradient(circle at 46% 54%,
+                    transparent 48%,
+                    rgba(80,30,150,0.50) 64%,
+                    rgba(60,20,130,0.84) 78%,
+                    rgba(50,15,110,0.46) 92%,
+                    transparent 100%);
             filter: blur(8px);
             animation: orbBreathGlobal var(--aura-breath-cycle) ease-in-out infinite;
         }
@@ -3950,24 +4034,30 @@
            Always applies (dark is default — only the cards change in
            "light cards" mode; everything else stays dark and elegant).
            ═══════════════════════════════════════════════════════ */
+        /* Body-text panels — slightly less opaque so they breathe with the
+           atmosphere; buttons get the SAME blur recipe at slightly lower
+           alpha so chips and panels feel like one family. */
         .card-detail {
-            background: var(--detail-panel-bg, rgba(14, 14, 20, 0.92)) !important;
+            background: var(--detail-panel-bg, rgba(14, 14, 20, 0.84)) !important;
             border: 1px solid var(--detail-border, rgba(255,255,255,0.10)) !important;
-            backdrop-filter: blur(16px) saturate(1.05) !important;
-            -webkit-backdrop-filter: blur(16px) saturate(1.05) !important;
-            box-shadow: 0 8px 22px rgba(0,0,0,0.34) !important;
+            backdrop-filter: blur(18px) saturate(1.05) !important;
+            -webkit-backdrop-filter: blur(18px) saturate(1.05) !important;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.30) !important;
         }
         .card-detail.highlighted {
-            background: var(--detail-highlight-bg, rgba(30, 24, 44, 0.94)) !important;
+            background: var(--detail-highlight-bg, rgba(30, 24, 44, 0.86)) !important;
             border-color: var(--detail-highlight-border, rgba(200, 160, 255, 0.34)) !important;
-            box-shadow: 0 10px 28px rgba(0,0,0,0.34) !important;
+            box-shadow: 0 10px 28px rgba(0,0,0,0.30) !important;
         }
         .card-detail .card-detail-name {
             color: var(--detail-title-color, #F6F6FB) !important;
         }
         .card-detail .card-detail-position {
-            background: var(--detail-chip-bg, rgba(255,255,255,0.05)) !important;
-            color: var(--detail-chip-color, rgba(245,245,250,0.62)) !important;
+            background: var(--detail-chip-bg, rgba(255,255,255,0.08)) !important;
+            color: var(--detail-chip-color, rgba(245,245,250,0.72)) !important;
+            backdrop-filter: blur(14px) !important;
+            -webkit-backdrop-filter: blur(14px) !important;
+            border: 1px solid rgba(255,255,255,0.06) !important;
         }
         .card-detail .card-detail-affirmation {
             color: var(--detail-quote-color, #D7B8FF) !important;
@@ -3976,9 +4066,20 @@
         .guide-summary,
         .daily-section,
         .settings-hub-card {
-            background: rgba(14, 14, 20, 0.90) !important;
-            backdrop-filter: blur(16px) saturate(1.05) !important;
-            -webkit-backdrop-filter: blur(16px) saturate(1.05) !important;
+            background: rgba(14, 14, 20, 0.82) !important;
+            backdrop-filter: blur(18px) saturate(1.05) !important;
+            -webkit-backdrop-filter: blur(18px) saturate(1.05) !important;
+        }
+        /* Buttons share the same blur recipe at slightly lower alpha →
+           visual flow between text-boxes and chips. */
+        .settings-chip-btn,
+        .toggle-btn,
+        .audio-chip,
+        .btn-secondary {
+            background: rgba(14, 14, 20, 0.66) !important;
+            border: 1px solid rgba(255,255,255,0.12) !important;
+            backdrop-filter: blur(18px) saturate(1.05) !important;
+            -webkit-backdrop-filter: blur(18px) saturate(1.05) !important;
         }
         /* Reading atmospheric orb — softer so it stops washing out cards */
         .reading-aura-ball {
@@ -4087,6 +4188,13 @@
 </div>
 
 <div class="screen entry-screen" id="entryScreen">
+    <div class="aura-sparkle-logo large" aria-hidden="true" style="margin: 0 auto 6px;">
+        <span class="ring"></span>
+        <svg viewBox="0 0 64 64" fill="currentColor">
+            <!-- 4-point sparkle: vertical + horizontal bows that cinch in the middle -->
+            <path d="M32 4 C 33 22, 34 23, 60 32 C 34 41, 33 42, 32 60 C 31 42, 30 41, 4 32 C 30 23, 31 22, 32 4 Z"/>
+        </svg>
+    </div>
     <h1 class="entry-title">AURA</h1>
     <p class="entry-tagline">Know Yourself</p>
     <div class="entry-orb-area">
@@ -4667,26 +4775,26 @@ const READING_CARD_FAMILIES = {
     focus: {
         dark: { start: '#271429', end: '#120c18', border: 'rgba(195, 151, 224, 0.36)' },
         light: { start: '#fffaf8', end: '#f2e8f1', border: 'rgba(180, 145, 194, 0.42)', title: '#4e3757', position: 'rgba(78, 55, 87, 0.62)' },
-        detail: { panel: 'rgba(20, 14, 26, 0.94)', border: 'rgba(202, 170, 232, 0.18)', highlight: 'rgba(52, 34, 66, 0.96)', highlightBorder: 'rgba(202, 170, 232, 0.34)', title: '#fbf4ff', chipBg: 'rgba(202, 170, 232, 0.12)', chipColor: 'rgba(241, 226, 255, 0.8)', quote: '#e4c6f4' },
-        orb: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.14) 0%, #d7a2eb 10%, #e8b6ef 20%, #f2ccd6 34%, #f5dbe1 46%, #d8ede8 58%, rgba(143,211,199,0.72) 66%, rgba(143,211,199,0.18) 74%, transparent 82%), radial-gradient(circle at 50% 50%, transparent 56%, #8fd3c7 60%, #8fd3c7 65%, transparent 69%)'
+        detail: { panel: 'rgba(20, 14, 26, 0.84)', border: 'rgba(202, 170, 232, 0.18)', highlight: 'rgba(52, 34, 66, 0.86)', highlightBorder: 'rgba(202, 170, 232, 0.34)', title: '#fbf4ff', chipBg: 'rgba(202, 170, 232, 0.12)', chipColor: 'rgba(241, 226, 255, 0.8)', quote: '#e4c6f4' },
+        orb: 'radial-gradient(circle at 50% 50%, rgba(252,238,255,0.96) 0%, rgba(238,220,250,0.74) 6%, #d7a2eb 14%, #e8b6ef 24%, #f2ccd6 36%, #f5dbe1 48%, #d8ede8 58%, rgba(143,211,199,0.72) 66%, rgba(143,211,199,0.18) 74%, transparent 82%), radial-gradient(circle at 50% 50%, transparent 56%, #8fd3c7 60%, #8fd3c7 65%, transparent 69%)'
     },
     past: {
         dark: { start: '#34171d', end: '#160d12', border: 'rgba(210, 142, 149, 0.34)' },
         light: { start: '#fff8f6', end: '#f5e2dd', border: 'rgba(196, 148, 150, 0.42)', title: '#5a373d', position: 'rgba(90, 55, 61, 0.62)' },
-        detail: { panel: 'rgba(24, 14, 18, 0.94)', border: 'rgba(214, 158, 165, 0.18)', highlight: 'rgba(60, 28, 34, 0.96)', highlightBorder: 'rgba(214, 158, 165, 0.34)', title: '#fff3f4', chipBg: 'rgba(214, 158, 165, 0.12)', chipColor: 'rgba(255, 226, 229, 0.8)', quote: '#efb7bf' },
-        orb: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.14) 0%, #d998a4 10%, #e9b0b7 20%, #efbf93 34%, #f4cfaf 46%, #d59b9f 58%, rgba(145,84,90,0.72) 66%, rgba(145,84,90,0.18) 74%, transparent 82%), radial-gradient(circle at 50% 50%, transparent 56%, #91545a 60%, #91545a 65%, transparent 69%)'
+        detail: { panel: 'rgba(24, 14, 18, 0.84)', border: 'rgba(214, 158, 165, 0.18)', highlight: 'rgba(60, 28, 34, 0.86)', highlightBorder: 'rgba(214, 158, 165, 0.34)', title: '#fff3f4', chipBg: 'rgba(214, 158, 165, 0.12)', chipColor: 'rgba(255, 226, 229, 0.8)', quote: '#efb7bf' },
+        orb: 'radial-gradient(circle at 50% 50%, rgba(255,236,224,0.96) 0%, rgba(255,222,202,0.74) 6%, #d998a4 14%, #e9b0b7 24%, #efbf93 36%, #f4cfaf 48%, #d59b9f 58%, rgba(145,84,90,0.72) 66%, rgba(145,84,90,0.18) 74%, transparent 82%), radial-gradient(circle at 50% 50%, transparent 56%, #91545a 60%, #91545a 65%, transparent 69%)'
     },
     present: {
         dark: { start: '#1d162a', end: '#0f1018', border: 'rgba(131, 196, 220, 0.34)' },
         light: { start: '#fbfbff', end: '#ebe8f6', border: 'rgba(141, 156, 204, 0.42)', title: '#3d3558', position: 'rgba(61, 53, 88, 0.62)' },
-        detail: { panel: 'rgba(16, 16, 24, 0.94)', border: 'rgba(139, 196, 223, 0.18)', highlight: 'rgba(34, 32, 54, 0.96)', highlightBorder: 'rgba(139, 196, 223, 0.34)', title: '#f6f5ff', chipBg: 'rgba(139, 196, 223, 0.12)', chipColor: 'rgba(224, 244, 255, 0.8)', quote: '#9ed6ec' },
-        orb: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.14) 0%, #d96a84 10%, #e78ea4 20%, #79dde3 34%, #a6e7ea 46%, #b7c0ef 58%, rgba(128,96,183,0.72) 66%, rgba(128,96,183,0.18) 74%, transparent 82%), radial-gradient(circle at 50% 50%, transparent 56%, #8060b7 60%, #8060b7 65%, transparent 69%)'
+        detail: { panel: 'rgba(16, 16, 24, 0.84)', border: 'rgba(139, 196, 223, 0.18)', highlight: 'rgba(34, 32, 54, 0.86)', highlightBorder: 'rgba(139, 196, 223, 0.34)', title: '#f6f5ff', chipBg: 'rgba(139, 196, 223, 0.12)', chipColor: 'rgba(224, 244, 255, 0.8)', quote: '#9ed6ec' },
+        orb: 'radial-gradient(circle at 50% 50%, rgba(248,232,255,0.96) 0%, rgba(232,212,250,0.74) 6%, #d96a84 14%, #e78ea4 24%, #79dde3 36%, #a6e7ea 48%, #b7c0ef 58%, rgba(128,96,183,0.72) 66%, rgba(128,96,183,0.18) 74%, transparent 82%), radial-gradient(circle at 50% 50%, transparent 56%, #8060b7 60%, #8060b7 65%, transparent 69%)'
     },
     future: {
         dark: { start: '#15201a', end: '#0b1410', border: 'rgba(156, 201, 176, 0.34)' },
         light: { start: '#fbfdf8', end: '#e6f0e8', border: 'rgba(150, 188, 167, 0.42)', title: '#355042', position: 'rgba(53, 80, 66, 0.62)' },
-        detail: { panel: 'rgba(14, 20, 17, 0.94)', border: 'rgba(163, 204, 184, 0.18)', highlight: 'rgba(24, 41, 34, 0.96)', highlightBorder: 'rgba(163, 204, 184, 0.34)', title: '#f3fff8', chipBg: 'rgba(163, 204, 184, 0.12)', chipColor: 'rgba(226, 247, 237, 0.8)', quote: '#bddbc8' },
-        orb: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.14) 0%, #9fd0b4 10%, #b9dfc9 20%, #cbaef0 34%, #dcccf6 46%, #e2f1e7 58%, rgba(226,241,231,0.72) 66%, rgba(226,241,231,0.18) 74%, transparent 82%), radial-gradient(circle at 50% 50%, transparent 56%, #e2f1e7 60%, #e2f1e7 65%, transparent 69%)'
+        detail: { panel: 'rgba(14, 20, 17, 0.84)', border: 'rgba(163, 204, 184, 0.18)', highlight: 'rgba(24, 41, 34, 0.86)', highlightBorder: 'rgba(163, 204, 184, 0.34)', title: '#f3fff8', chipBg: 'rgba(163, 204, 184, 0.12)', chipColor: 'rgba(226, 247, 237, 0.8)', quote: '#bddbc8' },
+        orb: 'radial-gradient(circle at 50% 50%, rgba(232,250,236,0.96) 0%, rgba(214,242,224,0.74) 6%, #9fd0b4 14%, #b9dfc9 24%, #cbaef0 36%, #dcccf6 48%, #e2f1e7 58%, rgba(226,241,231,0.72) 66%, rgba(226,241,231,0.18) 74%, transparent 82%), radial-gradient(circle at 50% 50%, transparent 56%, #e2f1e7 60%, #e2f1e7 65%, transparent 69%)'
     }
 };
 function getReadingCardVisuals(index, isSingle = false) {
@@ -7844,10 +7952,11 @@ function applyReadingAtmosphere() {
     const layer3 = card3.colors?.[0] || '#1976D2'; // outer — card 3 primary
     const orbEl = document.querySelector('.reading-aura-ball');
     if (orbEl) {
+        // Smooth-blend gradient — overlapping ring stops kill the hollow centre.
         orbEl.style.background = [
-            `radial-gradient(circle at 50% 48%, ${layer1} 0%, ${layer1} 16%, ${layer1}aa 20%, transparent 22%)`,
-            `radial-gradient(circle at 50% 48%, transparent 18%, ${layer2}ee 34%, ${layer2} 45%, ${layer2}88 52%, transparent 55%)`,
-            `radial-gradient(circle at 46% 54%, transparent 50%, ${layer3}dd 72%, ${layer3} 80%, ${layer3}88 85%, transparent 88%)`
+            `radial-gradient(circle at 50% 48%, ${layer1} 0%, ${layer1}ee 14%, ${layer1}99 26%, ${layer1}55 38%, transparent 48%)`,
+            `radial-gradient(circle at 50% 48%, transparent 14%, ${layer2}88 30%, ${layer2}ee 46%, ${layer2}99 60%, ${layer2}44 72%, transparent 82%)`,
+            `radial-gradient(circle at 46% 54%, transparent 48%, ${layer3}77 64%, ${layer3}cc 78%, ${layer3}77 90%, transparent 100%)`
         ].join(',');
     }
     const anchor = selectedCards.length > 1 ? selectedCards[1] : selectedCards[0];
@@ -8205,31 +8314,31 @@ function buildReadingShareImage(cards, dateStr) {
         ctx.font = `600 ${isSingle ? 56 : 38}px Georgia, serif`;
         ctx.fillStyle = 'rgba(255,255,255,0.97)';
         ctx.letterSpacing = '1px';
-        // Card name — smaller per user feedback ("text under orbs is too big")
+        // Card name — pushed below the orb so they don't crowd
         ctx.font = `400 ${isSingle ? 44 : 30}px 'Cormorant Garamond', Georgia, serif`;
-        wrapText(card.name, midX, cy + cardH * 0.66, cardW - 36, isSingle ? 50 : 36, 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.97)';
+        ctx.letterSpacing = '1px';
+        wrapText(card.name, midX, cy + cardH * 0.76, cardW - 36, isSingle ? 50 : 36, 2);
 
-        // Affirmation
-        ctx.font = `italic ${isSingle ? 30 : 22}px Georgia, serif`;
+        // Affirmation — sits cleanly below the name
+        ctx.font = `italic 400 ${isSingle ? 24 : 18}px Georgia, serif`;
         ctx.fillStyle = 'rgba(220,200,255,0.78)';
         ctx.letterSpacing = '0px';
-        // Affirmation — also dialed back so reflection has more room
-        ctx.font = `italic 400 ${isSingle ? 24 : 18}px Georgia, serif`;
-        wrapText(`"${card.affirmation}"`, midX, cy + cardH * 0.85, cardW - 44, isSingle ? 30 : 24, 2);
+        wrapText(`"${card.affirmation}"`, midX, cy + cardH * 0.91, cardW - 44, isSingle ? 30 : 24, 2);
     });
 
-    // ── AI Reflection — full text, fills remaining canvas space ──
+    // ── AI Reflection — large, fills the remaining canvas space ──
     const guideEl = document.getElementById('guideMessage');
     const reflection = guideEl ? (guideEl.innerText || guideEl.textContent || '').replace(/\s+/g, ' ').trim() : '';
     if (reflection) {
-        const reflBoxY = cardY + cardH + 32;
+        const reflBoxY = cardY + cardH + 36;
         const brandingLineY = H - 100;
         const maxReflH = brandingLineY - reflBoxY - 12;
-        const reflFontSize = 24;   // slightly tighter so full reflection fits
-        const lineH = 36;
-        const padV = 52;           // top + bottom padding inside box
+        const reflFontSize = 30;   // bigger, easier to read on social
+        const lineH = 44;
+        const padV = 64;           // generous top + bottom padding inside box
         const maxLines = Math.max(1, Math.floor((maxReflH - padV) / lineH));
-        const maxTW = W - 180;
+        const maxTW = W - 160;     // slightly wider so reflection fills the space
 
         // Count actual lines needed
         ctx.font = `italic 400 ${reflFontSize}px Georgia, serif`;
