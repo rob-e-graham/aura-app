@@ -7,9 +7,11 @@ behalf of AURA. Read this once, write from instinct after.
 
 ## What AURA is, in one line
 
-**Unlock AI with timeless wisdom & self reflection.**
+**AURA - Unlock AI with Timeless Wisdom & Self Reflection.**
 
-*(The canonical tagline. Locked Apr 27, 2026 — see `MARKETING_COPY.md`.)*
+*(The canonical tagline. Locked Apr 27, 2026 — see `MARKETING_COPY.md`.
+"Timeless Wisdom" and "Self Reflection" are always Title Case — they
+are AURA's two brand pillars.)*
 
 In long-form: a calm AI guide for self-discovery, grounded in 78
 archetypal cards and a daily ritual of reflection. Everything below is
@@ -54,7 +56,7 @@ than most. Say what it is. Skip the mystical theatre.
 >
 > ✅ "A daily ritual for self-discovery."
 
-### 5. Lowercase often
+### 5. Lowercase often (with two exceptions)
 Lowercase reads softer. AURA the brand stays in its uppercase
 all-caps treatment, but body copy frequently leans lowercase —
 especially on social, where it signals warmth and informality.
@@ -62,6 +64,10 @@ especially on social, where it signals warmth and informality.
 > ❌ "Your Daily Reading Awaits"
 >
 > ✅ "today's card is ready when you are"
+
+**Two always-Title-Case exceptions:** "Timeless Wisdom" and "Self Reflection"
+— the brand pillars from the locked tagline. Even on social, capitalise
+them. They're proper-noun *concepts*, not casual descriptors.
 
 ---
 

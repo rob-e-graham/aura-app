@@ -384,8 +384,9 @@
             padding: 4px 0 6px !important;
             box-sizing: border-box !important;
         }
-        /* Cards now flex to grid track width — guaranteed to fit. */
-        .cards-spread .spread-card {
+        /* Cards in a 3-card spread flex to grid track width — guaranteed
+           to fit any iPhone. Single-card spread has its own dimensions. */
+        .cards-spread:not(.single-card) .spread-card {
             width: 100% !important;
             max-width: 102px !important;
             justify-self: center !important;
@@ -400,7 +401,9 @@
             height: 176px !important;
             padding: 14px 9px 12px !important;
             border-radius: 18px !important;
-            box-shadow: 0 14px 34px rgba(0,0,0,0.34) !important;
+            /* No drop shadow — the orb provides all the depth.
+               Soft inner highlight only, for a clean flat-lay look. */
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.06) !important;
             justify-content: flex-start !important;
             gap: 8px !important;
         }
@@ -4144,7 +4147,8 @@
         body[data-theme="light"] .spread-card {
             background: linear-gradient(180deg, var(--card-light-start, #ffffff) 0%, var(--card-light-end, #faf4ef) 100%) !important;
             border: 1px solid var(--card-light-border, rgba(196, 179, 193, 0.56)) !important;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.36) !important;
+            /* No drop shadow on light cards either — clean fashion flat-lay. */
+            box-shadow: none !important;
         }
         body[data-theme="light"] .spread-card-title {
             color: var(--card-light-title, #302733) !important;
@@ -4999,13 +5003,15 @@ function normalizeCardPalette(cardOrColors) {
  */
 function buildCardOrbGradient(cardOrColors) {
     const [c1, c2, c3] = normalizeCardPalette(cardOrColors);
-    // FULL primary colour from the centre outward — NO whitened core,
-    // NO blend toward secondary at the middle. The dot is the personality.
-    const mid12     = _blendHex(c1, c2, 0.45);
-    const mid23     = _blendHex(c2, c3, 0.50);
-    const aura      = _blendHex(c3, c1, 0.18);
-    const rim       = _darkenHex(c3, 0.28);
-    const rimSoft   = _blendHex(c3, aura, 0.35);
+    // FULL primary colour at the centre (no white dot).
+    // Three distinct colours from the card's own palette — gives each
+    // card real personality. Harmony is tuned at the DATA level
+    // (auraDeck), not by collapsing the palette in code.
+    const mid12   = _blendHex(c1, c2, 0.45);
+    const mid23   = _blendHex(c2, c3, 0.50);
+    const aura    = _blendHex(c3, c1, 0.18);
+    const rim     = _darkenHex(c3, 0.28);
+    const rimSoft = _blendHex(c3, aura, 0.35);
 
     return [
         `radial-gradient(circle at 50% 44%, ${c1} 0%, ${c1} 22%, ${mid12} 42%, ${c2} 56%, ${mid23} 68%, ${c3} 78%, ${rimSoft} 86%, ${rimSoft}99 90%, transparent 100%)`,

@@ -185,7 +185,7 @@ agent given the right access (social accounts, email tool, copy bank).
 ### 6.1 Brand & content foundations (Week -3 from launch)
 
 **Locked messaging line:**
-- `Aura — Unlock AI with timeless wisdom & self reflection`
+- `AURA - Unlock AI with Timeless Wisdom & Self Reflection.`
 
 **Use this as the parent message across GitHub, website, launch assets, social bios, and media copy.**
 

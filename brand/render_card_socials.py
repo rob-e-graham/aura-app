@@ -163,8 +163,9 @@ def build_orb_image(colors, size=760):
     c1 = hexrgb(colors[0])
     c2 = hexrgb(colors[1] if len(colors) > 1 else colors[0])
     c3 = hexrgb(colors[2] if len(colors) > 2 else colors[0])
-    # FULL primary colour at the centre — no white dot, no blend toward
-    # secondary. The middle of the orb IS the personality.
+    # FULL primary colour at the centre — no white dot. Three distinct
+    # colours from the card's palette. Harmony is tuned in the data,
+    # not collapsed in code.
     mid12 = lerp_rgb(c1, c2, 0.45)
     mid23 = lerp_rgb(c2, c3, 0.50)
     aura = lerp_rgb(c3, c1, 0.18)

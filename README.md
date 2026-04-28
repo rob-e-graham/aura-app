@@ -1,6 +1,6 @@
 # AURA
 
-> **Unlock AI with timeless wisdom & self reflection.**
+> **AURA - Unlock AI with Timeless Wisdom & Self Reflection.**
 
 AURA is a mobile-first self-reflection app built around card draws, guided prompts, conversational AI, and premium subscription features.
 

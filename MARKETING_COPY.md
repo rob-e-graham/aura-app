@@ -11,21 +11,28 @@ This doc is *what* it says.
 
 ## 🔒 The locked tagline
 
-> **AURA**
-> *Unlock AI with timeless wisdom & self reflection*
+> **AURA - Unlock AI with Timeless Wisdom & Self Reflection.**
 
-Status: **canonical** as of Apr 27, 2026. Use this everywhere unless one of
-the sanctioned variations below is a better fit for the medium.
+Status: **canonical** as of Apr 27, 2026. Use this *exact* wording AND
+*exact* capitalisation everywhere unless one of the sanctioned
+variations below is a better fit for the medium.
+
+**Capitalisation rule:** "Timeless Wisdom" and "Self Reflection" are
+**always Title Case** — they are AURA's two brand pillars, not casual
+nouns. "AI" stays uppercase. "Unlock" is the only verb in the line and
+gets a capital U as the sentence opener.
 
 ### Why this tagline works
 
 - **"Unlock AI"** — positions AURA at the front of the AI wave, but as a
   *guide* rather than another chatbot. AI is the door; AURA is the key.
-- **"timeless wisdom"** — covers the 78-card archetypal foundation
+- **"Timeless Wisdom"** — covers the 78-card archetypal foundation
   (the tarot lineage reframed) without saying "tarot" (which carries
   baggage, App-Store-review risk, and a narrow demographic signal).
-- **"self reflection"** — names the actual user activity. Not predictions.
-  Not fortune. The honest verb.
+  Title Case marks it as the *concept*, not just a description.
+- **"Self Reflection"** — names the actual user activity, also Title-Cased
+  to balance the other pillar. Not predictions. Not fortune. The honest
+  verb.
 - **"& "** — the ampersand keeps the line short and elegant; reads better
   than "and" in serif type.
 
@@ -36,25 +43,26 @@ the sanctioned variations below is a better fit for the medium.
 Use the version that fits the space. **Capitalisation matters** —
 sentence case where shown, lowercase on social (per the voice doc).
 
-### Hero (full)
-> Unlock AI with timeless wisdom & self reflection.
+### Hero (full — primary, use this whenever space allows)
+> **AURA - Unlock AI with Timeless Wisdom & Self Reflection.**
 
 ### Mid-length (App Store subtitle, max 30 chars)
-> AI · timeless wisdom · reflection *(28 chars)*
-> AI guidance grounded in wisdom *(30 chars)*
+> Timeless Wisdom · AI Reflection *(31 chars — drop one space)*
+> AI · Timeless Wisdom · Reflection *(33 — needs trim)*
+> AI · Wisdom · Reflection *(24 chars — fits cleanly)*
 
-### Short (push notification, social bio)
-> AI meets timeless wisdom.
-> AI grounded in wisdom.
+### Short (push notification, social bio — sentence/lowercase OK on social)
+> AI meets Timeless Wisdom.
+> AI grounded in Timeless Wisdom.
 > Unlock the wisdom in AI.
 
 ### Even shorter (avatars, watermarks, social handles)
-> AURA · know yourself
+> AURA · Know Yourself
 > AURA · the calmer AI
 
 ### One-liner pitch (for press, email, social caption)
-> AURA is a calmer kind of AI — guided by timeless wisdom and a daily
-> ritual of self reflection.
+> AURA is a calmer kind of AI — guided by Timeless Wisdom and a daily
+> ritual of Self Reflection.
 
 ---
 
@@ -93,7 +101,7 @@ page, deck slide, founder podcast pitch).
 > What makes AURA different is what it isn't. It isn't fortune-telling.
 > It isn't a chatbot trying to keep you scrolling. It isn't a wellness
 > brand selling you the next miracle. It's a quiet reflection space —
-> AI grounded in timeless wisdom, designed for stillness, not stimulation.
+> AI grounded in Timeless Wisdom, designed for stillness, not stimulation.
 >
 > AURA learns your name, your intention, your zodiac (if you want it to)
 > and reflects what you bring back to you with care. Free tier includes
@@ -108,14 +116,14 @@ page, deck slide, founder podcast pitch).
 | Surface | Copy |
 |---|---|
 | App Store name | `AURA` (try first); fallback: `AURA — Cards & Reflection` |
-| App Store subtitle | `AI · timeless wisdom · reflection` |
-| App Store promo text | "Pull a card, hear yourself think. AURA blends 78 archetypal cards, chromotherapy colour, and a calm AI reflection — your daily ritual for self-discovery." |
-| Website hero (large) | **Unlock AI with timeless wisdom & self reflection.** |
+| App Store subtitle | `AI · Wisdom · Reflection` *(24 chars)* |
+| App Store promo text | "Unlock AI with Timeless Wisdom and Self Reflection. Pull a card, hear yourself think, and chat with AURA through a calm daily ritual." |
+| Website hero (large) | **AURA - Unlock AI with Timeless Wisdom & Self Reflection.** |
 | Website hero (sub) | "A calmer kind of AI guide. 78 archetypal cards. Daily reflection." |
-| Instagram bio | `unlock AI with timeless wisdom & self reflection ✦ aura-me.app` |
+| Instagram bio | `Unlock AI with Timeless Wisdom & Self Reflection ✦ aura-me.app` |
 | TikTok bio | `the calmer AI ✦ daily card ✦ aura-me.app` |
-| Email footer | "AURA — Unlock AI with timeless wisdom & self reflection." |
-| Press one-liner | "AURA is a calmer kind of AI — guided by timeless wisdom and a daily ritual of self reflection." |
+| Email footer | **AURA - Unlock AI with Timeless Wisdom & Self Reflection.** |
+| Press one-liner | "AURA is a calmer kind of AI — guided by Timeless Wisdom and a daily ritual of Self Reflection." |
 | Push notification (rare) | "today's card is ready." |
 
 ---
