@@ -7,9 +7,13 @@ behalf of AURA. Read this once, write from instinct after.
 
 ## What AURA is, in one line
 
-**A calm space for self-reflection through cards, colour, and conversation.**
+**Unlock AI with timeless wisdom & self reflection.**
 
-That's the whole pitch. Everything else is just a longer version of that.
+*(The canonical tagline. Locked Apr 27, 2026 — see `MARKETING_COPY.md`.)*
+
+In long-form: a calm AI guide for self-discovery, grounded in 78
+archetypal cards and a daily ritual of reflection. Everything below is
+just a longer version of that.
 
 ---
 

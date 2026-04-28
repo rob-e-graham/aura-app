@@ -13,6 +13,12 @@ For the full strategic plan + Fam's marketing brief, see `LAUNCH_PLAN.md`.
 
 ## ✅ Already shipped
 
+### Marketing foundations
+- [x] **Tagline locked** — *"Unlock AI with timeless wisdom & self reflection"* (canonical, see `MARKETING_COPY.md`)
+- [x] Tone of voice doc (`AURA_VOICE.md`)
+- [x] Marketing copy bank (`MARKETING_COPY.md`)
+- [x] Launch plan (`LAUNCH_PLAN.md`)
+
 ### Brand & visual
 - [x] AURA sparkle logo finalised (dramatic curve, subtle cross-tip silhouette)
 - [x] Wordmark + sparkle lockups (horizontal, stacked, gold/black/white)
