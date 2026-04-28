@@ -19,6 +19,11 @@ A first pass has already been made in the app to:
 - soften the palette toward blush / lavender / sage / powder tones
 - make panels cleaner and easier to read
 
+Important live orb note:
+- an older internal colourway description that defined `c3 = darken(c1)` is now stale
+- the current orb direction uses **three real palette colours from each card** rather than a generated darkened version of the primary
+- keep that in mind when proposing orb systems or merch logic
+
 ## What I want from you
 Please act like a senior product + brand designer and help refine this direction.
 
@@ -58,6 +63,8 @@ Please act like a senior product + brand designer and help refine this direction
 - translucent layers should feel airy, not muddy or opaque
 - overall tone should feel premium, soft, mystical, feminine, modern
 - the orb language should be collectible and fashion-worthy, not just decorative
+- outer outlines/rings should stay readable and iconic
+- inner colour transitions should feel soft, blended, and alive rather than stepped or target-like
 - think fashion/editorial/spa/wellness, not gamer/cosmic/neon
 
 ## Current target aesthetic

@@ -28,6 +28,12 @@ Use these as:
 ## Lux orb rule
 The orb system should feel like a premium symbol set people would actually want to wear on a tee shirt.
 
+Current orb construction note:
+- the older description `c3 = darken(c1)` is stale and should not be followed
+- the live direction now uses **three real palette colours from each card**, not a generated darkened shade
+- think: one dominant personality colour, one supporting accent, one real grounding/support colour from the card palette
+- keep the outer ring/outline strong, while the inner transitions stay soft and blended
+
 That means:
 - each orb needs a clearly distinct silhouette / ring logic, not just a colour swap
 - orbs should read beautifully at multiple scales: app card, tee graphic, embroidered badge, sticker
