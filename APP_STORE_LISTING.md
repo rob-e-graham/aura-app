@@ -31,12 +31,15 @@ form fields. Anything in `[brackets]` is a choice you make.
 3. `AURA Self Discovery` *(19 chars)*
 
 ### Subtitle (max 30 characters)
-`Card readings & AI reflection` *(29 chars — primary recommendation)*
+> Aligned with the locked tagline (`MARKETING_COPY.md`):
+> *"Unlock AI with timeless wisdom & self reflection"*
+
+Primary: `AI · wisdom · reflection` *(24 chars)*
 
 Alternates:
-- `Reflect through your aura`
-- `Cards · Colour · Reflection`
-- `Daily ritual for self-discovery`
+- `Calmer AI · timeless wisdom` *(27 chars)*
+- `AI guided by wisdom & cards` *(27 chars)*
+- `Card readings & AI reflection` *(29 chars — original)*
 
 ### Bundle ID
 `com.auralife.app` *(already set in Xcode)*
@@ -89,11 +92,14 @@ Click **App Privacy → Get Started** in App Store Connect.
 ## Version Information (App Store tab → 1.0.0 Prepare for Submission)
 
 ### Promotional Text (max 170 characters — can update anytime without review)
-> Pull a card, hear yourself think. AURA blends 78 archetypal cards, chromotherapy colour, and a calm AI reflection — your daily ritual for self-discovery.
+> Unlock AI with timeless wisdom and self reflection. Pull a card, hear yourself think, and chat with AURA through a calm daily ritual.
 
-*(167 chars — fits)*
+*(141 chars — fits)*
 
 ### Description (max 4000 characters)
+
+**Core positioning line to keep consistent across launch materials:**
+> Unlock AI with timeless wisdom & self reflection.
 
 ```
 AURA is a calm, beautiful self-discovery app for everyday reflection.

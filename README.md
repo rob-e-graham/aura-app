@@ -1,5 +1,7 @@
 # AURA
 
+> **Unlock AI with timeless wisdom & self reflection.**
+
 AURA is a mobile-first self-reflection app built around card draws, guided prompts, conversational AI, and premium subscription features.
 
 This repository is for the AURA app only. It is separate from the ARCHAI project and should be presented as its own product, codebase, and GitHub presence.

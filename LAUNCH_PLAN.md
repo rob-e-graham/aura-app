@@ -146,7 +146,7 @@ Use `APP_STORE_LISTING.md` for all the copy.
 
 ### 4.2 App Store Connect listing
 - [ ] App Name: try `AURA` first, fall back to `AURA — Cards & Reflection`
-- [ ] Subtitle: `Card readings & AI reflection`
+- [ ] Subtitle: `AI · wisdom · reflection` *(per locked tagline — see MARKETING_COPY.md)*
 - [ ] Promo Text, Description, Keywords — paste from `APP_STORE_LISTING.md`
 - [ ] Categories: Lifestyle (primary), Health & Fitness (secondary)
 - [ ] Age rating: 12+ (mild mystical themes per questionnaire)
@@ -183,6 +183,17 @@ Use `APP_STORE_LISTING.md` for all the copy.
 agent given the right access (social accounts, email tool, copy bank).
 
 ### 6.1 Brand & content foundations (Week -3 from launch)
+
+**Locked messaging line:**
+- `Aura — Unlock AI with timeless wisdom & self reflection`
+
+**Use this as the parent message across GitHub, website, launch assets, social bios, and media copy.**
+
+Supporting message angles:
+- Calm AI for reflection, not noise
+- Timeless wisdom reframed for modern life
+- A friend-like reflective companion, not a cold assistant
+- Daily ritual, self discovery, emotional clarity
 
 - [ ] Reserve handles on every social: `@aura_me`, `@auracards`, `@auralife`
     - Instagram, TikTok, X/Twitter, Pinterest, Threads, YouTube
