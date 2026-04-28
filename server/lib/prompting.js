@@ -60,6 +60,11 @@ function buildAuraVariation(userMessage = "") {
   const signal = inferUserSignal(userMessage);
   const personaModes = [
     {
+      key: "quiet_friend",
+      label: "quiet / close friend",
+      rule: "Sound like a close friend with emotional intelligence. Stay simple, steady, and spacious."
+    },
+    {
       key: "poetic_mystical",
       label: "poetic / mystical",
       rule: "Use a little more luminous, symbolic phrasing than usual, but stay concrete and readable."
@@ -80,7 +85,7 @@ function buildAuraVariation(userMessage = "") {
       rule: "Let a little charm or light playfulness through, but keep it elegant and never silly."
     }
   ];
-  const personaMode = signal.roomy ? randItem(personaModes) : null;
+  const personaMode = randItem(signal.heavy ? personaModes.filter((mode) => mode.key !== "playful_magnetic") : personaModes);
   const moodPool = signal.emotional
     ? ["steady", "gentle", "grounded", "softly warm"]
     : signal.playful
@@ -118,31 +123,41 @@ function buildAuraVariation(userMessage = "") {
         "It is okay to sound a little more human and less polished-perfect."
       ];
 
+  const closurePool = signal.heavy
+    ? [
+        "End with a grounded statement or gentle invitation, not a question.",
+        "Let the reply land with steadiness instead of prompting more talk."
+      ]
+    : [
+        "A question is optional, not required.",
+        "A warm closing line can be stronger than a question.",
+        "Sometimes just let the thought breathe with no question at all.",
+        "If you do ask a question, ask only one and let it earn its place."
+      ];
+
   return [
-    "Personality variation for this reply (keep all safety and end-question rules):",
-    ...(personaMode ? [
-      "- This turn has room for personality variation.",
-      `- Random soul mode for this reply: ${personaMode.label}.`,
-      `- ${personaMode.rule}`
-    ] : [
-      "- Keep the core Aura voice steady for this reply (less style variation, more attunement)."
-    ]),
+    "Personality variation for this reply (keep all safety rules):",
+    "- This turn has room for personality variation.",
+    `- Random soul mode for this reply: ${personaMode.label}.`,
+    `- ${personaMode.rule}`,
     `- Mood today: ${randItem(moodPool)}.`,
     `- Cadence: ${randItem(cadencePool)}.`,
     `- ${randItem(openingPool)}`,
     `- ${randItem(flavorPool)}`,
+    `- ${randItem(closurePool)}`,
     "- Keep structure constraints, but vary sentence rhythm and word choice more than usual.",
     "- If the user is brief/flat, add warmth and gentle personality instead of mirroring flatness.",
-    "- In heavy/sensitive moments, reduce stylization and prioritize steadiness."
+    "- In heavy/sensitive moments, reduce stylization and prioritize steadiness.",
+    "- Do not ask multiple questions or slip a question onto the end of every reply."
   ].join("\n");
 }
 
 function computeRequestTemperature(userMessage = "") {
   const signal = inferUserSignal(userMessage);
-  const base = signal.emotional ? 0.78 : 0.84;
-  const variance = signal.flat ? 0.08 : signal.playful ? 0.1 : 0.06;
+  const base = signal.heavy ? 0.72 : signal.emotional ? 0.78 : 0.86;
+  const variance = signal.flat ? 0.09 : signal.playful ? 0.12 : 0.08;
   const jitter = Math.random() * variance;
-  return Math.min(0.96, Number((base + jitter).toFixed(2)));
+  return Math.min(0.98, Number((base + jitter).toFixed(2)));
 }
 
 function createPromptService({ systemPromptPath, promptDbPath, soulPromptPaths = [] }) {
